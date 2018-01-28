@@ -6,6 +6,43 @@
     android:layout_height="match_parent"
     tools:context="uconn.werc_project_application.MainActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/EditText_Longitude"
+                android:layout_width="419dp"
+                android:layout_height="50dp"
+                android:hint="Longitude" />
+
+            <EditText
+                android:id="@+id/EditText_Latitude"
+                android:layout_width="419dp"
+                android:layout_height="50dp"
+                android:hint="Latitude"
+                 />
+
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/Button_Send"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Save"
+            android:layout_weight="4" />
+
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/button_gotomap"
         android:layout_width="wrap_content"
@@ -15,4 +52,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 </android.support.constraint.ConstraintLayout>
