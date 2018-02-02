@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobileconnectors.pinpoint.PinpointManager;
+import com.amazonaws.mobileconnectors.pinpoint.PinpointConfiguration;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -16,12 +18,34 @@ public class MainActivity extends AppCompatActivity {
     Double longitude, latitude;
     Intent intent_test;
     String url;
+
+    /** AWS Global Variables **/
+    // AWS Pinpoint Data Analytics
+    public static PinpointManager pinpointManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
-            AWSMobileClient.getInstance().initialize(this).execute();
+        /** AWS Initializations **/
+        AWSMobileClient.getInstance().initialize(this).execute();
+        // AWS Pinpoint Data Analytics
+        PinpointConfiguration pinpointConfig = new PinpointConfiguration(
+                getApplicationContext(),
+                AWSMobileClient.getInstance().getCredentialsProvider(),
+                AWSMobileClient.getInstance().getConfiguration());
+
+        pinpointManager = new PinpointManager(pinpointConfig);
+
+        // Start a session with Pinpoint
+        pinpointManager.getSessionClient().startSession();
+
+        // Stop the session and submit the default app started event
+        pinpointManager.getSessionClient().stopSession();
+        pinpointManager.getAnalyticsClient().submitEvents();
+
+
         setContentView(R.layout.activity_main);
 
         longitude = -73.087749; // default longitude

@@ -9,6 +9,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        // AWS Config
+        multiDexEnabled = true
     }
     buildTypes {
         release {
@@ -26,5 +29,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    // AWS Resources
     compile ('com.amazonaws:aws-android-sdk-mobile-client:2.6.7@aar') { transitive = true; }
+    compile 'com.amazonaws:aws-android-sdk-pinpoint:2.6.+'
+    compile 'com.android.support:multidex:1.0.+'
+
 }
