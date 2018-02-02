@@ -11,6 +11,12 @@ import android.widget.Toast;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobileconnectors.pinpoint.PinpointManager;
 import com.amazonaws.mobileconnectors.pinpoint.PinpointConfiguration;
+// AWS Database
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.*;
+import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.s3.transferutility.*;
+import com.amazonaws.models.nosql.GpsdataDO;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -22,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
     /** AWS Global Variables **/
     // AWS Pinpoint Data Analytics
     public static PinpointManager pinpointManager;
+    // AWS DynamoDB
+    DynamoDBMapper dynamoDBMapper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +46,13 @@ public class MainActivity extends AppCompatActivity {
                 AWSMobileClient.getInstance().getConfiguration());
 
         pinpointManager = new PinpointManager(pinpointConfig);
+
+        // AWS DynamoDB
+        AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(AWSMobileClient.getInstance().getCredentialsProvider());
+        this.dynamoDBMapper = DynamoDBMapper.builder()
+                .dynamoDBClient(dynamoDBClient)
+                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+                .build();
 
         // Start a session with Pinpoint
         pinpointManager.getSessionClient().startSession();
