@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
 
     Double longitude, latitude;
     Intent intent_test;
-
+    String url, jfowejfjweof;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
 
     public static boolean isStringDouble(String s) {
         try {
