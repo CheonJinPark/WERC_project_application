@@ -8,15 +8,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.amazonaws.mobile.client.AWSMobileClient;
+
 
 public class MainActivity extends AppCompatActivity {
 
     Double longitude, latitude;
     Intent intent_test;
-    String url, jfowejfjweof;
+    String url;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+            AWSMobileClient.getInstance().initialize(this).execute();
         setContentView(R.layout.activity_main);
 
         longitude = -73.087749; // default longitude
