@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/WERC_project_application.iml" filepath="$PROJECT_DIR$/.idea/WERC_project_application.iml" />
-      <module fileurl="file://C:\Users\Bill\Desktop\Work\WERC\WERC_project_application\WERC_project_application.iml" filepath="C:\Users\Bill\Desktop\Work\WERC\WERC_project_application\WERC_project_application.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://C:\Users\Bill\Desktop\Work\WERC\WERC_project_application\app\app.iml" filepath="C:\Users\Bill\Desktop\Work\WERC\WERC_project_application\app\app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sensorem.iml" filepath="$PROJECT_DIR$/sensorem.iml" />
     </modules>
   </component>
 </project>

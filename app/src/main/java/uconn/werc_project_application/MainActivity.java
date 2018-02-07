@@ -1,6 +1,5 @@
 package uconn.werc_project_application;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,16 +12,17 @@ import com.amazonaws.mobileconnectors.pinpoint.PinpointManager;
 import com.amazonaws.mobileconnectors.pinpoint.PinpointConfiguration;
 // AWS Database
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.*;
-import com.amazonaws.mobile.config.AWSConfiguration;
-import com.amazonaws.mobileconnectors.s3.transferutility.*;
-import com.amazonaws.models.nosql.GpsdataDO;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+// BLE Support
+import android.content.pm.PackageManager;
+import com.ble.BLEUtilities;
 
 
 public class MainActivity extends AppCompatActivity {
 
     Double longitude, latitude;
     Intent intent_test;
+    Intent intent_ble;
     String url;
 
     /** AWS Global Variables **/
@@ -61,12 +61,14 @@ public class MainActivity extends AppCompatActivity {
         pinpointManager.getSessionClient().stopSession();
         pinpointManager.getAnalyticsClient().submitEvents();
 
+        /** BLE Initializations **/
 
         setContentView(R.layout.activity_main);
 
         longitude = -73.087749; // default longitude
         latitude = 41.603221; // default latitude
 
+        /** Button Initializations **/
 
         Button Send = (Button)findViewById(R.id.Button_Send);
 
@@ -107,6 +109,17 @@ public class MainActivity extends AppCompatActivity {
                 intent_test.putExtra("Lat",latitude);
                 intent_test.putExtra("Long",longitude);
                 startActivity(intent_test);
+            }
+        });
+
+        Button btn_ble_scan = (Button)findViewById(R.id.button_ble);
+
+        btn_ble_scan.setOnClickListener(new Button.OnClickListener()
+        {
+            public void onClick(View V)
+            {
+                intent_ble = new Intent(MainActivity.this, BLEScanActivity.class);
+                startActivity(intent_ble);
             }
         });
 
