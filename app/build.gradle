@@ -37,4 +37,6 @@ dependencies {
     compile 'com.amazonaws:aws-android-sdk-s3:2.6.+'
     compile 'com.amazonaws:aws-android-sdk-cognito:2.6.+'
 
+    implementation 'com.google.android.gms:play-services-location:11.8.0'
+
 }
