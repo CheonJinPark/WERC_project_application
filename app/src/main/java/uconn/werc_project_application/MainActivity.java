@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobileconnectors.pinpoint.PinpointManager;
 import com.amazonaws.mobileconnectors.pinpoint.PinpointConfiguration;
@@ -201,13 +202,17 @@ public class MainActivity extends AppCompatActivity{
             return false;
         }
     }
+
+    // Create IdentityManager and set it as the default instance.
+    IdentityManager idm = new IdentityManager(getApplicationContext(),
+            new AWSConfiguration(getApplicationContext()));
+
     public void createGdata(double l, double lat){
         final GpsdataDO gdata = new GpsdataDO();
 
-        gdata.setUserId("userID");
-        //originally in setUserID : identityManager.getCachedUserID()
+        gdata.setUserId(idm.getCachedUserID());
         gdata.setDeviceId("Android");
-        gdata.setTimeEpoch(00.11);
+        gdata.setTimeEpoch(5404.0);
         gdata.setGpsLat(lat);
         gdata.setGpsLong(l);
 
