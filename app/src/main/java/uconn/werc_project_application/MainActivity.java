@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity{
     String url;
     LocationManager locationManager;
     int REQUEST_LOCATION = 2;
+    GPS g1, g2, g3, g4, g5;
 
     TextView long_textview, lat_textview;
     /** AWS Global Variables **/
@@ -55,8 +56,15 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d("JIN","View는 만듬" );
 
-
+        //Test GPSs
+       g1 = new GPS(-72.253981,41.807741); //Uconn
+       g2 = new GPS(-72.250645,41.803309); //Alumni Dorm
+       g3 = new GPS(-72.253430,41.804776); //Coop
+       g4 = new GPS(-72.259929,41.802675); //Hilltop Community Center
+       g5 = new GPS(-72.251748,41.806629); //Library
+        Log.d("JIN","GPS 문제" );
         /** AWS Initializations **/
         AWSMobileClient.getInstance().initialize(this).execute();
         // AWS Pinpoint Data Analytics
@@ -173,8 +181,11 @@ public class MainActivity extends AppCompatActivity{
         GotoMap.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 intent_test = new Intent(MainActivity.this, MapsActivity.class);
-                intent_test.putExtra("Lat", latitude);
-                intent_test.putExtra("Long", longitude);
+                intent_test.putExtra("g1",g1);
+                intent_test.putExtra("g2",g2);
+                intent_test.putExtra("g3",g3);
+                intent_test.putExtra("g4",g4);
+                intent_test.putExtra("g5",g5);
                 startActivity(intent_test);
             }
         });
