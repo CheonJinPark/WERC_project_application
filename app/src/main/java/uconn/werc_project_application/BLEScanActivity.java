@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ScrollView;
 
+import com.amazonaws.mobileconnectors.pinpoint.analytics.AnalyticsClient;
+import com.amazonaws.mobileconnectors.pinpoint.analytics.AnalyticsEvent;
 import com.ble.BLEDevice;
 import com.ble.BLEScanner;
 import com.ble.BLEUtilities;
@@ -70,6 +72,8 @@ public class BLEScanActivity extends AppCompatActivity implements View.OnClickLi
         btn_Scan = (Button) findViewById(R.id.btn_scan);
         ((ScrollView) findViewById(R.id.scrollView)).addView(listView);
         findViewById(R.id.btn_scan).setOnClickListener(this);
+
+
     }
 
 //    @Override
@@ -102,6 +106,15 @@ public class BLEScanActivity extends AppCompatActivity implements View.OnClickLi
 
                 if (!mBTLeScanner.isScanning()) {
                     startScan();
+
+                    // Send Custom Event to Amazon Pinpoint
+                    final AnalyticsClient mgr = AWSProvider.getInstance()
+                            .getPinpointManager()
+                            .getAnalyticsClient();
+                    final AnalyticsEvent evt = mgr.createEvent("BLEScan")
+                            .withAttribute("dummyattr", "val");
+                    mgr.recordEvent(evt);
+                    mgr.submitEvents();
                 }
                 else {
                     stopScan();

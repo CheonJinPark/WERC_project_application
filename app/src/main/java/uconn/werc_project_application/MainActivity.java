@@ -46,11 +46,6 @@ public class MainActivity extends AppCompatActivity{
     GPS g1, g2, g3, g4, g5;
 
     TextView long_textview, lat_textview;
-    /** AWS Global Variables **/
-    // AWS Pinpoint Data Analytics
-    public static PinpointManager pinpointManager;
-    // AWS DynamoDB
-    DynamoDBMapper dynamoDBMapper;
 
 
     @Override
@@ -58,6 +53,10 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d("JIN","View는 만듬" );
+
+        // Install the application crash handler.
+        ApplicationCrashHandler.installHandler();
+
 
         //Test GPSs
        g1 = new GPS(-72.253981,41.807741); //Uconn
@@ -82,20 +81,12 @@ public class MainActivity extends AppCompatActivity{
                 .dynamoDBClient(dynamoDBClient)
                 .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
                 .build();
-
         longitude = -111.11; // default longitude
         latitude = 222.0; // default latitude
 
 
         long_textview = (TextView)findViewById(R.id.Textview_gps_test_longitude);
         lat_textview = (TextView)findViewById(R.id.Textview_gps_test_latitude);
-        // Start a session with Pinpoint
-        pinpointManager.getSessionClient().startSession();
-
-        // Stop the session and submit the default app started event
-        pinpointManager.getSessionClient().stopSession();
-        pinpointManager.getAnalyticsClient().submitEvents();
-
 
         //make the Loaction manager for gps
         FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -172,9 +163,6 @@ public class MainActivity extends AppCompatActivity{
                 } else {
                     Toast.makeText(getApplicationContext(), "Latitude is not correct format", Toast.LENGTH_SHORT).show();
                 }
-                createGdata(longitude,latitude);
-
-
             }
         });
 
@@ -213,28 +201,24 @@ public class MainActivity extends AppCompatActivity{
             return false;
         }
     }
-
-    // Create IdentityManager and set it as the default instance.
-    IdentityManager idm = new IdentityManager(getApplicationContext(),
-            new AWSConfiguration(getApplicationContext()));
-
-    public void createGdata(double l, double lat){
-        final GpsdataDO gdata = new GpsdataDO();
-
-        gdata.setUserId(idm.getCachedUserID());
-        gdata.setDeviceId("Android");
-        gdata.setTimeEpoch(5404.0);
-        gdata.setGpsLat(lat);
-        gdata.setGpsLong(l);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                dynamoDBMapper.save(gdata);
-                // Item saved
-            }
-        }).start();
-    }
+//
+//    public void createGdata(double l, double lat){
+//        final GpsdataDO gdata = new GpsdataDO();
+//
+//        gdata.setUserId(idm.getCachedUserID());
+//        gdata.setDeviceId("Android");
+//        gdata.setTimeEpoch(5404.0);
+//        gdata.setGpsLat(lat);
+//        gdata.setGpsLong(l);
+//
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                dynamoDBMapper.save(gdata);
+//                // Item saved
+//            }
+//        }).start();
+//    }
 
 
 }
