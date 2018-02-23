@@ -58,7 +58,7 @@ public class BLEScanActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         mBTStateUpdateReceiver = new BroadcastReceiver_BTState(getApplicationContext());
-        mBTLeScanner = new BLEScanner(this, 5000, -75);
+        mBTLeScanner = new BLEScanner(this, 120000, -75);
 
         mBTDevicesHashMap = new HashMap<>();
         mBTDevicesArrayList = new ArrayList<>();

@@ -22,6 +22,7 @@ public class BLEScanner {
 
     private long scanPeriod;
     private int signalStrength;
+    private String[] uuids;
 
     public BLEScanner(BLEScanActivity BLEScanActivity, long scanPeriod, int signalStrength) {
         bsa = BLEScanActivity;
@@ -76,7 +77,7 @@ public class BLEScanner {
 
             mScanning = true;
             mBluetoothAdapter.startLeScan(mLeScanCallback);
-//            mBluetoothAdapter.startLeScan(uuids, mLeScanCallback);
+        //    mBluetoothAdapter.startLeScan(uuids, mLeScanCallback);
         }
         else {
             mScanning = false;

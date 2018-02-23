@@ -14,8 +14,11 @@ import android.text.TextUtils;
 
 import java.util.Locale;
 
+import uconn.werc_project_application.AWSProvider;
+import uconn.werc_project_application.data.
+
 /**
- * The Content Provider for the internal Notes database
+ * The Content Provider for the internal Sensordata database
  */
 public class SensorContentProvider extends ContentProvider {
     /**
@@ -24,12 +27,12 @@ public class SensorContentProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     /**
-     * The code for the UriMatch matching all notes
+     * The code for the UriMatch matching all Sensordata
      */
     private static final int ALL_ITEMS = 10;
 
     /**
-     * The code for the UriMatch matching a single note
+     * The code for the UriMatch matching a single datapacket
      */
     private static final int ONE_ITEM = 20;
 
@@ -43,12 +46,12 @@ public class SensorContentProvider extends ContentProvider {
      */
     static {
         sUriMatcher.addURI(
-                NotesContentContract.AUTHORITY,
-                NotesContentContract.Notes.DIR_BASEPATH,
+                SensorContentContract.AUTHORITY,
+                SensorContentContract.Sensordata.DIR_BASEPATH,
                 ALL_ITEMS);
         sUriMatcher.addURI(
-                NotesContentContract.AUTHORITY,
-                NotesContentContract.Notes.ITEM_BASEPATH,
+                SensorContentContract.AUTHORITY,
+                SensorContentContract.Sensordata.ITEM_BASEPATH,
                 ONE_ITEM);
     }
 
@@ -65,6 +68,40 @@ public class SensorContentProvider extends ContentProvider {
         databaseHelper = new DatabaseHelper(getContext());
         return true;
     }
+
+    private SenordataDO toSenordataDO(ContentValues values) {
+        final SenordataDO datapacket = new SenordataDO();
+        datapacket.setContent(values.getAsString(SensorContentContract.Sensordata.CONTENT));
+        datapacket.setCreationDate(values.getAsDouble(SensorContentContract.Sensordata.CREATED));
+        datapacket.setdatapacketId(values.getAsString(SensorContentContract.Sensordata.datapacketID));
+        datapacket.setTitle(values.getAsString(SensorContentContract.Sensordata.TITLE));
+        datapacket.setUpdatedDate(values.getAsDouble(SensorContentContract.Sensordata.UPDATED));
+        datapacket.setUserId(AWSProvider.getInstance().getIdentityManager().getCachedUserID());
+        return datapacket;
+    }
+
+    private Object[] fromSenordataDO(SenordataDO datapacket) {
+        String[] fields = SensorContentContract.Sensordata.PROJECTION_ALL;
+        Object[] r = new Object[fields.length];
+        for (int i = 0 ; i < fields.length ; i++) {
+            if (fields[i].equals(SensorContentContract.Sensordata.CONTENT)) {
+                r[i] = datapacket.getContent();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.CREATED)) {
+                r[i] = datapacket.getCreationDate();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.datapacketID)) {
+                r[i] = datapacket.getdatapacketId();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.TITLE)) {
+                r[i] = datapacket.getTitle();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.UPDATED)) {
+                r[i] = datapacket.getUpdatedDate();
+            } else {
+                r[i] = new Integer(0);
+            }
+        }
+        return r;
+    }
+
+
 
     /**
      * Query for a (number of) records.
@@ -85,14 +122,14 @@ public class SensorContentProvider extends ContentProvider {
 
         switch (uriType) {
             case ALL_ITEMS:
-                queryBuilder.setTables(NotesContentContract.Notes.TABLE_NAME);
+                queryBuilder.setTables(SensorContentContract.Sensordata.TABLE_NAME);
                 if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = NotesContentContract.Notes.SORT_ORDER_DEFAULT;
+                    sortOrder = SensorContentContract.Sensordata.SORT_ORDER_DEFAULT;
                 }
                 break;
             case ONE_ITEM:
                 String where = getOneItemClause(uri.getLastPathSegment());
-                queryBuilder.setTables(NotesContentContract.Notes.TABLE_NAME);
+                queryBuilder.setTables(SensorContentContract.Sensordata.TABLE_NAME);
                 queryBuilder.appendWhere(where);
                 break;
         }
@@ -104,7 +141,7 @@ public class SensorContentProvider extends ContentProvider {
 
     /**
      * The content provider must return the content type for its supported URIs.  The supported
-     * URIs are defined in the UriMatcher and the types are stored in the NotesContentContract.
+     * URIs are defined in the UriMatcher and the types are stored in the SensorContentContract.
      *
      * @param uri the URI for typing
      * @return the type of the URI
@@ -114,9 +151,9 @@ public class SensorContentProvider extends ContentProvider {
     public String getType(@NonNull Uri uri) {
         switch (sUriMatcher.match(uri)) {
             case ALL_ITEMS:
-                return NotesContentContract.Notes.CONTENT_DIR_TYPE;
+                return SensorContentContract.Sensordata.CONTENT_DIR_TYPE;
             case ONE_ITEM:
-                return NotesContentContract.Notes.CONTENT_ITEM_TYPE;
+                return SensorContentContract.Sensordata.CONTENT_ITEM_TYPE;
             default:
                 return null;
         }
@@ -136,10 +173,10 @@ public class SensorContentProvider extends ContentProvider {
         switch (uriType) {
             case ALL_ITEMS:
                 SQLiteDatabase db = databaseHelper.getWritableDatabase();
-                long id = db.insert(NotesContentContract.Notes.TABLE_NAME, null, values);
+                long id = db.insert(SensorContentContract.Sensordata.TABLE_NAME, null, values);
                 if (id > 0) {
-                    String noteId = values.getAsString(NotesContentContract.Notes.NOTEID);
-                    Uri item = NotesContentContract.Notes.uriBuilder(noteId);
+                    String datapacketId = values.getAsString(SensorContentContract.Sensordata.datapacketID);
+                    Uri item = SensorContentContract.Sensordata.uriBuilder(datapacketId);
                     notifyAllListeners(item);
                     return item;
                 }
@@ -165,7 +202,7 @@ public class SensorContentProvider extends ContentProvider {
         switch (uriType) {
             case ALL_ITEMS:
                 rows = db.delete(
-                        NotesContentContract.Notes.TABLE_NAME,  // The table name
+                        SensorContentContract.Sensordata.TABLE_NAME,  // The table name
                         selection, selectionArgs);              // The WHERE clause
                 break;
             case ONE_ITEM:
@@ -174,7 +211,7 @@ public class SensorContentProvider extends ContentProvider {
                     where += " AND " + selection;
                 }
                 rows = db.delete(
-                        NotesContentContract.Notes.TABLE_NAME,  // The table name
+                        SensorContentContract.Sensordata.TABLE_NAME,  // The table name
                         where, selectionArgs);                  // The WHERE clause
                 break;
             default:
@@ -204,7 +241,7 @@ public class SensorContentProvider extends ContentProvider {
         switch (uriType) {
             case ALL_ITEMS:
                 rows = db.update(
-                        NotesContentContract.Notes.TABLE_NAME,  // The table name
+                        SensorContentContract.Sensordata.TABLE_NAME,  // The table name
                         values,                                 // The values to replace
                         selection, selectionArgs);              // The WHERE clause
                 break;
@@ -214,7 +251,7 @@ public class SensorContentProvider extends ContentProvider {
                     where += " AND " + selection;
                 }
                 rows = db.update(
-                        NotesContentContract.Notes.TABLE_NAME,  // The table name
+                        SensorContentContract.Sensordata.TABLE_NAME,  // The table name
                         values,                                 // The values to replace
                         where, selectionArgs);                  // The WHERE clause
                 break;
@@ -239,6 +276,6 @@ public class SensorContentProvider extends ContentProvider {
     }
 
     private String getOneItemClause(String id) {
-        return String.format("%s = \"%s\"", NotesContentContract.Notes.NOTEID, id);
+        return String.format("%s = \"%s\"", SensorContentContract.Sensordata.datapacketID, id);
     }
 }
