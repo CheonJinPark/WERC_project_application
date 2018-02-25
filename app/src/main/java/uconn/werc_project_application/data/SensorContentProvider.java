@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -12,10 +13,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
+
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import uconn.werc_project_application.AWSProvider;
-import uconn.werc_project_application.data.SenordataDO;
 
 
 /**
@@ -36,11 +42,6 @@ public class SensorContentProvider extends ContentProvider {
      * The code for the UriMatch matching a single datapacket
      */
     private static final int ONE_ITEM = 20;
-
-    /**
-     * The database helper for this content provider
-     */
-    private DatabaseHelper databaseHelper;
 
     /*
      * Initialize the UriMatcher with the URIs that this content provider handles
@@ -66,7 +67,6 @@ public class SensorContentProvider extends ContentProvider {
      */
     @Override
     public boolean onCreate() {
-        databaseHelper = new DatabaseHelper(getContext());
         return true;
     }
 
@@ -77,7 +77,7 @@ public class SensorContentProvider extends ContentProvider {
         datapacket.setTime(values.getAsDouble(SensorContentContract.Sensordata.TIME));
         datapacket.setGpsLat(values.getAsDouble(SensorContentContract.Sensordata.GPSLAT));
         datapacket.setGpsLong(values.getAsDouble(SensorContentContract.Sensordata.GPSLONG));
-        datapacket.setPacketId(values.getAsString(SensorContentContract.Sensordata.PACKETID));
+        datapacket.setPacketId(UUID.randomUUID().toString());
         datapacket.setSensorCo(values.getAsDouble(SensorContentContract.Sensordata.SENSORCO));
         datapacket.setSensorNo2(values.getAsDouble(SensorContentContract.Sensordata.SENSORNO2));
         datapacket.setSensorO3(values.getAsDouble(SensorContentContract.Sensordata.SENSORO3));
@@ -155,30 +155,53 @@ public class SensorContentProvider extends ContentProvider {
      */
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+    public Cursor query(
+            @NonNull Uri uri,
+            @Nullable String[] projection,
+            @Nullable String selection,
+            @Nullable String[] selectionArgs,
+            @Nullable String sortOrder) {
         int uriType = sUriMatcher.match(uri);
-        SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+
+        DynamoDBMapper dbMapper = AWSProvider.getInstance().getDynamoDBMapper();
+        MatrixCursor cursor = new MatrixCursor(SensorContentContract.Sensordata.PROJECTION_ALL);
+        String userId = AWSProvider.getInstance().getIdentityManager().getCachedUserID();
 
         switch (uriType) {
             case ALL_ITEMS:
-                queryBuilder.setTables(SensorContentContract.Sensordata.TABLE_NAME);
-                if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = SensorContentContract.Sensordata.SORT_ORDER_DEFAULT;
+                // In this (simplified) version of a content provider, we only allow searching
+                // for all records that the user owns.  The first step to this is establishing
+                // a template record that has the partition key pre-populated.
+                SenordataDO template = new SenordataDO();
+                template.setUserId(userId);
+                // Now create a query expression that is based on the template record.
+                DynamoDBQueryExpression<SenordataDO> queryExpression;
+                queryExpression = new DynamoDBQueryExpression<SenordataDO>()
+                        .withHashKeyValues(template);
+                // Finally, do the query with that query expression.
+                List<SenordataDO> result = dbMapper.query(SenordataDO.class, queryExpression);
+                Iterator<SenordataDO> iterator = result.iterator();
+                while (iterator.hasNext()) {
+                    final SenordataDO note = iterator.next();
+                    Object[] columnValues = fromSenordataDO(note);
+                    cursor.addRow(columnValues);
                 }
+
                 break;
             case ONE_ITEM:
-                String where = getOneItemClause(uri.getLastPathSegment());
-                queryBuilder.setTables(SensorContentContract.Sensordata.TABLE_NAME);
-                queryBuilder.appendWhere(where);
+                // In this (simplified) version of a content provider, we only allow searching
+                // for the specific record that was requested
+                final SenordataDO note = dbMapper.load(SenordataDO.class, userId, uri.getLastPathSegment());
+                if (note != null) {
+                    Object[] columnValues = fromSenordataDO(note);
+                    cursor.addRow(columnValues);
+                }
                 break;
         }
 
-        Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
-
     /**
      * The content provider must return the content type for its supported URIs.  The supported
      * URIs are defined in the UriMatcher and the types are stored in the SensorContentContract.
@@ -212,40 +235,33 @@ public class SensorContentProvider extends ContentProvider {
         int uriType = sUriMatcher.match(uri);
         switch (uriType) {
             case ALL_ITEMS:
-                SQLiteDatabase db = databaseHelper.getWritableDatabase();
-                long id = db.insert(SensorContentContract.Sensordata.TABLE_NAME, null, values);
-                if (id > 0) {
-                    String datapacketId = values.getAsString(SensorContentContract.Sensordata.PACKETID);
-                    Uri item = SensorContentContract.Sensordata.uriBuilder(datapacketId);
-                    notifyAllListeners(item);
-                    return item;
-                }
-                throw new SQLException(String.format(Locale.US, "Error inserting for URI %s - id = %d", uri, id));
+                DynamoDBMapper dbMapper = AWSProvider.getInstance().getDynamoDBMapper();
+                final SenordataDO newdata = toSenordataDO(values);
+                dbMapper.save(newdata);
+                Uri item = new Uri.Builder()
+                        .appendPath(SensorContentContract.CONTENT_URI.toString())
+                        .appendPath(newdata.getPacketId())
+                        .build();
+//                notifyAllListeners(item);
+                return item;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
     }
 
-
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         int uriType = sUriMatcher.match(uri);
         int rows;
-        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
         switch (uriType) {
-            case ALL_ITEMS:
-                rows = db.delete(
-                        SensorContentContract.Sensordata.TABLE_NAME,  // The table name
-                        selection, selectionArgs);              // The WHERE clause
-                break;
             case ONE_ITEM:
-                String where = getOneItemClause(uri.getLastPathSegment());
-                if (!TextUtils.isEmpty(selection)) {
-                    where += " AND " + selection;
-                }
-                rows = db.delete(
-                        SensorContentContract.Sensordata.TABLE_NAME,  // The table name
-                        where, selectionArgs);                  // The WHERE clause
+                DynamoDBMapper dbMapper = AWSProvider.getInstance().getDynamoDBMapper();
+                final SenordataDO sensordata = new SenordataDO();
+                sensordata.setPacketId(uri.getLastPathSegment());
+                sensordata.setUserId(AWSProvider.getInstance().getIdentityManager().getCachedUserID());
+                dbMapper.delete(sensordata);
+                rows = 1;
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
@@ -255,7 +271,6 @@ public class SensorContentProvider extends ContentProvider {
         }
         return rows;
     }
-
     /**
      * Part of the ContentProvider implementation.  Updates the record (based on the record URI)
      * with the specified ContentValues
@@ -270,23 +285,13 @@ public class SensorContentProvider extends ContentProvider {
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         int uriType = sUriMatcher.match(uri);
         int rows;
-        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
         switch (uriType) {
-            case ALL_ITEMS:
-                rows = db.update(
-                        SensorContentContract.Sensordata.TABLE_NAME,  // The table name
-                        values,                                 // The values to replace
-                        selection, selectionArgs);              // The WHERE clause
-                break;
             case ONE_ITEM:
-                String where = getOneItemClause(uri.getLastPathSegment());
-                if (!TextUtils.isEmpty(selection)) {
-                    where += " AND " + selection;
-                }
-                rows = db.update(
-                        SensorContentContract.Sensordata.TABLE_NAME,  // The table name
-                        values,                                 // The values to replace
-                        where, selectionArgs);                  // The WHERE clause
+                DynamoDBMapper dbMapper = AWSProvider.getInstance().getDynamoDBMapper();
+                final SenordataDO updatedData = toSenordataDO(values);
+                dbMapper.save(updatedData);
+                rows = 1;
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
@@ -296,7 +301,6 @@ public class SensorContentProvider extends ContentProvider {
         }
         return rows;
     }
-
     /**
      * Notify all listeners that the specified URI has changed
      * @param uri the URI that changed

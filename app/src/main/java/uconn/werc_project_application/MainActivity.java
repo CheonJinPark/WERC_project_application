@@ -2,12 +2,16 @@ package uconn.werc_project_application;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -26,6 +30,8 @@ import com.amazonaws.mobileconnectors.pinpoint.PinpointConfiguration;
 // AWS Database
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.*;
 import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.pinpoint.analytics.AnalyticsClient;
+import com.amazonaws.mobileconnectors.pinpoint.analytics.AnalyticsEvent;
 import com.amazonaws.mobileconnectors.s3.transferutility.*;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -33,6 +39,9 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.w3c.dom.Text;
+
+import uconn.werc_project_application.data.DummyDataGenerator;
+import uconn.werc_project_application.data.SensorContentContract;
 
 
 public class MainActivity extends AppCompatActivity{
@@ -43,8 +52,12 @@ public class MainActivity extends AppCompatActivity{
     LocationManager locationManager;
     int REQUEST_LOCATION = 2;
     GPS g1, g2, g3, g4, g5;
+    private static final int INSERT_TOKEN = 1003;
 
     TextView long_textview, lat_textview;
+
+
+    private ContentResolver contentResolver;
 
 
     @Override
@@ -55,7 +68,7 @@ public class MainActivity extends AppCompatActivity{
 
         // Install the application crash handler.
         ApplicationCrashHandler.installHandler();
-
+        contentResolver = getApplicationContext().getContentResolver();
 
         //Test GPSs
        g1 = new GPS(-72.253981,41.807741); //Uconn
@@ -72,14 +85,14 @@ public class MainActivity extends AppCompatActivity{
                 AWSMobileClient.getInstance().getCredentialsProvider(),
                 AWSMobileClient.getInstance().getConfiguration());
 
-        pinpointManager = new PinpointManager(pinpointConfig);
-
-        // AWS DynamoDB
-        AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(AWSMobileClient.getInstance().getCredentialsProvider());
-        this.dynamoDBMapper = DynamoDBMapper.builder()
-                .dynamoDBClient(dynamoDBClient)
-                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
-                .build();
+//        pinpointManager = new PinpointManager(pinpointConfig);
+//
+//        // AWS DynamoDB
+//        AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(AWSMobileClient.getInstance().getCredentialsProvider());
+//        this.dynamoDBMapper = DynamoDBMapper.builder()
+//                .dynamoDBClient(dynamoDBClient)
+//                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+//                .build();
         longitude = -111.11; // default longitude
         latitude = 222.0; // default latitude
 
@@ -165,8 +178,8 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        Button GotoMap = (Button) findViewById(R.id.button_gotomap);
-        GotoMap.setOnClickListener(new Button.OnClickListener() {
+        Button btn_gotoMap = (Button) findViewById(R.id.button_gotomap);
+        btn_gotoMap.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 intent_test = new Intent(MainActivity.this, MapsActivity.class);
                 intent_test.putExtra("g1",g1);
@@ -177,6 +190,7 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(intent_test);
             }
         });
+
         Button btn_ble_scan = (Button)findViewById(R.id.button_ble);
 
         btn_ble_scan.setOnClickListener(new Button.OnClickListener()
@@ -188,7 +202,34 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
+        Button btn_send_data = (Button)findViewById(R.id.button_senddata);
+        btn_send_data.setOnClickListener(new Button.OnClickListener()
+        {
+            public void onClick(View V)
+            {
+                DummyDataGenerator.initialize(SensorContentContract.Sensordata.PROJECTION_ALL);
+                ContentValues values = DummyDataGenerator.getInstance().generate(0.0, 3.0);
+                AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
+                    @Override
+                    protected void onInsertComplete(int token, Object cookie, Uri uri) {
+                        super.onInsertComplete(token, cookie, uri);
+                        Log.d("MainActivity", "insert completed");
+                    }
+                };
+                queryHandler.startInsert(INSERT_TOKEN, null, SensorContentContract.Sensordata.CONTENT_URI, values);
 
+
+                final AnalyticsClient mgr = AWSProvider.getInstance()
+                        .getPinpointManager()
+                        .getAnalyticsClient();
+                final AnalyticsEvent evt = mgr.createEvent("SendDummyData")
+                        .withAttribute("packetId", values.getAsString(SensorContentContract.Sensordata.SENSORCO));
+                mgr.recordEvent(evt);
+                mgr.submitEvents();
+            }
+
+
+        });
     }
 
 

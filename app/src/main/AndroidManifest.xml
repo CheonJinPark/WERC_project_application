@@ -58,7 +58,9 @@
         <provider
             android:name=".data.SensorContentProvider"
             android:authorities="uconn.werc_project_application.provider"
-            android:label="SensorProvider" />
+            android:enabled="true"
+            android:label="SensorProvider" >
+        </provider>
     </application>
 
 </manifest>

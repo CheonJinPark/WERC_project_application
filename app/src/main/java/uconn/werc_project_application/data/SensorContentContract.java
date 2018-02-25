@@ -32,7 +32,7 @@ public class SensorContentContract {
         /**
          * The Table Name
          */
-        public static final String TABLE_NAME = "notes";
+        public static final String TABLE_NAME = "senordata";
 
 
         public static final String _ID = "userId";
@@ -77,10 +77,10 @@ public class SensorContentContract {
 
 
 
-        public static final String DIR_BASEPATH = "notes";
+        public static final String DIR_BASEPATH = "senordata";
 
 
-        public static final String ITEM_BASEPATH = "notes/*";
+        public static final String ITEM_BASEPATH = "senordata/*";
 
 
         /**
