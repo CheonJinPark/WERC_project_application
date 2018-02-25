@@ -79,20 +79,8 @@ public class MainActivity extends AppCompatActivity{
         Log.d("JIN","GPS 문제" );
         /** AWS Initializations **/
         AWSMobileClient.getInstance().initialize(this).execute();
-        // AWS Pinpoint Data Analytics
-        PinpointConfiguration pinpointConfig = new PinpointConfiguration(
-                getApplicationContext(),
-                AWSMobileClient.getInstance().getCredentialsProvider(),
-                AWSMobileClient.getInstance().getConfiguration());
 
-//        pinpointManager = new PinpointManager(pinpointConfig);
-//
-//        // AWS DynamoDB
-//        AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(AWSMobileClient.getInstance().getCredentialsProvider());
-//        this.dynamoDBMapper = DynamoDBMapper.builder()
-//                .dynamoDBClient(dynamoDBClient)
-//                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
-//                .build();
+
         longitude = -111.11; // default longitude
         latitude = 222.0; // default latitude
 
@@ -127,7 +115,7 @@ public class MainActivity extends AppCompatActivity{
             public void onSuccess(Location location) {
                 // Got last known location. In some rare situations this can be null.
                 if (location != null) {
-                    Toast.makeText(getApplicationContext(),"Got location",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Location Acquired",Toast.LENGTH_LONG).show();
                     lat_textview.setText(Double.toString(location.getLatitude()));
                     long_textview.setText(Double.toString(location.getLongitude()));
                 }
@@ -213,7 +201,9 @@ public class MainActivity extends AppCompatActivity{
                     @Override
                     protected void onInsertComplete(int token, Object cookie, Uri uri) {
                         super.onInsertComplete(token, cookie, uri);
-                        Log.d("MainActivity", "insert completed");
+                        Log.d("DummyDataButtonPress", "insert completed");
+                        Toast.makeText(getApplicationContext(),"Dummy Data Uploaded",Toast.LENGTH_LONG).show();
+
                     }
                 };
                 queryHandler.startInsert(INSERT_TOKEN, null, SensorContentContract.Sensordata.CONTENT_URI, values);
@@ -241,24 +231,7 @@ public class MainActivity extends AppCompatActivity{
             return false;
         }
     }
-//
-//    public void createGdata(double l, double lat){
-//        final GpsdataDO gdata = new GpsdataDO();
-//
-//        gdata.setUserId(idm.getCachedUserID());
-//        gdata.setDeviceId("Android");
-//        gdata.setTimeEpoch(5404.0);
-//        gdata.setGpsLat(lat);
-//        gdata.setGpsLong(l);
-//
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                dynamoDBMapper.save(gdata);
-//                // Item saved
-//            }
-//        }).start();
-//    }
+
 
 
 }

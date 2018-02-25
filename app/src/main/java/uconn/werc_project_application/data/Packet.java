@@ -4,6 +4,10 @@ import java.util.UUID;
 
 /**
  * Created by Bill Brown on 2/23/2018.
+ *
+ * So-far unused class. Efficacy is to be determined
+ *
+ *
  */
 
 public class Packet {
