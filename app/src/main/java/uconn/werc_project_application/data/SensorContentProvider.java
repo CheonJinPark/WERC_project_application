@@ -15,7 +15,8 @@ import android.text.TextUtils;
 import java.util.Locale;
 
 import uconn.werc_project_application.AWSProvider;
-import uconn.werc_project_application.data.
+import uconn.werc_project_application.data.SenordataDO;
+
 
 /**
  * The Content Provider for the internal Sensordata database
@@ -71,12 +72,27 @@ public class SensorContentProvider extends ContentProvider {
 
     private SenordataDO toSenordataDO(ContentValues values) {
         final SenordataDO datapacket = new SenordataDO();
-        datapacket.setContent(values.getAsString(SensorContentContract.Sensordata.CONTENT));
-        datapacket.setCreationDate(values.getAsDouble(SensorContentContract.Sensordata.CREATED));
-        datapacket.setdatapacketId(values.getAsString(SensorContentContract.Sensordata.datapacketID));
-        datapacket.setTitle(values.getAsString(SensorContentContract.Sensordata.TITLE));
-        datapacket.setUpdatedDate(values.getAsDouble(SensorContentContract.Sensordata.UPDATED));
         datapacket.setUserId(AWSProvider.getInstance().getIdentityManager().getCachedUserID());
+        datapacket.setDeviceId(values.getAsString(SensorContentContract.Sensordata.DEVICEID));
+        datapacket.setTime(values.getAsDouble(SensorContentContract.Sensordata.TIME));
+        datapacket.setGpsLat(values.getAsDouble(SensorContentContract.Sensordata.GPSLAT));
+        datapacket.setGpsLong(values.getAsDouble(SensorContentContract.Sensordata.GPSLONG));
+        datapacket.setPacketId(values.getAsString(SensorContentContract.Sensordata.PACKETID));
+        datapacket.setSensorCo(values.getAsDouble(SensorContentContract.Sensordata.SENSORCO));
+        datapacket.setSensorNo2(values.getAsDouble(SensorContentContract.Sensordata.SENSORNO2));
+        datapacket.setSensorO3(values.getAsDouble(SensorContentContract.Sensordata.SENSORO3));
+        datapacket.setSensorPm(values.getAsDouble(SensorContentContract.Sensordata.SENSORPM));
+        datapacket.setSensorSo2(values.getAsDouble(SensorContentContract.Sensordata.SENSORSO2));
+        datapacket.setSensorTemp(values.getAsDouble(SensorContentContract.Sensordata.SENSORTEMP));
+        datapacket.setSensorRawCo(values.getAsDouble(SensorContentContract.Sensordata.SENSORRAWCO));
+        datapacket.setSensorRawNo2(values.getAsDouble(SensorContentContract.Sensordata.SENSORRAWNO2));
+        datapacket.setSensorRawO3(values.getAsDouble(SensorContentContract.Sensordata.SENSORRAWO3));
+        datapacket.setSensorRawPm(values.getAsDouble(SensorContentContract.Sensordata.SENSORRAWPM));
+        datapacket.setSensorRawSo2(values.getAsDouble(SensorContentContract.Sensordata.SENSORRAWSO2));
+        datapacket.setSensorRawTemp(values.getAsDouble(SensorContentContract.Sensordata.SENSORRAWTEMP));
+
+
+
         return datapacket;
     }
 
@@ -84,16 +100,40 @@ public class SensorContentProvider extends ContentProvider {
         String[] fields = SensorContentContract.Sensordata.PROJECTION_ALL;
         Object[] r = new Object[fields.length];
         for (int i = 0 ; i < fields.length ; i++) {
-            if (fields[i].equals(SensorContentContract.Sensordata.CONTENT)) {
-                r[i] = datapacket.getContent();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.CREATED)) {
-                r[i] = datapacket.getCreationDate();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.datapacketID)) {
-                r[i] = datapacket.getdatapacketId();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.TITLE)) {
-                r[i] = datapacket.getTitle();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.UPDATED)) {
-                r[i] = datapacket.getUpdatedDate();
+            if (fields[i].equals(SensorContentContract.Sensordata.DEVICEID)) {
+                r[i] = datapacket.getDeviceId();
+            } else if (fields[i].equals(SensorContentContract.Sensordata._ID)) {
+                r[i] = datapacket.getUserId();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.TIME)) {
+                r[i] = datapacket.getTime();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.GPSLAT)) {
+                r[i] = datapacket.getGpsLat();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.GPSLONG)) {
+                r[i] = datapacket.getGpsLong();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORCO)) {
+                r[i] = datapacket.getSensorCo();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORNO2)) {
+                r[i] = datapacket.getSensorNo2();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORO3)) {
+                r[i] = datapacket.getSensorO3();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORPM)) {
+                r[i] = datapacket.getSensorPm();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORSO2)) {
+                r[i] = datapacket.getSensorSo2();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORTEMP)) {
+                r[i] = datapacket.getSensorTemp();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORRAWCO)) {
+                r[i] = datapacket.getSensorRawCo();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORRAWNO2)) {
+                r[i] = datapacket.getSensorRawNo2();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORRAWO3)) {
+                r[i] = datapacket.getSensorRawO3();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORRAWPM)) {
+                r[i] = datapacket.getSensorRawPm();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORRAWSO2)) {
+                r[i] = datapacket.getSensorRawSo2();
+            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORRAWTEMP)) {
+                r[i] = datapacket.getSensorRawTemp();
             } else {
                 r[i] = new Integer(0);
             }
@@ -175,7 +215,7 @@ public class SensorContentProvider extends ContentProvider {
                 SQLiteDatabase db = databaseHelper.getWritableDatabase();
                 long id = db.insert(SensorContentContract.Sensordata.TABLE_NAME, null, values);
                 if (id > 0) {
-                    String datapacketId = values.getAsString(SensorContentContract.Sensordata.datapacketID);
+                    String datapacketId = values.getAsString(SensorContentContract.Sensordata.PACKETID);
                     Uri item = SensorContentContract.Sensordata.uriBuilder(datapacketId);
                     notifyAllListeners(item);
                     return item;
@@ -186,14 +226,7 @@ public class SensorContentProvider extends ContentProvider {
         }
     }
 
-    /**
-     * Delete one or more records from the SQLite database.
-     *
-     * @param uri the URI of the record(s) to delete
-     * @param selection A WHERE clause to use for the deletion
-     * @param selectionArgs Any arguments to replace the ? in the selection
-     * @return the number of rows deleted.
-     */
+
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         int uriType = sUriMatcher.match(uri);
@@ -276,6 +309,6 @@ public class SensorContentProvider extends ContentProvider {
     }
 
     private String getOneItemClause(String id) {
-        return String.format("%s = \"%s\"", SensorContentContract.Sensordata.datapacketID, id);
+        return String.format("%s = \"%s\"", SensorContentContract.Sensordata._ID, id);
     }
 }

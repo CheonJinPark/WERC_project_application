@@ -24,15 +24,35 @@ public class Packet {
     private long sensor_o3;
     private long sensor_pm;
     private long sensor_so2;
+    private long sensor_temp;
     // Raw Sensor Data
     private long sensor_raw_co;
     private long sensor_raw_no2;
     private long sensor_raw_o3;
     private long sensor_raw_pm;
     private long sensor_raw_so2;
+    private long sensor_raw_temp;
+
 
     public Packet() {
         setPacketId(UUID.randomUUID().toString());
+    }
+
+
+    public long getSensor_temp() {
+        return sensor_temp;
+    }
+
+    public void setSensor_temp(long sensor_temp) {
+        this.sensor_temp = sensor_temp;
+    }
+
+    public long getSensor_raw_temp() {
+        return sensor_raw_temp;
+    }
+
+    public void setSensor_raw_temp(long sensor_raw_temp) {
+        this.sensor_raw_temp = sensor_raw_temp;
     }
 
     public long getId() {

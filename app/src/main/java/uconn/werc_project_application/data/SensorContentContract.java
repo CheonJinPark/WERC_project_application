@@ -37,6 +37,7 @@ public class SensorContentContract {
 
         public static final String _ID = "userId";
 
+        public static final String TIME = "time";
 
         public static final String DEVICEID = "deviceId";
 
@@ -60,6 +61,8 @@ public class SensorContentContract {
 
         public static final String SENSORSO2 = "sensor_so2";
 
+        public static final String SENSORTEMP = "sensor_temp";
+
         public static final String SENSORRAWCO = "sensor_raw_co";
 
         public static final String SENSORRAWNO2 = "sensor_raw_no2";
@@ -69,6 +72,9 @@ public class SensorContentContract {
         public static final String SENSORRAWPM = "sensor_raw_pm";
 
         public static final String SENSORRAWSO2 = "sensor_raw_so2";
+
+        public static final String SENSORRAWTEMP = "sensor_raw_temp";
+
 
 
         public static final String DIR_BASEPATH = "notes";
@@ -95,22 +101,34 @@ public class SensorContentContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.uconn.werc_project_application.sensordata";
 
-//        /**
-//         * A projection of all columns in the items table
-//         */
-//        public static final String[] PROJECTION_ALL = {
-//                _ID,
-//                NOTEID,
-//                TITLE,
-//                CONTENT,
-//                CREATED,
-//                UPDATED
-//        };
+        /**
+         * A projection of all columns in the items table
+         */
+        public static final String[] PROJECTION_ALL = {
+                _ID,
+                TIME,
+                DEVICEID,
+                PACKETID,
+                GPSLAT,
+                GPSLONG,
+                SENSORCO,
+                SENSORNO2,
+                SENSORO3,
+                SENSORPM,
+                SENSORSO2,
+                SENSORTEMP,
+                SENSORRAWCO,
+                SENSORRAWNO2,
+                SENSORRAWO3,
+                SENSORRAWPM,
+                SENSORRAWSO2,
+                SENSORRAWTEMP
+        };
 
         /**
          * The default sort order (SQLite syntax)
 //         */
-//        public static final String SORT_ORDER_DEFAULT = CREATED + " ASC";
+        public static final String SORT_ORDER_DEFAULT = TIME + " ASC";
 
         /**
          * Build a URI for the provided note
