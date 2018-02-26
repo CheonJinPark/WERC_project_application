@@ -2,6 +2,8 @@ package uconn.werc_project_application;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -11,16 +13,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.ScrollView;
 
 import com.amazonaws.mobileconnectors.pinpoint.analytics.AnalyticsClient;
 import com.amazonaws.mobileconnectors.pinpoint.analytics.AnalyticsEvent;
-import com.ble.BLEDevice;
-import com.ble.BLEScanner;
-import com.ble.BLEUtilities;
-import com.ble.BroadcastReceiver_BTState;
-import com.ble.ListAdapter_BLEDevices;
+import uconn.werc_project_application.ble.BLEDevice;
+import uconn.werc_project_application.ble.BLEScanner;
+import uconn.werc_project_application.ble.BLEUtilities;
+import uconn.werc_project_application.ble.BroadcastReceiver_BLE_GATT;
+import uconn.werc_project_application.ble.BroadcastReceiver_BTState;
+import uconn.werc_project_application.ble.ListAdapter_BLEDevices;
+import uconn.werc_project_application.ble.ListAdapter_BLE_Services;
+import uconn.werc_project_application.ble.Service_BLE_GATT;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,8 +35,8 @@ import java.util.HashMap;
  * Created by Bill on 2/6/2018.
  */
 
-public class BLEScanActivity extends AppCompatActivity implements View.OnClickListener {
-    private final static String TAG = MainActivity.class.getSimpleName();
+public class BLEScanActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+    private final static String TAG = BLEScanActivity.class.getSimpleName();
 
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int BTLE_SERVICES = 2;
@@ -76,25 +82,77 @@ public class BLEScanActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-//    @Override
-//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        Context context = view.getContext();
-//
-////        Utils.toast(context, "List Item clicked");
-//
-//        // do something with the text views and start the next activity.
-//
-//        stopScan();
-//
-//        String name = mBTDevicesArrayList.get(position).getName();
-//        String address = mBTDevicesArrayList.get(position).getAddress();
-//
-//        Intent intent = new Intent(this, Activity_BTLE_Services.class);
-//        intent.putExtra(Activity_BTLE_Services.EXTRA_NAME, name);
-//        intent.putExtra(Activity_BTLE_Services.EXTRA_ADDRESS, address);
-//        startActivityForResult(intent, BTLE_SERVICES);
-//    }
+    @Override
+    protected void onStart() {
+        super.onStart();
 
+        registerReceiver(mBTStateUpdateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+//        registerReceiver(mBTStateUpdateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+//        unregisterReceiver(mBTStateUpdateReceiver);
+        stopScan();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(mBTStateUpdateReceiver);
+        stopScan();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        // Check which request we're responding to
+        if (requestCode == REQUEST_ENABLE_BT) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+//                Utils.toast(getApplicationContext(), "Thank you for turning on Bluetooth");
+            }
+            else if (resultCode == RESULT_CANCELED) {
+                BLEUtilities.toast(getApplicationContext(), "Please turn on Bluetooth");
+            }
+        }
+        else if (requestCode == BTLE_SERVICES) {
+            // Do something
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Context context = view.getContext();
+
+//        Utils.toast(context, "List Item clicked");
+
+        // do something with the text views and start the next activity.
+
+        stopScan();
+
+        String name = mBTDevicesArrayList.get(position).getName();
+        String address = mBTDevicesArrayList.get(position).getAddress();
+
+        Intent intent = new Intent(this, BLEServicesActivity.class);
+        intent.putExtra(BLEServicesActivity.EXTRA_NAME, name);
+        intent.putExtra(BLEServicesActivity.EXTRA_ADDRESS, address);
+        startActivityForResult(intent, BTLE_SERVICES);
+    }
 
     @Override
     public void onClick(View v) {

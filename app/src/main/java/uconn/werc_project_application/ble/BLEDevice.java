@@ -1,4 +1,4 @@
-package com.ble;
+package uconn.werc_project_application.ble;
 
 import android.bluetooth.BluetoothDevice;
 

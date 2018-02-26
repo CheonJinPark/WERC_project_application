@@ -1,4 +1,4 @@
-package com.ble;
+package uconn.werc_project_application.ble;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -34,17 +34,17 @@ public class BLEUtilities {
         activity.startActivityForResult(enableBtIntent, BLEScanActivity.REQUEST_ENABLE_BT);
     }
 
-//    public static IntentFilter makeGattUpdateIntentFilter() {
-//
-//        final IntentFilter intentFilter = new IntentFilter();
-//
-//        intentFilter.addAction(Service_BTLE_GATT.ACTION_GATT_CONNECTED);
-//        intentFilter.addAction(Service_BTLE_GATT.ACTION_GATT_DISCONNECTED);
-//        intentFilter.addAction(Service_BTLE_GATT.ACTION_GATT_SERVICES_DISCOVERED);
-//        intentFilter.addAction(Service_BTLE_GATT.ACTION_DATA_AVAILABLE);
-//
-//        return intentFilter;
-//    }
+    public static IntentFilter makeGattUpdateIntentFilter() {
+
+        final IntentFilter intentFilter = new IntentFilter();
+
+        intentFilter.addAction(Service_BLE_GATT.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(Service_BLE_GATT.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(Service_BLE_GATT.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(Service_BLE_GATT.ACTION_DATA_AVAILABLE);
+
+        return intentFilter;
+    }
 
     public static String hexToString(byte[] data) {
         final StringBuilder sb = new StringBuilder(data.length);

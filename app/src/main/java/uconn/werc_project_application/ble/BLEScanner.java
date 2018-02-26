@@ -1,4 +1,4 @@
-package com.ble;
+package uconn.werc_project_application.ble;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.Handler;
 
 import uconn.werc_project_application.BLEScanActivity;
-import uconn.werc_project_application.MainActivity;
 
 /**
  * Created by Bill on 2/6/2018.

@@ -61,6 +61,10 @@
             android:enabled="true"
             android:label="SensorProvider" >
         </provider>
+        <service
+            android:name=".Service_BTLE_GATT"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.ble;
+package uconn.werc_project_application.ble;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import uconn.werc_project_application.R;
+import uconn.werc_project_application.ble.BLEDevice;
 
 /**
  * Created by Kelvin on 5/7/16.

@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity{
                     Toast.makeText(getApplicationContext(), "Longitude is saved", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "Logitude is not correct format", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Longitude is not correct format", Toast.LENGTH_SHORT).show();
                 }
 
                 if (isStringDouble(string_lat)) {
