@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -73,7 +74,7 @@ public class BLEScanActivity extends AppCompatActivity implements View.OnClickLi
 
         listView = new ListView(this);
         listView.setAdapter(adapter);
-//        listView.setOnItemClickListener(this);
+        listView.setOnItemClickListener(this);
 
         btn_Scan = (Button) findViewById(R.id.btn_scan);
         ((ScrollView) findViewById(R.id.scrollView)).addView(listView);
@@ -139,7 +140,8 @@ public class BLEScanActivity extends AppCompatActivity implements View.OnClickLi
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Context context = view.getContext();
 
-//        Utils.toast(context, "List Item clicked");
+        Log.d("debug", "OnClick Listener triggered");
+         BLEUtilities.toast(context, "List Item clicked");
 
         // do something with the text views and start the next activity.
 

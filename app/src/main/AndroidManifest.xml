@@ -48,6 +48,9 @@
         <activity
             android:name=".BLEScanActivity"
             android:label="Bluetooth scan" />
+        <activity
+            android:name=".BLEServicesActivity"
+            android:label="@string/ble_services" />
         <activity android:name=".AuthenticatorActivity"
                   android:label="Sign In">
             <intent-filter>
@@ -62,7 +65,7 @@
             android:label="SensorProvider" >
         </provider>
         <service
-            android:name=".Service_BTLE_GATT"
+            android:name=".ble.Service_BLE_GATT"
             android:enabled="true"
             android:exported="true"></service>
     </application>

@@ -65,6 +65,7 @@ public class Service_BLE_GATT extends Service {
                 broadcastUpdate(intentAction);
 
                 Log.i(TAG, "Connected to GATT server.");
+
                 // Attempts to discover services after successful connection.
                 Log.i(TAG, "Attempting to start service discovery:" + mBluetoothGatt.discoverServices());
             }
