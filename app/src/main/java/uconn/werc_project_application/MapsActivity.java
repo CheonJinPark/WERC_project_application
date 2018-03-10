@@ -1,10 +1,15 @@
 package uconn.werc_project_application;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
+import com.Information.Information;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -21,12 +26,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     Double Long, Lat;
  GPS g1,g2,g3,g4,g5;
+    Information info;
+Button op_btn;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         Intent intent = getIntent();
+        info = new Information();
         g1 = (GPS) intent.getSerializableExtra("g1");
         g2 = (GPS) intent.getSerializableExtra("g2");
         g3 = (GPS) intent.getSerializableExtra("g3");
@@ -36,6 +47,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        op_btn = (Button)findViewById(R.id.map_option);
+
+        op_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+DialogRadio();
+            }
+        });
     }
 
 
@@ -61,20 +80,82 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng Lib = new LatLng(g5.getLatitude(),g5.getLongitude());
 
 
-        mMap.addMarker(new MarkerOptions().position(Uconn).title("Uconn's Lat is :" +Lat+"   and Long is : "+Long));
-        mMap.addMarker(new MarkerOptions().position(Alumni).title("Alumni's Lat is :" +Lat+"   and Long is : "+Long));
-        mMap.addMarker(new MarkerOptions().position(Coop).title("Coop's Lat is :" +Lat+"   and Long is : "+Long));
-        mMap.addMarker(new MarkerOptions().position(Hilltop).title("Hilltop's Lat is :" +Lat+"   and Long is : "+Long));
-        mMap.addMarker(new MarkerOptions().position(Lib).title("Lib's Lat is :" +Lat+"   and Long is : "+Long));
 
-        mMap.addCircle(new CircleOptions().center(Uconn).radius(70).strokeWidth(0f).fillColor(Color.parseColor("#2200FFFF")));
-        mMap.addCircle(new CircleOptions().center(Alumni).radius(40).strokeWidth(1.0f).fillColor(Color.parseColor("#668A2BE2")));
-        mMap.addCircle(new CircleOptions().center(Coop).radius(30).strokeWidth(2.0f).fillColor(Color.parseColor("#2FE0FFFF")));
-        mMap.addCircle(new CircleOptions().center(Hilltop).radius(60).strokeWidth(3.0f).fillColor(Color.parseColor("#3390EE90")));
-        mMap.addCircle(new CircleOptions().center(Lib).radius(50).strokeWidth(4.0f).fillColor(Color.parseColor("#44FF0000")));
+//Test Uconn will be have 5 range, 5 stroke, Let's try
+
+
+       // mMap.addMarker(new MarkerOptions().position(Uconn).title("Uconn's "+"\r\n"+g1.showInfo()));
+      //  mMap.addMarker(new MarkerOptions().position(Alumni).title("Alumni's").snippet("Lat is :" +g2.getLatitude()+System.getProperty("line.separator")+"Long is : "+g2.getLongitude()));
+     //   mMap.addMarker(new MarkerOptions().position(Coop).title("Coop's "+System.getProperty("line.separator")+"Lat is :" +g3.getLatitude()+System.getProperty("line.separator")+"Long is : "+g3.getLongitude()));
+     //   mMap.addMarker(new MarkerOptions().position(Hilltop).title("Hilltop's "+System.getProperty("line.separator")+"Lat is :" +g4.getLatitude()+System.getProperty("line.separator")+"Long is : "+g4.getLongitude()));
+    //    mMap.addMarker(new MarkerOptions().position(Lib).title("Lib's "+System.getProperty("line.separator")+"Lat is :" +g5.getLatitude()+System.getProperty("line.separator")+"Long is : "+g5.getLongitude()));
+
+
+        //mMap.addCircle(new CircleOptions().center(Uconn).radius(70).strokeWidth(0f).fillColor(Color.parseColor("#2200FFFF")));
+       // drawCircle(mMap,g1);
+        //mMap.addCircle(new CircleOptions().center(Alumni).radius(40).strokeWidth(1.0f).fillColor(Color.parseColor("#668A2BE2")));
+        //without drawCircle function
+        drawCircle_loop(mMap,g1,info.SAFE_COLOUR,100);
+        drawCircle_loop(mMap,g2,info.SAFE_COLOUR,100);
+        drawCircle_loop(mMap,g3,info.SAFE_COLOUR,100);
+        drawCircle_loop(mMap,g4,info.SAFE_COLOUR,100);
+        drawCircle_loop(mMap,g5,info.SAFE_COLOUR,100);
+        //mMap.addCircle(new CircleOptions().center(new LatLng(g2.getLatitude(),g2.getLongitude())).radius(info.O3_RANGE).strokeWidth(5.0f).fillColor(Color.parseColor(info.SAFE_COLOUR)));
+       // mMap.addCircle(new CircleOptions().center(new LatLng(g2.getLatitude(),g2.getLongitude())).radius(info.CO_RANGE).strokeWidth(5.0f).fillColor(Color.parseColor(info.DANGER_1)));
+       // mMap.addCircle(new CircleOptions().center(new LatLng(g2.getLatitude(),g2.getLongitude())).radius(info.NO2_RANGE).strokeWidth(5.0f).fillColor(Color.parseColor(info.DANGER_2)));
+       // mMap.addCircle(new CircleOptions().center(new LatLng(g2.getLatitude(),g2.getLongitude())).radius(info.SO2_RANGE).strokeWidth(5.0f).fillColor(Color.parseColor(info.DANGER_1)));
+       // mMap.addCircle(new CircleOptions().center(new LatLng(g2.getLatitude(),g2.getLongitude())).radius(info.Dust_RANGE).strokeWidth(5.0f).fillColor(Color.parseColor(info.SAFE_COLOUR)));
+
+
+      //  mMap.addCircle(new CircleOptions().center(Coop).radius(30).strokeWidth(2.0f).fillColor(Color.parseColor("#2FE0FFFF")));
+      //  mMap.addCircle(new CircleOptions().center(Hilltop).radius(60).strokeWidth(3.0f).fillColor(Color.parseColor("#3390EE90")));
+      //  mMap.addCircle(new CircleOptions().center(Lib).radius(50).strokeWidth(4.0f).fillColor(Color.parseColor("#44FF0000")));
 
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((Uconn),15));
 
     }
+
+    public void drawCircle_loop(GoogleMap gMap, GPS g, String state, int radius) {
+        for(int i =1; i<6;i++){
+            gMap.addCircle(new CircleOptions().center(new LatLng(g.getLatitude(),g.getLongitude())).radius(radius/i).strokeWidth(0.0f).fillColor(Color.parseColor(info.SAFE_COLOUR)));
+
+        }
+
+    }
+
+    public void drawCircle(GoogleMap gMap, GPS g){
+        gMap.addCircle(new CircleOptions().center(new LatLng(g.getLatitude(),g.getLongitude())).radius(info.O3_RANGE).strokeWidth(0.0f).fillColor(Color.parseColor(info.SAFE_COLOUR)));
+        gMap.addCircle(new CircleOptions().center(new LatLng(g.getLatitude(),g.getLongitude())).radius(info.CO_RANGE).strokeWidth(0.0f).fillColor(Color.parseColor(info.SAFE_COLOUR)));
+        gMap.addCircle(new CircleOptions().center(new LatLng(g.getLatitude(),g.getLongitude())).radius(info.NO2_RANGE).strokeWidth(0.0f).fillColor(Color.parseColor(info.SAFE_COLOUR)));
+        gMap.addCircle(new CircleOptions().center(new LatLng(g.getLatitude(),g.getLongitude())).radius(info.SO2_RANGE).strokeWidth(0.0f).fillColor(Color.parseColor(info.SAFE_COLOUR)));
+        gMap.addCircle(new CircleOptions().center(new LatLng(g.getLatitude(),g.getLongitude())).radius(info.Dust_RANGE).strokeWidth(0.0f).fillColor(Color.parseColor(info.SAFE_COLOUR)));
+
+
+
+    }
+    private void DialogRadio(){
+        final String[] optionlist = {"100","200","300","400","500"};
+        AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
+        alt_bld.setTitle("Select a Phone Model");
+        alt_bld.setSingleChoiceItems(optionlist, -1, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                mMap.clear();
+                drawCircle_loop(mMap,g1,info.SAFE_COLOUR, Integer.parseInt(optionlist[item]));
+                drawCircle_loop(mMap,g2,info.SAFE_COLOUR, Integer.parseInt(optionlist[item]));
+                drawCircle_loop(mMap,g3,info.SAFE_COLOUR, Integer.parseInt(optionlist[item]));
+                drawCircle_loop(mMap,g4,info.SAFE_COLOUR, Integer.parseInt(optionlist[item]));
+                drawCircle_loop(mMap,g5,info.SAFE_COLOUR, Integer.parseInt(optionlist[item]));
+op_btn.setText(optionlist[item]);
+                //Toast.makeText(getApplicationContext(), "Phone Model = "+PhoneModels[item], Toast.LENGTH_SHORT).show();
+                dialog.cancel();
+            }
+        });
+        AlertDialog alert = alt_bld.create();
+        alert.show();
+    }
+
+
+
 }
+

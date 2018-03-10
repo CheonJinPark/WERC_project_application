@@ -72,6 +72,11 @@ public class MainActivity extends AppCompatActivity{
 
         //Test GPSs
        g1 = new GPS(-72.253981,41.807741); //Uconn
+        g1.setCo(20);
+        g1.setDust(40);
+        g1.setNo2(60);
+        g1.setSo2(10);
+        g1.setO3(30);
        g2 = new GPS(-72.250645,41.803309); //Alumni Dorm
        g3 = new GPS(-72.253430,41.804776); //Coop
        g4 = new GPS(-72.259929,41.802675); //Hilltop Community Center
@@ -117,7 +122,7 @@ public class MainActivity extends AppCompatActivity{
                 if (location != null) {
                     Toast.makeText(getApplicationContext(),"Location Acquired",Toast.LENGTH_LONG).show();
                     lat_textview.setText(Double.toString(location.getLatitude()));
-                    long_textview.setText(Double.toString(location.getLongitude()));
+                    long_textview.setText(Double.toString(location.getLongitude())+System.getProperty("line.separator")+"why it is not working");
                 }
                 else{
                     Toast.makeText(getApplicationContext(),"No location",Toast.LENGTH_LONG).show();
