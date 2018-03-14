@@ -4,10 +4,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.PopupMenu;
 
 import com.Information.Information;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,6 +25,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -28,7 +35,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
  GPS g1,g2,g3,g4,g5;
     Information info;
 Button op_btn;
-
+String DataType,ALLorSelf;
+    List<GPS> gpsList;
+    int Radius;
 
 
 
@@ -36,6 +45,7 @@ Button op_btn;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         Intent intent = getIntent();
         info = new Information();
         g1 = (GPS) intent.getSerializableExtra("g1");
@@ -43,18 +53,40 @@ Button op_btn;
         g3 = (GPS) intent.getSerializableExtra("g3");
         g4 = (GPS) intent.getSerializableExtra("g4");
         g5 = (GPS) intent.getSerializableExtra("g5");
+        //default datatype is co
+        DataType = info.CO;
+        ALLorSelf = "ALL";
+        Radius = 100;
+        //Let's think self is uconn(g1) and others are other people
+        gpsList = new ArrayList<GPS>();
+        gpsList.add(g1);
+        gpsList.add(g2);
+        gpsList.add(g3);
+        gpsList.add(g4);
+        gpsList.add(g5);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        op_btn = (Button)findViewById(R.id.map_option);
+       // op_btn = (Button)findViewById(R.id.map_option);
+//
+       // op_btn.setOnClickListener(new View.OnClickListener() {
+      //      @Override
+      //      public void onClick(View v) {
+//DialogRadio();
+     //       }
+     //   });
 
-        op_btn.setOnClickListener(new View.OnClickListener() {
+
+        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.float_option_btn);
+
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-DialogRadio();
+               setupPopup(v);
             }
         });
+
     }
 
 
@@ -117,11 +149,24 @@ DialogRadio();
     }
 
     public void drawCircle_loop(GoogleMap gMap, GPS g, String state, int radius) {
+        int d = radius/10;
+
+        gMap.addCircle(new CircleOptions().center(new LatLng(g.getLatitude(),g.getLongitude())).radius(radius).strokeWidth(0.0f).fillColor(Color.parseColor(info.SAFE_COLOUR)));
         for(int i =1; i<6;i++){
-            gMap.addCircle(new CircleOptions().center(new LatLng(g.getLatitude(),g.getLongitude())).radius(radius/i).strokeWidth(0.0f).fillColor(Color.parseColor(info.SAFE_COLOUR)));
+            gMap.addCircle(new CircleOptions().center(new LatLng(g.getLatitude(),g.getLongitude())).radius(radius-d*i).strokeWidth(0.0f).fillColor(Color.parseColor(info.SAFE_COLOUR)));
 
         }
 
+    }
+    public void updateMap(){
+mMap.clear();
+if(ALLorSelf.equals("ALL")){
+    for(int j = 0;j<gpsList.size();j++){
+        drawCircle_loop(mMap,gpsList.get(j),info.SAFE_COLOUR,Radius);
+    }
+}else{
+    drawCircle_loop(mMap,g1,info.SAFE_COLOUR,Radius);
+}
     }
 
     public void drawCircle(GoogleMap gMap, GPS g){
@@ -137,7 +182,7 @@ DialogRadio();
     private void DialogRadio(){
         final String[] optionlist = {"100","200","300","400","500"};
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
-        alt_bld.setTitle("Select a Phone Model");
+        alt_bld.setTitle("Options");
         alt_bld.setSingleChoiceItems(optionlist, -1, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 mMap.clear();
@@ -153,6 +198,72 @@ op_btn.setText(optionlist[item]);
         });
         AlertDialog alert = alt_bld.create();
         alert.show();
+    }
+    public void setupPopup(View v){
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        Menu menu = popup.getMenu();
+        inflater.inflate(R.menu.firstmenu, menu);
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch(item.getItemId()) {
+                    case R.id.popup_co:
+
+                        DataType = info.CO;
+                        Radius = 100;
+                        updateMap();
+                        break;
+
+                    case R.id.popup_o3:
+
+                        DataType = info.O3;
+                        Radius = 200;
+                        updateMap();
+                        break;
+
+                    case R.id.popup_no2:
+
+                        DataType = info.NO2;
+                        Radius = 300;
+                        updateMap();
+                        break;
+
+                    case R.id.popup_so2:
+
+                        DataType = info.SO2;
+                        Radius = 400;
+                        updateMap();
+                        break;
+
+                    case R.id.popup_dust:
+
+                        DataType = info.DUST;
+                        Radius = 500;
+                        updateMap();
+                        break;
+
+                    case R.id.popup_all:
+
+                        ALLorSelf = "ALL";
+                        updateMap();
+                        break;
+                    case R.id.popup_self:
+
+                        ALLorSelf = "SELF";
+                        updateMap();
+                        break;
+
+
+
+                }
+                return false;
+                }
+
+        });
+
+popup.show();
+
     }
 
 
