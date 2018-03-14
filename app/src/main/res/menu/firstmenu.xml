@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+        xmlns:tools="http://schemas.android.com/tools"
+
+        tools:context="uconn.werc_project_application.MapsActivity" >
+
+
+
+        <item android:id="@+id/popup_datatype"
+
+            android:title="Data Type">
+
+            <menu>
+                <item android:id="@+id/popup_o3"
+
+                    android:title="O3"/>
+
+                <item android:id="@+id/popup_co"
+
+                    android:title="CO"/>
+
+                <item android:id="@+id/popup_no2"
+
+                    android:title="NO2"/>
+                <item android:id="@+id/popup_so2"
+
+                    android:title="SO2"/>
+                <item android:id="@+id/popup_dust"
+
+                    android:title="DUST"/>
+            </menu>
+    </item>
+
+        <item android:id="@+id/popup_display"
+
+            android:title="All or Self">
+
+            <menu>
+
+                <item android:id="@+id/popup_all"
+
+                    android:title="All"/>
+
+                <item android:id="@+id/popup_self"
+
+                    android:title="Self"/>
+
+
+            </menu>
+
+        </item>
+
+
+</menu>
