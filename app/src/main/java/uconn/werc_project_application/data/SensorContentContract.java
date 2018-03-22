@@ -132,15 +132,24 @@ public class SensorContentContract {
 
         /**
          * Build a URI for the provided note
-         * @param noteId the ID of the provided note
-         * @return the URI of the provided note
+         * @param packetId the ID of the provided note
+         * @return the URI of the provided datapoint.
          */
-        public static Uri uriBuilder(String noteId) {
+        public static Uri uriBuilder(String packetId) {
             Uri item = new Uri.Builder()
                     .scheme("content")
                     .authority(SensorContentContract.AUTHORITY)
                     .appendPath(SensorContentContract.Sensordata.DIR_BASEPATH)
-                    .appendPath(noteId)
+                    .appendPath(packetId)
+                    .build();
+            return item;
+        }
+
+        public static Uri uriBuilder() {
+            Uri item = new Uri.Builder()
+                    .scheme("content")
+                    .authority(SensorContentContract.AUTHORITY)
+                    .appendPath(SensorContentContract.Sensordata.DIR_BASEPATH)
                     .build();
             return item;
         }

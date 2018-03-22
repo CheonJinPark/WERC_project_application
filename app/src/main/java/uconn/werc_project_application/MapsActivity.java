@@ -1,16 +1,28 @@
 package uconn.werc_project_application;
 
 import android.app.AlertDialog;
+import android.app.LoaderManager;
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupMenu;
 
@@ -28,16 +40,32 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import uconn.werc_project_application.data.Datapoint;
+import uconn.werc_project_application.data.SensorContentContract;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     Double Long, Lat;
- GPS g1,g2,g3,g4,g5;
+    GPS g1,g2,g3,g4,g5;
     Information info;
-Button op_btn;
-String DataType,ALLorSelf;
+    Button op_btn;
+    String DataType,ALLorSelf;
     List<GPS> gpsList;
     int Radius;
+
+    /**
+     * The unique identifier for the loader
+     */
+    private static final int DP_LOADER = 10;
+
+    // ASync query constant
+    private static final int QUERY_TOKEN = 1001;
+
+    /**
+     * Content Resolver
+     */
+    private ContentResolver contentResolver;
 
 
 
@@ -47,6 +75,9 @@ String DataType,ALLorSelf;
         setContentView(R.layout.activity_maps);
 
         Intent intent = getIntent();
+
+        contentResolver = this.getContentResolver();
+
         info = new Information();
         g1 = (GPS) intent.getSerializableExtra("g1");
         g2 = (GPS) intent.getSerializableExtra("g2");
@@ -76,6 +107,34 @@ String DataType,ALLorSelf;
 //DialogRadio();
      //       }
      //   });
+
+
+//        getLoaderManager().initLoader(DP_LOADER, null, this);
+
+        Uri dataUri = SensorContentContract.Sensordata.uriBuilder();
+
+
+        // Replace local cursor methods with async query handling
+        AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
+            @Override
+            protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+                super.onQueryComplete(token, cookie, cursor);
+                cursor.moveToFirst();
+                try {
+                    while(cursor.moveToNext())
+                    {
+                        Datapoint dp = Datapoint.fromCursorQuery(cursor);
+                        // dp has all fields in it. Add to map from here.
+                        // use dp.getSensor_co and other accessors to read data.
+                        // See Datapoint class in data package for more info.
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+        };
+        queryHandler.startQuery(QUERY_TOKEN, null, dataUri, SensorContentContract.Sensordata.PROJECTION_ALL, null, null, null);
+
 
 
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.float_option_btn);
@@ -266,6 +325,15 @@ popup.show();
 
     }
 
+//    @Override
+//    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+//        return new CursorLoader(this,
+//                SensorContentContract.Sensordata.CONTENT_URI,
+//                SensorContentContract.Sensordata.PROJECTION_ALL,
+//                null,
+//                null,
+//                SensorContentContract.Sensordata.SORT_ORDER_DEFAULT);
+//    }
 
 
 }

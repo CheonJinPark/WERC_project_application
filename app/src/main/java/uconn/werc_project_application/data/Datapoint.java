@@ -1,5 +1,7 @@
 package uconn.werc_project_application.data;
 
+import android.database.Cursor;
+
 import java.util.UUID;
 
 /**
@@ -10,7 +12,7 @@ import java.util.UUID;
  *
  */
 
-public class Packet {
+public class Datapoint {
     /* Member Variables */
     // Device Metadata
     private long id = -1;
@@ -38,9 +40,62 @@ public class Packet {
     private long sensor_raw_temp;
 
 
-    public Packet() {
-        setPacketId(UUID.randomUUID().toString());
+//    public Datapoint() {
+//        setPacketId(UUID.randomUUID().toString());
+//    }
+
+    public static Datapoint fromCursorQuery(Cursor c)
+    {
+        Datapoint dp = new Datapoint();
+
+        dp.setPacketId(getString(c, SensorContentContract.Sensordata.PACKETID, ""));
+        dp.setUserId(getString(c, SensorContentContract.Sensordata._ID, ""));
+        dp.setTime(getLong(c, SensorContentContract.Sensordata.TIME, -1));
+        dp.setDeviceId(getString(c, SensorContentContract.Sensordata.DEVICEID, ""));
+        dp.setGps_lat(getLong(c, SensorContentContract.Sensordata.GPSLAT, -1));
+        dp.setGps_long(getLong(c, SensorContentContract.Sensordata.GPSLONG, -1 ));
+        dp.setSensor_co(getLong(c, SensorContentContract.Sensordata.SENSORCO, -1));
+        dp.setSensor_no2(getLong(c, SensorContentContract.Sensordata.SENSORNO2, -1));
+        dp.setSensor_o3(getLong(c, SensorContentContract.Sensordata.SENSORO3, -1));
+        dp.setSensor_pm(getLong(c, SensorContentContract.Sensordata.SENSORPM, -1));
+        dp.setSensor_so2(getLong(c, SensorContentContract.Sensordata.SENSORSO2, -1));
+
+        return dp;
     }
+
+    /**
+     * Read a string from a key in the cursor
+     *
+     * @param c the cursor to read from
+     * @param col the column key
+     * @param defaultValue the default value if the column key does not exist in the cursor
+     * @return the value of the key
+     */
+    private static String getString(Cursor c, String col, String defaultValue) {
+        if (c.getColumnIndex(col) >= 0) {
+            return c.getString(c.getColumnIndex(col));
+        } else {
+            return defaultValue;
+        }
+    }
+
+
+    /**
+     * Read a long value from a key in the cursor
+     *
+     * @param c the cursor to read from
+     * @param col the column key
+     * @param defaultValue the default value if the column key does not exist in the cursor
+     * @return the value of the key
+     */
+    private static long getLong(Cursor c, String col, long defaultValue) {
+        if (c.getColumnIndex(col) >= 0) {
+            return c.getLong(c.getColumnIndex(col));
+        } else {
+            return defaultValue;
+        }
+    }
+
 
 
     public long getSensor_temp() {
