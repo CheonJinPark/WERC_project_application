@@ -67,9 +67,12 @@
         <service
             android:name=".ble.Service_BLE_GATT"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true" >
 
-        <activity android:name=".CustomDPmakerActivity"></activity>
+            </service>
+        <service
+            android:name=".data.SendDataService"
+            android:enabled="true"/>
     </application>
 
 </manifest>
