@@ -1,5 +1,6 @@
 package uconn.werc_project_application.ble;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,11 +14,10 @@ public class BroadcastReceiver_BLE_GATT extends BroadcastReceiver {
 
     private boolean mConnected = false;
 
-    private BLEServicesActivity activity;
+    private BLEDataLinker linker;
 
-    public BroadcastReceiver_BLE_GATT(BLEServicesActivity activity) {
-
-        this.activity = activity;
+    public BroadcastReceiver_BLE_GATT(BLEDataLinker activity) {
+        this.linker = activity;
     }
 
     // Handles various events fired by the Service.
@@ -33,22 +33,22 @@ public class BroadcastReceiver_BLE_GATT extends BroadcastReceiver {
 
         if (Service_BLE_GATT.ACTION_GATT_CONNECTED.equals(action)) {
             mConnected = true;
-            BLEUtilities.toast(activity.getApplicationContext(), "Connected to Device");
+            BLEUtilities.toast(linker.getContext(), "Connected to Device");
         }
         else if (Service_BLE_GATT.ACTION_GATT_DISCONNECTED.equals(action)) {
             mConnected = false;
-            BLEUtilities.toast(activity.getApplicationContext(), "Disconnected From Device");
-            activity.finish();
+            BLEUtilities.toast(linker.getContext(), "Disconnected From Device");
+//            linker.finish();
         }
         else if (Service_BLE_GATT.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-            activity.updateServices();
+//            linker.updateServices();
         }
         else if (Service_BLE_GATT.ACTION_DATA_AVAILABLE.equals(action)) {
 
 //            String uuid = intent.getStringExtra(Service_BTLE_GATT.EXTRA_UUID);
 //            String data = intent.getStringExtra(Service_BTLE_GATT.EXTRA_DATA);
 
-            activity.updateCharacteristic();
+//            activity.updateCharacteristic();
         }
 
         return;

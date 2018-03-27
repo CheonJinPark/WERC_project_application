@@ -206,6 +206,8 @@ public class Service_BLE_GATT extends Service {
      */
     public boolean connect(final String address) {
 
+        Log.w("TAG", "Connection attempted");
+
         if (mBluetoothAdapter == null || address == null) {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
             return false;

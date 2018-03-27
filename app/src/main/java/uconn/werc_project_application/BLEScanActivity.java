@@ -20,6 +20,8 @@ import android.widget.ScrollView;
 
 import com.amazonaws.mobileconnectors.pinpoint.analytics.AnalyticsClient;
 import com.amazonaws.mobileconnectors.pinpoint.analytics.AnalyticsEvent;
+
+import uconn.werc_project_application.ble.BLEDataLinker;
 import uconn.werc_project_application.ble.BLEDevice;
 import uconn.werc_project_application.ble.BLEScanner;
 import uconn.werc_project_application.ble.BLEUtilities;
@@ -140,8 +142,8 @@ public class BLEScanActivity extends AppCompatActivity implements View.OnClickLi
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Context context = view.getContext();
 
-        Log.d("debug", "OnClick Listener triggered");
-         BLEUtilities.toast(context, "List Item clicked");
+//        Log.d("debug", "OnClick Listener triggered");
+//         BLEUtilities.toast(context, "List Item clicked");
 
         // do something with the text views and start the next activity.
 
@@ -150,11 +152,14 @@ public class BLEScanActivity extends AppCompatActivity implements View.OnClickLi
         String name = mBTDevicesArrayList.get(position).getName();
         String address = mBTDevicesArrayList.get(position).getAddress();
 
+        BLEDataLinker.getInstance().setAddress(address);
+        BLEDataLinker.getInstance().connectBLE();
 
-        Intent intent = new Intent(this, BLEServicesActivity.class);
-        intent.putExtra(BLEServicesActivity.EXTRA_NAME, name);
-        intent.putExtra(BLEServicesActivity.EXTRA_ADDRESS, address);
-        startActivityForResult(intent, BTLE_SERVICES);
+
+//        Intent intent = new Intent(this, BLEServicesActivity.class);
+//        intent.putExtra(BLEServicesActivity.EXTRA_NAME, name);
+//        intent.putExtra(BLEServicesActivity.EXTRA_ADDRESS, address);
+//        startActivityForResult(intent, BTLE_SERVICES);
     }
 
     @Override

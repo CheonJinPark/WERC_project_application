@@ -47,6 +47,7 @@ public class BLEDataLinker {
     private Service_BLE_GATT mBTLE_Service;
     private boolean mBTLE_Service_Bound;
     private BroadcastReceiver_BLE_GATT mGattUpdateReceiver;
+    private static Context context;
 
     private String name;
     private String address;
@@ -89,18 +90,28 @@ public class BLEDataLinker {
         }
     };
 
-    public static void initialize(String address) {
+    public static void initialize(Context context) {
         if (instance == null)
         {
-            instance = new BLEDataLinker(address);
+            instance = new BLEDataLinker(context);
         }
 
     }
 
-    private BLEDataLinker(String address) {
+    private BLEDataLinker(Context context) {
         this.address = address;
+        this.context = context;
     }
 
+    public void connectBLE() {
+        if (context != null && address != null) {
+            mGattUpdateReceiver = new BroadcastReceiver_BLE_GATT(this);
+            mBTLE_Service_Intent = new Intent(context, Service_BLE_GATT.class);
+            context.bindService(mBTLE_Service_Intent, mBTLE_ServiceConnection, Context.BIND_AUTO_CREATE);
+            context.startService(mBTLE_Service_Intent);
+            Log.d("BLEDataLinker", "Linker Declared.");
+        }
+    }
     public void setData(String data)
     {
         this.mData = data;
@@ -141,4 +152,6 @@ public class BLEDataLinker {
     {
         this.service = service;
     }
+    public Context getContext() { return context; }
+    public void setAddress(String address) { this.address = address; }
 }
