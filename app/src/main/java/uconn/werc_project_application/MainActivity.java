@@ -129,86 +129,66 @@ public class MainActivity extends AppCompatActivity{
             public void onSuccess(Location location) {
                 // Got last known location. In some rare situations this can be null.
                 if (location != null) {
-                    Toast.makeText(getApplicationContext(),"Location Acquired",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Location Acquired", Toast.LENGTH_LONG).show();
                     lat_textview.setText(Double.toString(location.getLatitude()));
-                    long_textview.setText(Double.toString(location.getLongitude())+System.getProperty("line.separator")+"why it is not working");
-                }
-                else{
-                    Toast.makeText(getApplicationContext(),"No location",Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+                    long_textview.setText(Double.toString(location.getLongitude()) + System.getProperty("line.separator") + "why it is not working");
+
+                    Button Send = (Button) findViewById(R.id.Button_Send);
 
 
+                    Send.setOnClickListener(new Button.OnClickListener() {
+                        public void onClick(View v) {
+                            EditText Edit_Longitude = (EditText) findViewById(R.id.EditText_Longitude);
+                            EditText Edit_Latitude = (EditText) findViewById(R.id.EditText_Latitude);
 
+                            String string_long = Edit_Longitude.getText().toString();
+                            String string_lat = Edit_Latitude.getText().toString();
 
+                            if (isStringDouble(string_long)) {
+                                longitude = Double.parseDouble(string_long);
+                                Toast.makeText(getApplicationContext(), "Longitude is saved", Toast.LENGTH_SHORT).show();
 
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Longitude is not correct format", Toast.LENGTH_SHORT).show();
+                            }
 
+                            if (isStringDouble(string_lat)) {
+                                latitude = Double.parseDouble(string_lat);
+                                Toast.makeText(getApplicationContext(), "Latitude is saved", Toast.LENGTH_SHORT).show();
 
-     // gps_textview = (TextView) findViewById(R.id.textview_gpd_result);
-       // gps_textview.setText("GPS is not running");
-       // gps_textview.setText("Logitude : " + Double.toString(longitude)+" Latitude : "+Double.toString(latitude));
-
-
-
-        Button Send = (Button) findViewById(R.id.Button_Send);
-
-
-        Send.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-                EditText Edit_Longitude = (EditText) findViewById(R.id.EditText_Longitude);
-                EditText Edit_Latitude = (EditText) findViewById(R.id.EditText_Latitude);
-
-                String string_long = Edit_Longitude.getText().toString();
-                String string_lat = Edit_Latitude.getText().toString();
-
-                if (isStringDouble(string_long)) {
-                    longitude = Double.parseDouble(string_long);
-                    Toast.makeText(getApplicationContext(), "Longitude is saved", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    Toast.makeText(getApplicationContext(), "Longitude is not correct format", Toast.LENGTH_SHORT).show();
-                }
-
-                if (isStringDouble(string_lat)) {
-                    latitude = Double.parseDouble(string_lat);
-                    Toast.makeText(getApplicationContext(), "Latitude is saved", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    Toast.makeText(getApplicationContext(), "Latitude is not correct format", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Latitude is not correct format", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
             }
         });
-
         Button btn_gotoMap = (Button) findViewById(R.id.button_gotomap);
         btn_gotoMap.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 intent_test = new Intent(MainActivity.this, MapsActivity.class);
-                intent_test.putExtra("g1",g1);
-                intent_test.putExtra("g2",g2);
-                intent_test.putExtra("g3",g3);
-                intent_test.putExtra("g4",g4);
-                intent_test.putExtra("g5",g5);
+                intent_test.putExtra("g1", g1);
+                intent_test.putExtra("g2", g2);
+                intent_test.putExtra("g3", g3);
+                intent_test.putExtra("g4", g4);
+                intent_test.putExtra("g5", g5);
                 startActivity(intent_test);
             }
         });
 
-        Button btn_ble_scan = (Button)findViewById(R.id.button_ble);
+        Button btn_ble_scan = (Button) findViewById(R.id.button_ble);
 
-        btn_ble_scan.setOnClickListener(new Button.OnClickListener()
-        {
-            public void onClick(View V)
-            {
+        btn_ble_scan.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View V) {
                 intent_ble = new Intent(MainActivity.this, BLEScanActivity.class);
                 startActivity(intent_ble);
             }
         });
 
-        Button btn_send_data = (Button)findViewById(R.id.button_senddata);
-        btn_send_data.setOnClickListener(new Button.OnClickListener()
-        {
-            public void onClick(View V)
-            {
+        Button btn_send_data = (Button) findViewById(R.id.button_senddata);
+        btn_send_data.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View V) {
                 DummyDataGenerator.initialize(SensorContentContract.Sensordata.PROJECTION_ALL);
                 ContentValues values = DummyDataGenerator.getInstance().generate(0.0, 3.0);
                 AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
@@ -216,7 +196,7 @@ public class MainActivity extends AppCompatActivity{
                     protected void onInsertComplete(int token, Object cookie, Uri uri) {
                         super.onInsertComplete(token, cookie, uri);
                         Log.d("DummyDataButtonPress", "insert completed");
-                        Toast.makeText(getApplicationContext(),"Dummy Data Uploaded",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Dummy Data Uploaded", Toast.LENGTH_LONG).show();
 
                     }
                 };
@@ -235,24 +215,17 @@ public class MainActivity extends AppCompatActivity{
 
         });
 
-        Button gcdp = (Button)findViewById(R.id.gotoDPmaker);
+        Button gcdp = (Button) findViewById(R.id.gotoDPmaker);
         gcdp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,CustomDPmakerActivity.class);
+                Intent intent = new Intent(MainActivity.this, CustomDPmakerActivity.class);
                 startActivity(intent);
             }
         });
 
 
-
-
     }
-
-
-
-
-
 
     public static boolean isStringDouble(String s) {
         try {
