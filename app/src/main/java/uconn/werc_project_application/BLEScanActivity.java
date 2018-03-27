@@ -150,6 +150,7 @@ public class BLEScanActivity extends AppCompatActivity implements View.OnClickLi
         String name = mBTDevicesArrayList.get(position).getName();
         String address = mBTDevicesArrayList.get(position).getAddress();
 
+
         Intent intent = new Intent(this, BLEServicesActivity.class);
         intent.putExtra(BLEServicesActivity.EXTRA_NAME, name);
         intent.putExtra(BLEServicesActivity.EXTRA_ADDRESS, address);

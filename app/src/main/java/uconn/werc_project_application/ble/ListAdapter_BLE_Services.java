@@ -123,6 +123,9 @@ public class ListAdapter_BLE_Services extends BaseExpandableListAdapter {
 
         if (BLEUtilities.hasNotifyProperty(properties) != 0) {
             sb.append("N");
+
+            BLEDataLinker.getInstance().setCharacteristic(bluetoothGattCharacteristic);
+
         }
 
         tv_property.setText(sb.toString());

@@ -40,7 +40,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.w3c.dom.Text;
 
+import uconn.werc_project_application.ble.BLEDataLinker;
 import uconn.werc_project_application.data.DummyDataGenerator;
+import uconn.werc_project_application.data.SendDataService;
 import uconn.werc_project_application.data.SensorContentContract;
 
 
@@ -70,25 +72,35 @@ public class MainActivity extends AppCompatActivity{
         ApplicationCrashHandler.installHandler();
         contentResolver = getApplicationContext().getContentResolver();
 
+
+        /* Bill's Section - Temporary */
+        /** AWS Initializations **/
+        AWSMobileClient.getInstance().initialize(this).execute();
+
+        TextView tv_ble_char = (TextView) findViewById(R.id.textView_bleChar);
+        TextView tv_ble_rx = (TextView) findViewById(R.id.textView_bleRx);
+
+        BLEDataLinker.initialize(tv_ble_char, tv_ble_rx);
+
+        startService(new Intent(this, SendDataService.class));
+
+        /* End of Bill's Section - Temporary */
+
         //Test GPSs
-       g1 = new GPS(-72.253981,41.807741); //Uconn
+        g1 = new GPS(-72.253981,41.807741); //Uconn
         g1.setCo(20);
         g1.setDust(40);
         g1.setNo2(60);
         g1.setSo2(10);
         g1.setO3(30);
-       g2 = new GPS(-72.250645,41.803309); //Alumni Dorm
-       g3 = new GPS(-72.253430,41.804776); //Coop
-       g4 = new GPS(-72.259929,41.802675); //Hilltop Community Center
-       g5 = new GPS(-72.251748,41.806629); //Library
+        g2 = new GPS(-72.250645,41.803309); //Alumni Dorm
+        g3 = new GPS(-72.253430,41.804776); //Coop
+        g4 = new GPS(-72.259929,41.802675); //Hilltop Community Center
+        g5 = new GPS(-72.251748,41.806629); //Library
         Log.d("JIN","GPS 문제" );
-        /** AWS Initializations **/
-        AWSMobileClient.getInstance().initialize(this).execute();
-
 
         longitude = -111.11; // default longitude
         latitude = 222.0; // default latitude
-
 
         long_textview = (TextView)findViewById(R.id.Textview_gps_test_longitude);
         lat_textview = (TextView)findViewById(R.id.Textview_gps_test_latitude);
@@ -225,7 +237,15 @@ public class MainActivity extends AppCompatActivity{
 
 
         });
+
+
+
+
     }
+
+
+
+
 
 
     public static boolean isStringDouble(String s) {

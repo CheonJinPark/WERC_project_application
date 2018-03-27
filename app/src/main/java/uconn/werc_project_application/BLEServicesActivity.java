@@ -154,6 +154,9 @@ public class BLEServicesActivity extends AppCompatActivity implements Expandable
             dialog_btle_characteristic.setCharacteristic(characteristic);
 
             dialog_btle_characteristic.show(getFragmentManager(), "Dialog_BTLE_Characteristic");
+            Log.d("BLE Connection", uuid);
+
+
         } else if (BLEUtilities.hasReadProperty(characteristic.getProperties()) != 0) {
             if (mBTLE_Service != null) {
                 mBTLE_Service.readCharacteristic(characteristic);

@@ -33,6 +33,7 @@ public class BroadcastReceiver_BLE_GATT extends BroadcastReceiver {
 
         if (Service_BLE_GATT.ACTION_GATT_CONNECTED.equals(action)) {
             mConnected = true;
+            BLEUtilities.toast(activity.getApplicationContext(), "Connected to Device");
         }
         else if (Service_BLE_GATT.ACTION_GATT_DISCONNECTED.equals(action)) {
             mConnected = false;

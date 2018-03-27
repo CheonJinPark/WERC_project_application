@@ -17,7 +17,6 @@ import java.util.UUID;
 public class DummyDataGenerator {
     private static DummyDataGenerator instance = null;
     private static String[] table_fields;
-    private Date date = new Date();
     public static DummyDataGenerator getInstance() {
         return instance;
     }
@@ -38,7 +37,7 @@ public class DummyDataGenerator {
         for (String field : table_fields)
         {
             if (field.equals(SensorContentContract.Sensordata.TIME))
-                values.put(field, date.getTime());
+                values.put(field, new Date().getTime());
             else if (field.equals(SensorContentContract.Sensordata.DEVICEID))
                 values.put(field, UUID.randomUUID().toString());
             else
