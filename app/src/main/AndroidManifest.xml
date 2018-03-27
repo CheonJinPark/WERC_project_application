@@ -48,6 +48,7 @@
         <activity
             android:name=".BLEServicesActivity"
             android:label="@string/ble_services" />
+        <activity android:name=".CustomDPmakerActivity"/>
         <activity
             android:name=".AuthenticatorActivity"
             android:label="Sign In">
