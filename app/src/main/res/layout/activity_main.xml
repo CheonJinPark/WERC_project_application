@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="uconn.werc_project_application.MainActivity"
-    >
+    tools:context="uconn.werc_project_application.MainActivity">
 
     <LinearLayout
         android:id="@+id/LinearLayout_main_top"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        >
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -29,37 +30,40 @@
                 android:id="@+id/EditText_Latitude"
                 android:layout_width="419dp"
                 android:layout_height="50dp"
-                android:hint="Latitude"
-                 />
+                android:hint="Latitude" />
 
         </LinearLayout>
-
 
 
         <Button
             android:id="@+id/Button_Send"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Save"
-            android:layout_weight="4" />
+            android:layout_weight="4"
+            android:text="Save" />
 
 
     </LinearLayout>
 
     <TextView
         android:id="@+id/Textview_gps_test_longitude"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/LinearLayout_main_top"
+        android:text="Longitude"
         android:textSize="30dp"
-        android:text="Longitude"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LinearLayout_main_top" />
+
     <TextView
         android:id="@+id/Textview_gps_test_latitude"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/Textview_gps_test_longitude"
+        android:text="Latitude"
         android:textSize="30dp"
-        android:text="Latitude"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Textview_gps_test_longitude" />
 
 
     <Button
@@ -90,6 +94,16 @@
         android:layout_marginBottom="12dp"
         android:text="Dummy Data"
         app:layout_constraintBottom_toTopOf="@+id/button_ble"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/gotoDPmaker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"
+        android:text="CustomDataPointMaker"
+        app:layout_constraintBottom_toTopOf="@+id/button_senddata"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

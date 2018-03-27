@@ -80,6 +80,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         info = new Information();
         g1 = (GPS) intent.getSerializableExtra("g1");
+
+        g1.setO3(4.6);
+        g1.setCo(0.084);
+        g1.setNo2(0.63);
+        g1.setSo2(0.7);
         g2 = (GPS) intent.getSerializableExtra("g2");
         g3 = (GPS) intent.getSerializableExtra("g3");
         g4 = (GPS) intent.getSerializableExtra("g4");
@@ -95,6 +100,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         gpsList.add(g3);
         gpsList.add(g4);
         gpsList.add(g5);
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -119,14 +126,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
                 super.onQueryComplete(token, cookie, cursor);
-                cursor.moveToFirst();
                 try {
+                    cursor.moveToFirst();
                     while(cursor.moveToNext())
                     {
                         Datapoint dp = Datapoint.fromCursorQuery(cursor);
                         // dp has all fields in it. Add to map from here.
+
                         // use dp.getSensor_co and other accessors to read data.
                         // See Datapoint class in data package for more info.
+
+
                     }
                 } finally {
                     cursor.close();
@@ -210,9 +220,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void drawCircle_loop(GoogleMap gMap, GPS g, String state, int radius) {
         int d = radius/10;
 
-        gMap.addCircle(new CircleOptions().center(new LatLng(g.getLatitude(),g.getLongitude())).radius(radius).strokeWidth(0.0f).fillColor(Color.parseColor(info.SAFE_COLOUR)));
+        gMap.addCircle(new CircleOptions().center(new LatLng(g.getLatitude(),g.getLongitude())).radius(radius).strokeWidth(0.0f).fillColor(Color.parseColor(state)));
         for(int i =1; i<6;i++){
-            gMap.addCircle(new CircleOptions().center(new LatLng(g.getLatitude(),g.getLongitude())).radius(radius-d*i).strokeWidth(0.0f).fillColor(Color.parseColor(info.SAFE_COLOUR)));
+            gMap.addCircle(new CircleOptions().center(new LatLng(g.getLatitude(),g.getLongitude())).radius(radius-d*i).strokeWidth(0.0f).fillColor(Color.parseColor(state)));
 
         }
 
@@ -224,7 +234,9 @@ if(ALLorSelf.equals("ALL")){
         drawCircle_loop(mMap,gpsList.get(j),info.SAFE_COLOUR,Radius);
     }
 }else{
-    drawCircle_loop(mMap,g1,info.SAFE_COLOUR,Radius);
+
+    drawCircle_loop(mMap,g1,info.define_color(DataType,g1.get(DataType)),Radius);
+    mMap.addMarker(new MarkerOptions().position(new LatLng(g1.getLatitude(),g1.getLongitude())).title(DataType + " : " + g1.get(DataType)));
 }
     }
 
