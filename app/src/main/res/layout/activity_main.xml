@@ -67,15 +67,6 @@
         app:layout_constraintTop_toBottomOf="@+id/Textview_gps_test_longitude" />
 
 
-    <TextView
-        android:id="@+id/textView_bleRx"
-        android:layout_width="413dp"
-        android:layout_height="38dp"
-        android:layout_weight="1"
-        android:text="BLE Received"
-        android:textSize="30dp"
-        app:layout_constraintTop_toBottomOf="@+id/textView_bleChar"
-        tools:layout_editor_absoluteX="0dp" />
 
     <Button
         android:id="@+id/button_gotomap"
@@ -118,37 +109,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <EditText
-        android:id="@+id/editText_bleTx"
-        android:layout_width="304dp"
-        android:layout_height="0dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="BLE Transmit"
-        app:layout_constraintTop_toBottomOf="@+id/textView_bleRx"
-        tools:layout_editor_absoluteX="0dp" />
-
-    <Button
-        android:id="@+id/button_bleTx"
-        android:layout_width="111dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:text="SEND"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/editText_bleTx"
-        app:layout_constraintTop_toBottomOf="@+id/textView_bleRx" />
-
-    <TextView
-        android:id="@+id/textView_bleChar"
-        android:layout_width="0dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="24dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Textview_gps_test_latitude"
-        tools:text="BLE Notify Characteristic" />
 
 </android.support.constraint.ConstraintLayout>

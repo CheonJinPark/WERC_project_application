@@ -77,10 +77,10 @@ public class MainActivity extends AppCompatActivity{
         /** AWS Initializations **/
         AWSMobileClient.getInstance().initialize(this).execute();
 
-        TextView tv_ble_char = (TextView) findViewById(R.id.textView_bleChar);
-        TextView tv_ble_rx = (TextView) findViewById(R.id.textView_bleRx);
+        //TextView tv_ble_char = (TextView) findViewById(R.id.textView_bleChar);
+        //TextView tv_ble_rx = (TextView) findViewById(R.id.textView_bleRx);
 
-        BLEDataLinker.initialize(tv_ble_char, tv_ble_rx);
+        //BLEDataLinker.initialize(tv_ble_char, tv_ble_rx);
 
         startService(new Intent(this, SendDataService.class));
 
