@@ -235,6 +235,15 @@ public class MainActivity extends AppCompatActivity{
 
         });
 
+        Button gcdp = (Button)findViewById(R.id.gotoDPmaker);
+        gcdp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,CustomDPmakerActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
 
 

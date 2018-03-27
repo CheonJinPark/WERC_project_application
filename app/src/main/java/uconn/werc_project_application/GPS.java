@@ -1,5 +1,7 @@
 package uconn.werc_project_application;
 
+import com.Information.Information;
+
 import java.io.Serializable;
 
 /**
@@ -56,6 +58,27 @@ public class GPS implements Serializable{
     public GPS(double longitude, double latitude) {
         this.longitude = longitude;
         this.latitude = latitude;
+    }
+    public double get(String state) {
+        double result = 0.0;
+        switch (state) {
+            case Information.CO:
+                result = getCo();
+                break;
+            case Information.NO2:
+                result= getNo2();
+                break;
+            case Information.SO2:
+                result = getSo2();
+                break;
+            case Information.DUST:
+                result = getDust();
+                break;
+            case Information.O3:
+                result = getO3();
+                break;
+        }
+        return result;
     }
 
     public double getLongitude() {
