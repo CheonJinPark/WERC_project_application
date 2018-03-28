@@ -96,6 +96,7 @@ public class Service_BLE_GATT extends Service {
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
+            Log.d("BLE Service", "onCharacteristicRead:  Data Available from BLE");
 
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
@@ -107,6 +108,7 @@ public class Service_BLE_GATT extends Service {
                                             BluetoothGattCharacteristic characteristic) {
 
             broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+            Log.d("BLE Service", "Data Available from BLE");
         }
 
 //        @Override
@@ -127,6 +129,7 @@ public class Service_BLE_GATT extends Service {
 
         intent.putExtra(EXTRA_UUID, characteristic.getUuid().toString());
 
+        Log.d("Service_BLE_GATT", "Data Discovered");
         // For all other profiles, writes the data formatted in HEX.
         final byte[] data = characteristic.getValue();
 

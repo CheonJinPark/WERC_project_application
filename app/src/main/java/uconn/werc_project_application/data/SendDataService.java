@@ -61,6 +61,7 @@ public class SendDataService extends Service {
     public void onDestroy() {
         super.onDestroy();
     }
+
     class createDatapointTask extends TimerTask {
         @Override
         public void run () {
@@ -75,16 +76,7 @@ public class SendDataService extends Service {
                         Toast.makeText(getApplicationContext(), Integer.toString(BLEDataLinker.getInstance().writeToBLE("test")), Toast.LENGTH_LONG).show();
                     }
 
-                    AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
-                        @Override
-                        protected void onInsertComplete(int token, Object cookie, Uri uri) {
-                            super.onInsertComplete(token, cookie, uri);
-                            Log.d("Scheduled Insert", "scheduled insert completed");
-                        //    Toast.makeText(getApplicationContext(),"Scheduled Data Upload",Toast.LENGTH_LONG).show();
 
-                        }
-                    };
-                    queryHandler.startInsert(INSERT_TOKEN, null, SensorContentContract.Sensordata.CONTENT_URI, values);
                 }
             });
         }

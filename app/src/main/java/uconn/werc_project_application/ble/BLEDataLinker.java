@@ -3,22 +3,28 @@ package uconn.werc_project_application.ble;
 import android.app.Service;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
+import android.content.AsyncQueryHandler;
 import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import uconn.werc_project_application.R;
+import uconn.werc_project_application.data.SensorContentContract;
 
 import static android.content.ContentValues.TAG;
 
@@ -45,6 +51,8 @@ public class BLEDataLinker {
     private boolean mBTLE_Service_Bound;
     private BroadcastReceiver_BLE_GATT mGattUpdateReceiver;
     private static Context context;
+    private static final int INSERT_TOKEN = 1003;
+    private ContentResolver contentResolver;
 
     private String name;
     private String address;
@@ -68,12 +76,6 @@ public class BLEDataLinker {
 
             mBTLE_Service.connect(address);
 
-            // Automatically connects to the device upon successful start-up initialization.
-//            mBTLeService.connect(mBTLeDeviceAddress);
-
-//            mBluetoothGatt = mBTLeService.getmBluetoothGatt();
-//            mGattUpdateReceiver.setBluetoothGatt(mBluetoothGatt);
-//            mGattUpdateReceiver.setBTLeService(mBTLeService);
         }
 
         @Override
@@ -81,9 +83,6 @@ public class BLEDataLinker {
             mBTLE_Service = null;
             mBTLE_Service_Bound = false;
 
-//            mBluetoothGatt = null;
-//            mGattUpdateReceiver.setBluetoothGatt(null);
-//            mGattUpdateReceiver.setBTLeService(null);
         }
     };
 
@@ -108,6 +107,7 @@ public class BLEDataLinker {
     public void connectBLE() {
         if (context != null && address != null) {
             mGattUpdateReceiver = new BroadcastReceiver_BLE_GATT(this);
+            context.registerReceiver(mGattUpdateReceiver, BLEUtilities.makeGattUpdateIntentFilter());
             mBTLE_Service_Intent = new Intent(context, Service_BLE_GATT.class);
             context.bindService(mBTLE_Service_Intent, mBTLE_ServiceConnection, Context.BIND_AUTO_CREATE);
             context.startService(mBTLE_Service_Intent);
@@ -167,7 +167,12 @@ public class BLEDataLinker {
                     } else if (BLEUtilities.hasNotifyProperty(properties) != 0)
                     {
                         mNotifyCharacteristic = characteristic;
-                        Log.d("BLEDataLinker", "Found Notify characteristic");
+                        Log.d("BLEDataLinker", "Found Notify characteristic   Data: " + characteristic.getStringValue(0));
+
+                        // Enable Notify Characteristic
+                        if (mBTLE_Service != null) {
+                            mBTLE_Service.setCharacteristicNotification(characteristic, true);
+                        }
                     }
                     newCharacteristicsList.add(characteristic);
                 }
@@ -176,12 +181,27 @@ public class BLEDataLinker {
             }
         }
     }
+
+    public void publishToDB(ContentValues cvals)
+    {
+        AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
+            @Override
+            protected void onInsertComplete(int token, Object cookie, Uri uri) {
+                super.onInsertComplete(token, cookie, uri);
+                Log.d("Scheduled Insert", "scheduled insert completed");
+                Toast.makeText(context,"Scheduled Data Upload",Toast.LENGTH_LONG).show();
+
+            }
+        };
+        queryHandler.startInsert(INSERT_TOKEN, null, SensorContentContract.Sensordata.CONTENT_URI, cvals);
+    }
+
     public int writeToBLE(String msg)
     {
         if (mWriteCharacteristic != null && mBTLE_Service != null) {
                 mWriteCharacteristic.setValue(msg);
                 mBTLE_Service.writeCharacteristic(mWriteCharacteristic);
-                Log.d("BLEDataLinker", "How is this happening.");
+                Log.d("BLEDataLinker", "Message Submitted to BLE Device.");
                 return 1;
         }
         else {
@@ -189,6 +209,13 @@ public class BLEDataLinker {
             return 0;
         }
 
+    }
+
+    public void close()
+    {
+        context.unregisterReceiver(mGattUpdateReceiver);
+        context.unbindService(mBTLE_ServiceConnection);
+        mBTLE_Service_Intent = null;
     }
 
     public void setService(Service_BLE_GATT service)

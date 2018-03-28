@@ -110,12 +110,12 @@ public class BLEServicesActivity extends AppCompatActivity implements Expandable
     protected void onStart() {
         super.onStart();
 
-//        mGattUpdateReceiver = new BroadcastReceiver_BLE_GATT(this);
-//        registerReceiver(mGattUpdateReceiver, BLEUtilities.makeGattUpdateIntentFilter());
-//
-//        mBTLE_Service_Intent = new Intent(this, Service_BLE_GATT.class);
-//        bindService(mBTLE_Service_Intent, mBTLE_ServiceConnection, Context.BIND_AUTO_CREATE);
-//        startService(mBTLE_Service_Intent);
+        mGattUpdateReceiver = new BroadcastReceiver_BLE_GATT(this);
+        registerReceiver(mGattUpdateReceiver, BLEUtilities.makeGattUpdateIntentFilter());
+
+        mBTLE_Service_Intent = new Intent(this, Service_BLE_GATT.class);
+        bindService(mBTLE_Service_Intent, mBTLE_ServiceConnection, Context.BIND_AUTO_CREATE);
+        startService(mBTLE_Service_Intent);
     }
 
     @Override
