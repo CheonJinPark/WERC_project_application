@@ -71,12 +71,9 @@ public class SendDataService extends Service {
                     // My function happens in here.
                     DummyDataGenerator.initialize(SensorContentContract.Sensordata.PROJECTION_ALL);
                     ContentValues values = DummyDataGenerator.getInstance().generate(0.0, 3.0);
-                    if (BLEDataLinker.getInstance() != null)
+                    if (BLEDataLinker.getInstance() != null) {
                         Toast.makeText(getApplicationContext(), Integer.toString(BLEDataLinker.getInstance().writeToBLE("test")), Toast.LENGTH_LONG).show();
-
-
-
-
+                    }
 
                     AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
                         @Override
