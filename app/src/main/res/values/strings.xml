@@ -3,4 +3,5 @@
     <string name="title_activity_maps">Map</string>
     <string name="CLIENT_CHARACTERISTIC_CONFIG">00002902-0000-1000-8000-00805f9b34fb"</string>
     <string name="ble_services">Bluetooth Services</string>
+    <string name="title_activity_get_location_map_acitivy">Map</string>
 </resources>

@@ -1,6 +1,7 @@
 package uconn.werc_project_application;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -34,6 +35,7 @@ public class CustomDPmakerActivity extends AppCompatActivity {
     private Button save_btn;
     private TextView GPS_Lat_textview, GPS_Long_textview;
     int REQUEST_LOCATION = 2;
+    private double longitude, latitude;
 
 
     @Override
@@ -213,6 +215,8 @@ public class CustomDPmakerActivity extends AppCompatActivity {
                 // Got last known location. In some rare situations this can be null.
                 if (location != null) {
                     Toast.makeText(getApplicationContext(), "Location Acquired", Toast.LENGTH_LONG).show();
+                    longitude = location.getLongitude();
+                    latitude = location.getLatitude();
                     GPS_Lat_textview.setText(Double.toString(location.getLatitude()));
                     GPS_Long_textview.setText(Double.toString(location.getLongitude()));
                 } else {
@@ -223,6 +227,17 @@ public class CustomDPmakerActivity extends AppCompatActivity {
     }
     public void initial_Button(){
 
+
+        Button changeLoc_btn = (Button)findViewById(R.id.CDP_ChangeLocation_btn);
+        changeLoc_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CustomDPmakerActivity.this,GetLocationMapAcitivy.class);
+                intent.putExtra("Long",longitude);
+                intent.putExtra("Lat",latitude);
+                startActivityForResult(intent,0);
+            }
+        });
         //get time function
         final long now = System.currentTimeMillis();
 
@@ -264,5 +279,13 @@ public class CustomDPmakerActivity extends AppCompatActivity {
                 //part to save data to server ****
             }
         });
+    }
+    @Override
+    protected void onActivityResult(int requestCode,int resultCode, Intent data){
+        longitude = data.getDoubleExtra("Long",0);
+        latitude = data.getDoubleExtra("Lat",0);
+
+        GPS_Lat_textview.setText(Double.toString(latitude));
+        GPS_Long_textview.setText(Double.toString(longitude));
     }
 }
