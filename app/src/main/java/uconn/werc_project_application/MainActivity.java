@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -23,6 +24,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Information.Information;
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobileconnectors.pinpoint.PinpointManager;
@@ -55,9 +57,9 @@ public class MainActivity extends AppCompatActivity{
     int REQUEST_LOCATION = 2;
     GPS g1, g2, g3, g4, g5;
     private static final int INSERT_TOKEN = 1003;
-
-    TextView long_textview, lat_textview;
-
+    TextView userName,apiValue, co_value,o3_value,no2_value,so2_value,pm_value,connection_state,data_point;
+    Information info = new Information();
+    final String CONNECT = "connected", DISCONNECT = "disconnected";
 
     private ContentResolver contentResolver;
 
@@ -83,6 +85,16 @@ public class MainActivity extends AppCompatActivity{
 
         /* End of Bill's Section - Temporary */
 
+
+        //Here is basic set up functions for MainActivity View
+        initiateView();
+        setColors();
+        setUserName("Bill");
+        setAQI(48);
+        setConnection(DISCONNECT);
+        setDataPoints(224);
+
+
         //Test GPSs
         g1 = new GPS(-72.253981,41.807741); //Uconn
         g1.setCo(20);
@@ -99,8 +111,6 @@ public class MainActivity extends AppCompatActivity{
         longitude = -111.11; // default longitude
         latitude = 222.0; // default latitude
 
-        long_textview = (TextView)findViewById(R.id.Textview_gps_test_longitude);
-        lat_textview = (TextView)findViewById(R.id.Textview_gps_test_latitude);
 
         //make the Loaction manager for gps
         FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -123,47 +133,6 @@ public class MainActivity extends AppCompatActivity{
             Log.d("JIN","Permission os granted" );
 
         }
-
-        mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                // Got last known location. In some rare situations this can be null.
-                if (location != null) {
-                    Toast.makeText(getApplicationContext(), "Location Acquired", Toast.LENGTH_LONG).show();
-                    lat_textview.setText(Double.toString(location.getLatitude()));
-                    long_textview.setText(Double.toString(location.getLongitude()) + System.getProperty("line.separator") + "why it is not working");
-
-                    Button Send = (Button) findViewById(R.id.Button_Send);
-
-
-                    Send.setOnClickListener(new Button.OnClickListener() {
-                        public void onClick(View v) {
-                            EditText Edit_Longitude = (EditText) findViewById(R.id.EditText_Longitude);
-                            EditText Edit_Latitude = (EditText) findViewById(R.id.EditText_Latitude);
-
-                            String string_long = Edit_Longitude.getText().toString();
-                            String string_lat = Edit_Latitude.getText().toString();
-
-                            if (isStringDouble(string_long)) {
-                                longitude = Double.parseDouble(string_long);
-                                Toast.makeText(getApplicationContext(), "Longitude is saved", Toast.LENGTH_SHORT).show();
-
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Longitude is not correct format", Toast.LENGTH_SHORT).show();
-                            }
-
-                            if (isStringDouble(string_lat)) {
-                                latitude = Double.parseDouble(string_lat);
-                                Toast.makeText(getApplicationContext(), "Latitude is saved", Toast.LENGTH_SHORT).show();
-
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Latitude is not correct format", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                }
-            }
-        });
         Button btn_gotoMap = (Button) findViewById(R.id.button_gotomap);
         btn_gotoMap.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
@@ -235,6 +204,53 @@ public class MainActivity extends AppCompatActivity{
             return false;
         }
     }
+
+    void initiateView(){
+        userName = (TextView)findViewById(R.id.main_userName);
+        apiValue = (TextView)findViewById(R.id.main_api_value);
+        co_value = (TextView)findViewById(R.id.main_CO_value);
+        o3_value = (TextView)findViewById(R.id.main_O3_value);
+        no2_value = (TextView)findViewById(R.id.main_NO2_value);
+        so2_value = (TextView)findViewById(R.id.main_SO2_value);
+        pm_value = (TextView)findViewById(R.id.main_PM_value);
+        connection_state = (TextView)findViewById(R.id.main_device_connectionState);
+        data_point = (TextView)findViewById(R.id.main_data_point);
+
+
+    }
+    void setColors(){
+
+
+        co_value.setTextColor(Color.parseColor(info.getTextColor(Integer.parseInt(co_value.getText().toString()))));
+        o3_value.setTextColor(Color.parseColor(info.getTextColor(Integer.parseInt(o3_value.getText().toString()))));
+        no2_value.setTextColor(Color.parseColor(info.getTextColor(Integer.parseInt(no2_value.getText().toString()))));
+        so2_value.setTextColor(Color.parseColor(info.getTextColor(Integer.parseInt(so2_value.getText().toString()))));
+        pm_value.setTextColor(Color.parseColor(info.getTextColor(Integer.parseInt(pm_value.getText().toString()))));
+
+    }
+    void setUserName(String name){
+        userName.setText(name+"!");
+    }
+    void setAQI(int value){
+        apiValue.setText(Integer.toString(value));
+        apiValue.setTextColor(Color.parseColor(info.getTextColor(value)));
+    }
+    void setConnection(String state) {
+        switch (state) {
+            case CONNECT:
+                connection_state.setText(CONNECT);
+                connection_state.setTextColor(Color.parseColor("#7CFC00"));
+                break;
+            case DISCONNECT:
+                connection_state.setText(DISCONNECT);
+                connection_state.setTextColor(Color.parseColor("#FF0000"));
+                break;
+        }
+    }
+    void setDataPoints(int value){
+        data_point.setText(Integer.toString(value)+ " data points");
+    }
+
 
 
 
