@@ -111,11 +111,22 @@ public class Service_BLE_GATT extends Service {
             Log.d("BLE Service", "Data Available from BLE");
         }
 
-//        @Override
-//        public void onCharacteristicWrite(BluetoothGatt gatt,
-//                                          BluetoothGattCharacteristic characteristic, int status) {
-//
-//        }
+        @Override
+        public void onCharacteristicWrite(BluetoothGatt gatt,
+                                          BluetoothGattCharacteristic characteristic, int status)       {
+            super.onCharacteristicWrite(gatt, characteristic, status);
+
+            Log.d("BLE Service", "UUID: " + characteristic.getUuid().toString() + "  Status of Message: " + Integer.toString(status));
+
+        }
+
+        @Override
+        public void onReliableWriteCompleted (BluetoothGatt gatt, int status)
+        {
+            super.onReliableWriteCompleted(gatt, status);
+            Log.d("BLE Service", "Reliable Write Complete: " + Integer.toString(status));
+        }
+
     };
 
     private void broadcastUpdate(final String action) {
@@ -298,13 +309,13 @@ public class Service_BLE_GATT extends Service {
      *
      * @param characteristic The characteristic to read from.
      */
-    public void writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+    public boolean writeCharacteristic(BluetoothGattCharacteristic characteristic) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
-            return;
+            return false;
         }
-
         mBluetoothGatt.writeCharacteristic(characteristic);
+        return mBluetoothGatt.executeReliableWrite();
     }
 
     /**
@@ -331,7 +342,6 @@ public class Service_BLE_GATT extends Service {
         else {
             descriptor.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
         }
-
         mBluetoothGatt.writeDescriptor(descriptor);
     }
 

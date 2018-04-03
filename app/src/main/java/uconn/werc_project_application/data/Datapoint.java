@@ -1,6 +1,8 @@
 package uconn.werc_project_application.data;
 
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.hardware.Sensor;
 
 import java.util.UUID;
 
@@ -38,6 +40,53 @@ public class Datapoint {
     private long sensor_raw_pm;
     private long sensor_raw_so2;
     private long sensor_raw_temp;
+    // Converted AQI Values
+    private long sensor_aqi_co;
+    private long sensor_aqi_no2;
+    private long sensor_aqi_o3;
+    private long sensor_aqi_pm;
+    private long sensor_aqi_so2;
+
+    public long getSensor_aqi_co() {
+        return sensor_aqi_co;
+    }
+
+    public void setSensor_aqi_co(long sensor_aqi_co) {
+        this.sensor_aqi_co = sensor_aqi_co;
+    }
+
+    public long getSensor_aqi_no2() {
+        return sensor_aqi_no2;
+    }
+
+    public void setSensor_aqi_no2(long sensor_aqi_no2) {
+        this.sensor_aqi_no2 = sensor_aqi_no2;
+    }
+
+    public long getSensor_aqi_pm() {
+        return sensor_aqi_pm;
+    }
+
+    public void setSensor_aqi_pm(long sensor_aqi_pm) {
+        this.sensor_aqi_pm = sensor_aqi_pm;
+    }
+
+    public long getSensor_aqi_so2() {
+        return sensor_aqi_so2;
+    }
+
+    public void setSensor_aqi_so2(long sensor_aqi_so2) {
+        this.sensor_aqi_so2 = sensor_aqi_so2;
+    }
+
+    public long getSensor_aqi_o3() {
+        return sensor_aqi_o3;
+    }
+
+    public void setSensor_aqi_o3(long sensor_aqi_o3) {
+        this.sensor_aqi_o3 = sensor_aqi_o3;
+    }
+
 
 
 //    public Datapoint() {
@@ -96,7 +145,34 @@ public class Datapoint {
         }
     }
 
+    public ContentValues toContentValues()
+    {
+        ContentValues cv = new ContentValues();
+        cv.put(SensorContentContract.Sensordata.PACKETID, packetId);
+        cv.put(SensorContentContract.Sensordata.TIME, time);
+        cv.put(SensorContentContract.Sensordata.GPSLAT, gps_lat);
+        cv.put(SensorContentContract.Sensordata.GPSLONG, gps_long);
+        cv.put(SensorContentContract.Sensordata.DEVICEID, deviceId);
+        cv.put(SensorContentContract.Sensordata.SENSORCO, sensor_co);
+        cv.put(SensorContentContract.Sensordata.SENSORO3, sensor_o3);
+        cv.put(SensorContentContract.Sensordata.SENSORNO2, sensor_no2);
+        cv.put(SensorContentContract.Sensordata.SENSORSO2, sensor_so2);
+        cv.put(SensorContentContract.Sensordata.SENSORPM, sensor_pm);
+        cv.put(SensorContentContract.Sensordata.SENSORTEMP, sensor_temp);
+        cv.put(SensorContentContract.Sensordata.SENSORRAWCO, sensor_raw_co);
+        cv.put(SensorContentContract.Sensordata.SENSORRAWO3, sensor_raw_o3);
+        cv.put(SensorContentContract.Sensordata.SENSORRAWNO2, sensor_raw_no2);
+        cv.put(SensorContentContract.Sensordata.SENSORRAWSO2, sensor_raw_so2);
+        cv.put(SensorContentContract.Sensordata.SENSORRAWPM, sensor_raw_pm);
+        cv.put(SensorContentContract.Sensordata.SENSORRAWTEMP, sensor_raw_temp);
+        cv.put(SensorContentContract.Sensordata.SENSORAQICO, sensor_aqi_co);
+        cv.put(SensorContentContract.Sensordata.SENSORAQINO2, sensor_raw_no2);
+        cv.put(SensorContentContract.Sensordata.SENSORAQIO3, sensor_aqi_o3);
+        cv.put(SensorContentContract.Sensordata.SENSORAQISO2, sensor_aqi_so2);
+        cv.put(SensorContentContract.Sensordata.SENSORAQIPM, sensor_aqi_pm);
 
+        return cv;
+    }
 
     public long getSensor_temp() {
         return sensor_temp;

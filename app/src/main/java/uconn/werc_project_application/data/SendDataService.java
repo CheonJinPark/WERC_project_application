@@ -70,13 +70,11 @@ public class SendDataService extends Service {
                 @Override
                 public void run() {
                     // My function happens in here.
-                    DummyDataGenerator.initialize(SensorContentContract.Sensordata.PROJECTION_ALL);
-                    ContentValues values = DummyDataGenerator.getInstance().generate(0.0, 3.0);
+                    DummyDataGenerator ddg = new DummyDataGenerator(SensorContentContract.Sensordata.PROJECTION_ALL);
+                    ContentValues values = ddg.generate(0.0, 3.0);
                     if (BLEDataLinker.getInstance() != null) {
                         Toast.makeText(getApplicationContext(), Integer.toString(BLEDataLinker.getInstance().writeToBLE("test")), Toast.LENGTH_LONG).show();
                     }
-
-
                 }
             });
         }

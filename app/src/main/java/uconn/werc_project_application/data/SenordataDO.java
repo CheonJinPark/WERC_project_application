@@ -1,5 +1,6 @@
 package uconn.werc_project_application.data;
 
+
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexHashKey;
@@ -20,6 +21,11 @@ public class SenordataDO {
     private Double _gpsLat;
     private Double _gpsLong;
     private String _packetId;
+    private Double _sensorAqiCo;
+    private Double _sensorAqiNo2;
+    private Double _sensorAqiO3;
+    private Double _sensorAqiPm;
+    private Double _sensorAqiSo2;
     private Double _sensorCo;
     private Double _sensorNo2;
     private Double _sensorO3;
@@ -82,6 +88,46 @@ public class SenordataDO {
 
     public void setPacketId(final String _packetId) {
         this._packetId = _packetId;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_aqi_co")
+    public Double getSensorAqiCo() {
+        return _sensorAqiCo;
+    }
+
+    public void setSensorAqiCo(final Double _sensorAqiCo) {
+        this._sensorAqiCo = _sensorAqiCo;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_aqi_no2")
+    public Double getSensorAqiNo2() {
+        return _sensorAqiNo2;
+    }
+
+    public void setSensorAqiNo2(final Double _sensorAqiNo2) {
+        this._sensorAqiNo2 = _sensorAqiNo2;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_aqi_o3")
+    public Double getSensorAqiO3() {
+        return _sensorAqiO3;
+    }
+
+    public void setSensorAqiO3(final Double _sensorAqiO3) {
+        this._sensorAqiO3 = _sensorAqiO3;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_aqi_pm")
+    public Double getSensorAqiPm() {
+        return _sensorAqiPm;
+    }
+
+    public void setSensorAqiPm(final Double _sensorAqiPm) {
+        this._sensorAqiPm = _sensorAqiPm;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_aqi_so2")
+    public Double getSensorAqiSo2() {
+        return _sensorAqiSo2;
+    }
+
+    public void setSensorAqiSo2(final Double _sensorAqiSo2) {
+        this._sensorAqiSo2 = _sensorAqiSo2;
     }
     @DynamoDBAttribute(attributeName = "sensor_co")
     public Double getSensorCo() {

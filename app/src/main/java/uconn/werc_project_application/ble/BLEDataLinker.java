@@ -22,10 +22,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import uconn.werc_project_application.R;
 import uconn.werc_project_application.data.SensorContentContract;
 
+import static android.bluetooth.BluetoothGattCharacteristic.PROPERTY_WRITE;
+import static android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT;
 import static android.content.ContentValues.TAG;
 
 /**
@@ -34,8 +37,9 @@ import static android.content.ContentValues.TAG;
 
 public class BLEDataLinker {
 
-    private BluetoothGattCharacteristic mWriteCharacteristic;
-    private BluetoothGattCharacteristic mNotifyCharacteristic;
+    private ArrayList<BluetoothGattCharacteristic> mWriteCharacteristicList = new ArrayList<BluetoothGattCharacteristic>();
+    private ArrayList<BluetoothGattCharacteristic> mNotifyCharacteristicList = new ArrayList<BluetoothGattCharacteristic>();
+    private ArrayList<BluetoothGattCharacteristic> mReadCharacteristicList = new ArrayList<BluetoothGattCharacteristic>();
     private static String mData;
     private static View mView;
     private static TextView mTv_char;
@@ -126,10 +130,10 @@ public class BLEDataLinker {
 
         if (BLEUtilities.hasWriteProperty(properties) != 0)
         {
-            this.mWriteCharacteristic = characteristic;
+            this.mWriteCharacteristicList.add(characteristic);
         } else if (BLEUtilities.hasNotifyProperty(properties) != 0)
         {
-            this.mNotifyCharacteristic = characteristic;
+            this.mNotifyCharacteristicList.add(characteristic);
         }
 
         String value = characteristic.getStringValue(0);
@@ -145,6 +149,9 @@ public class BLEDataLinker {
             services_ArrayList.clear();
             characteristics_HashMap.clear();
             characteristics_HashMapList.clear();
+            mWriteCharacteristicList.clear();
+            mReadCharacteristicList.clear();
+            mNotifyCharacteristicList.clear();
 
             List<BluetoothGattService> servicesList = mBTLE_Service.getSupportedGattServices();
 
@@ -161,18 +168,24 @@ public class BLEDataLinker {
 
                     if (BLEUtilities.hasWriteProperty(properties) != 0)
                     {
-                        mWriteCharacteristic = characteristic;
-                        Log.d("BLEDataLinker", "Found Write characteristic");
-                        Log.d("BLEDataLinker", mWriteCharacteristic.getUuid().toString());
+                        characteristic.setWriteType(WRITE_TYPE_DEFAULT);
+                        mWriteCharacteristicList.add(characteristic);
+                        Log.d("BLEDataLinker", "Found Write characteristic  UUID: " + characteristic.getUuid().toString());
+                        Log.d("BLEDataLinker", "Characteristic Permissions: " + characteristic.getPermissions());
+
                     } else if (BLEUtilities.hasNotifyProperty(properties) != 0)
                     {
-                        mNotifyCharacteristic = characteristic;
-                        Log.d("BLEDataLinker", "Found Notify characteristic   Data: " + characteristic.getStringValue(0));
+                        mNotifyCharacteristicList.add(characteristic);
+                        Log.d("BLEDataLinker", "Found Notify characteristic   UUID: " + characteristic.getUuid().toString());
 
                         // Enable Notify Characteristic
                         if (mBTLE_Service != null) {
                             mBTLE_Service.setCharacteristicNotification(characteristic, true);
                         }
+                    } else if (BLEUtilities.hasReadProperty(properties) != 0)
+                    {
+                        mReadCharacteristicList.add(characteristic);
+                        Log.d("BLEDataLinker", "Found Read characteristic   UUID: " + characteristic.getUuid().toString());
                     }
                     newCharacteristicsList.add(characteristic);
                 }
@@ -198,11 +211,20 @@ public class BLEDataLinker {
 
     public int writeToBLE(String msg)
     {
-        if (mWriteCharacteristic != null && mBTLE_Service != null) {
-                mWriteCharacteristic.setValue(msg);
-                mBTLE_Service.writeCharacteristic(mWriteCharacteristic);
-                Log.d("BLEDataLinker", "Message Submitted to BLE Device.");
-                return 1;
+        if (!mWriteCharacteristicList.isEmpty() && mBTLE_Service != null) {
+
+//            UUID uuid = UUID.fromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
+//            BluetoothGattCharacteristic wchar = new BluetoothGattCharacteristic(uuid, PROPERTY_WRITE, BluetoothGattCharacteristic.PERMISSION_WRITE);
+//            wchar.setValue(msg);
+            for (BluetoothGattCharacteristic wchar : mWriteCharacteristicList) {
+                wchar.setValue(msg);
+                mBTLE_Service.writeCharacteristic(wchar);
+
+                Log.d("BLEDataLinker", "Message Submitted to BLE Device at UUID: " + wchar.getUuid().toString());
+
+            }
+            return 1;
+
         }
         else {
             determineCharacteristics();
@@ -216,6 +238,7 @@ public class BLEDataLinker {
         context.unregisterReceiver(mGattUpdateReceiver);
         context.unbindService(mBTLE_ServiceConnection);
         mBTLE_Service_Intent = null;
+        mBTLE_Service.close();
     }
 
     public void setService(Service_BLE_GATT service)

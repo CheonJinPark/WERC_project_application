@@ -24,9 +24,9 @@ public class AuthenticatorActivity extends AppCompatActivity {
         identityManager.login(this, new DefaultSignInResultHandler() {
             @Override
             public void onSuccess(Activity activity, IdentityProvider identityProvider) {
-                Toast.makeText(AuthenticatorActivity.this,
-                        String.format("Logged in as %s", identityManager.getCachedUserID()),
-                        Toast.LENGTH_LONG).show();
+//                Toast.makeText(AuthenticatorActivity.this,
+//                        String.format("Logged in as %s", identityManager.getCachedUserID()),
+//                        Toast.LENGTH_LONG).show();
                 // Go to the main activity
                 final Intent intent = new Intent(activity, MainActivity.class)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

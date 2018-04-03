@@ -1,6 +1,16 @@
 package uconn.werc_project_application.data;
 
+import android.Manifest;
 import android.content.ContentValues;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.Date;
 import java.util.Random;
@@ -58,7 +68,42 @@ public class DataInterpreter {
 
         return cv;
     }
-
+//    public void initial_GPSs() {
+//
+//        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient();
+//
+//        Log.d("JIN","LOCATION SERVICE IS OK" );
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            // Check Permissions Now
+//            Log.d("JIN","CHECKING PERMSSION" );
+//
+//
+//            // Check Permissions Now
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                    REQUEST_LOCATION);
+//            Log.d("JIN","Request Permission" );
+//        }
+//        else {
+//            // permission has been granted, continue as usual
+//            Log.d("JIN","Permission os granted" );
+//
+//        }
+//
+//        mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+//            @Override
+//            public void onSuccess(Location location) {
+//                // Got last known location. In some rare situations this can be null.
+//                if (location != null) {
+//                    GPS_Lat_textview.setText(Double.toString(location.getLatitude()));
+//                    GPS_Long_textview.setText(Double.toString(location.getLongitude()));
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "No location", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+//    }
     public String[] parseValues(String input)
     {
         return input.split(delimiter);

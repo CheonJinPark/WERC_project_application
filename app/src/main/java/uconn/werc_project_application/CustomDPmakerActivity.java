@@ -1,9 +1,13 @@
 package uconn.werc_project_application;
 
 import android.Manifest;
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,8 +27,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.nio.channels.SelectionKey;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 import uconn.werc_project_application.data.Datapoint;
+import uconn.werc_project_application.data.SensorContentContract;
 
 public class CustomDPmakerActivity extends AppCompatActivity {
 
@@ -34,6 +40,7 @@ public class CustomDPmakerActivity extends AppCompatActivity {
     private Button save_btn;
     private TextView GPS_Lat_textview, GPS_Long_textview;
     int REQUEST_LOCATION = 2;
+    private static final int INSERT_TOKEN = 1003;
 
 
     @Override
@@ -231,8 +238,9 @@ public class CustomDPmakerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Datapoint datapoint = new Datapoint();
-                datapoint.setPacketId(PacketId_Edit.getText().toString());
-                datapoint.setUserId(UserId_Edit.getText().toString());
+
+
+                datapoint.setPacketId(UUID.randomUUID().toString());
                 datapoint.setDeviceId(Device_Edit.getText().toString());
                 datapoint.setTime(now);
 
@@ -240,11 +248,11 @@ public class CustomDPmakerActivity extends AppCompatActivity {
                 //if u fix long to double then u can use this method
                //datapoint.setGps_lat(Double.parseDouble(GPS_Lat_textview.getText().toString()));
                //datapoint.setGps_long(Double.parseDouble(GPS_Long_textview.getText().toString()));
-                datapoint.setSensor_co(Long.parseLong(CO_textview.getText().toString()));
-                datapoint.setSensor_no2(Long.parseLong(NO2_textview.getText().toString()));
-                datapoint.setSensor_o3(Long.parseLong(O3_textview.getText().toString()));
-                datapoint.setSensor_pm(Long.parseLong(PM_textview.getText().toString()));
-                datapoint.setSensor_so2(Long.parseLong(SO2_textview.getText().toString()));
+                datapoint.setSensor_aqi_co(Long.parseLong(CO_textview.getText().toString()));
+                datapoint.setSensor_aqi_no2(Long.parseLong(NO2_textview.getText().toString()));
+                datapoint.setSensor_aqi_o3(Long.parseLong(O3_textview.getText().toString()));
+                datapoint.setSensor_aqi_pm(Long.parseLong(PM_textview.getText().toString()));
+                datapoint.setSensor_aqi_so2(Long.parseLong(SO2_textview.getText().toString()));
 
                 //check how does it work
                 Log.d("JIN","Start Checking" );
@@ -262,6 +270,18 @@ public class CustomDPmakerActivity extends AppCompatActivity {
 
 
                 //part to save data to server ****
+                ContentResolver contentResolver = getApplicationContext().getContentResolver();
+                ContentValues cvals = datapoint.toContentValues();
+                AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
+                    @Override
+                    protected void onInsertComplete(int token, Object cookie, Uri uri) {
+                        super.onInsertComplete(token, cookie, uri);
+                        Log.d("CustomDPMakerActivity", "Custom Datapoint Uploaded");
+                        Toast.makeText(getApplicationContext(),"Custom Datapoint Uploaded",Toast.LENGTH_LONG).show();
+
+                    }
+                };
+                queryHandler.startInsert(INSERT_TOKEN, null, SensorContentContract.Sensordata.CONTENT_URI, cvals);
             }
         });
     }

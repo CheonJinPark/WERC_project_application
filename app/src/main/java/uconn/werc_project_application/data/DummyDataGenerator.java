@@ -15,18 +15,9 @@ import java.util.UUID;
  */
 
 public class DummyDataGenerator {
-    private static DummyDataGenerator instance = null;
     private static String[] table_fields;
-    public static DummyDataGenerator getInstance() {
-        return instance;
-    }
 
-    public static void initialize(String[] fields) {
-        if (instance == null) {
-            instance = new DummyDataGenerator(fields);
-        }
-    }
-    private DummyDataGenerator(String[] fields) {
+    public DummyDataGenerator(String[] fields) {
         this.table_fields = fields;
 
     }

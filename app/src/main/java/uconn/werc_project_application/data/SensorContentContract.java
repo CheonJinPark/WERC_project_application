@@ -75,6 +75,17 @@ public class SensorContentContract {
 
         public static final String SENSORRAWTEMP = "sensor_raw_temp";
 
+        public static final String SENSORAQICO = "sensor_aqi_co";
+
+        public static final String SENSORAQINO2 = "sensor_aqi_no2";
+
+        public static final String SENSORAQIO3 = "sensor_aqi_o3";
+
+        public static final String SENSORAQISO2 = "sensor_aqi_so2";
+
+        public static final String SENSORAQIPM = "sensor_aqi_pm";
+
+
 
 
         public static final String DIR_BASEPATH = "senordata";
@@ -122,7 +133,12 @@ public class SensorContentContract {
                 SENSORRAWO3,
                 SENSORRAWPM,
                 SENSORRAWSO2,
-                SENSORRAWTEMP
+                SENSORRAWTEMP,
+                SENSORAQICO,
+                SENSORAQINO2,
+                SENSORAQIO3,
+                SENSORAQISO2,
+                SENSORAQIPM
         };
 
         /**

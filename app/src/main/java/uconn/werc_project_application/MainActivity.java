@@ -189,8 +189,8 @@ public class MainActivity extends AppCompatActivity{
         Button btn_send_data = (Button) findViewById(R.id.button_senddata);
         btn_send_data.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View V) {
-                DummyDataGenerator.initialize(SensorContentContract.Sensordata.PROJECTION_ALL);
-                ContentValues values = DummyDataGenerator.getInstance().generate(0.0, 3.0);
+                DummyDataGenerator ddg = new DummyDataGenerator(SensorContentContract.Sensordata.PROJECTION_ALL);
+                ContentValues values = ddg.generate(0.0, 3.0);
                 AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
                     @Override
                     protected void onInsertComplete(int token, Object cookie, Uri uri) {
@@ -235,7 +235,12 @@ public class MainActivity extends AppCompatActivity{
             return false;
         }
     }
-
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        BLEDataLinker.getInstance().close();
+    }
 
 
 }
