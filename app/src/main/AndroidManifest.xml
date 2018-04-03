@@ -26,7 +26,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -48,7 +48,7 @@
         <activity
             android:name=".BLEServicesActivity"
             android:label="@string/ble_services" />
-        <activity android:name=".CustomDPmakerActivity"/>
+        <activity android:name=".CustomDPmakerActivity" />
         <activity
             android:name=".AuthenticatorActivity"
             android:label="Sign In">
@@ -63,17 +63,19 @@
             android:name=".data.SensorContentProvider"
             android:authorities="uconn.werc_project_application.provider"
             android:enabled="true"
-            android:label="SensorProvider"></provider>
+            android:label="SensorProvider" />
 
         <service
             android:name=".ble.Service_BLE_GATT"
             android:enabled="true"
-            android:exported="true" >
-
-            </service>
+            android:exported="true"></service>
         <service
             android:name=".data.SendDataService"
-            android:enabled="true"/>
+            android:enabled="true" />
+
+        <activity
+            android:name=".GetLocationMapAcitivy"
+            android:label="@string/title_activity_get_location_map_acitivy"></activity>
     </application>
 
 </manifest>

@@ -3,9 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/WERC_project_application.iml" filepath="$PROJECT_DIR$/WERC_project_application.iml" />
-      <module fileurl="file://C:\Users\wdb13001\Github\sensorem\WERC_project_application.iml" filepath="C:\Users\wdb13001\Github\sensorem\WERC_project_application.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../wdb13001/Github/sensorem/WERC_project_application.iml" filepath="$PROJECT_DIR$/../../../wdb13001/Github/sensorem/WERC_project_application.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://C:\Users\Bill\Desktop\Work\WERC\WERC_project_application\sensorem.iml" filepath="C:\Users\Bill\Desktop\Work\WERC\WERC_project_application\sensorem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sensorem.iml" filepath="$PROJECT_DIR$/sensorem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../Bill/Desktop/Work/WERC/WERC_project_application/sensorem.iml" filepath="$PROJECT_DIR$/../../../Bill/Desktop/Work/WERC/WERC_project_application/sensorem.iml" />
     </modules>
   </component>
 </project>

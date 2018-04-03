@@ -156,6 +156,31 @@ public class Information {
 
         return color;
     }
+    public String getTextColor(int value) {
+        final String SAFE_COLOUR = "#7CFC00";
+        final String MODERATE_COLOUR = "#FFFF00";
+        final String USG_COLOUR = "#FF8C00";
+        final String UNHEALTHY_COLOUR = "#000080";
+        final String VERY_UNHEALTHY_COLOUR = "#4B0082";
+        final String HAZARDOUS_COLOUR = "#FF0000";
+
+        if (value >= 0 && value <= 50) {
+            return SAFE_COLOUR;
+        }
+        if (value >= 51 && value <= 100) {
+            return MODERATE_COLOUR;
+        }
+        if (value >= 101 && value <= 150) {
+            return USG_COLOUR;
+        }
+        if (value >= 151 && value <= 200) {
+            return UNHEALTHY_COLOUR;
+        }
+        if (value >= 201 && value <= 300) {
+            return VERY_UNHEALTHY_COLOUR;
+        }
+        return HAZARDOUS_COLOUR;
+    }
 
 }
 
