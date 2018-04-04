@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity{
         //Here is basic set up functions for MainActivity View
         initiateView();
         setColors();
-        setUserName("Bill");
+        setUserName("");
         setAQI(48);
         setConnection(DISCONNECT);
         setDataPoints(224);
@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity{
 
     }
     void setUserName(String name){
-        userName.setText(name+"!");
+        userName.setText(name);
     }
     void setAQI(int value){
         apiValue.setText(Integer.toString(value));
