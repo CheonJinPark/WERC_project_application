@@ -1,6 +1,5 @@
 package uconn.werc_project_application.data;
 
-
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexHashKey;
@@ -25,15 +24,18 @@ public class SenordataDO {
     private Double _sensorAqiNo2;
     private Double _sensorAqiO3;
     private Double _sensorAqiPm;
+    private String _sensorAqiPml;
     private Double _sensorAqiSo2;
     private Double _sensorCo;
     private Double _sensorNo2;
     private Double _sensorO3;
     private Double _sensorPm;
+    private Double _sensorPml;
     private Double _sensorRawCo;
     private Double _sensorRawNo2;
     private Double _sensorRawO3;
     private Double _sensorRawPm;
+    private Double _sensorRawPml;
     private Double _sensorRawSo2;
     private Double _sensorRawTemp;
     private Double _sensorSo2;
@@ -121,6 +123,14 @@ public class SenordataDO {
     public void setSensorAqiPm(final Double _sensorAqiPm) {
         this._sensorAqiPm = _sensorAqiPm;
     }
+    @DynamoDBAttribute(attributeName = "sensor_aqi_pml")
+    public String getSensorAqiPml() {
+        return _sensorAqiPml;
+    }
+
+    public void setSensorAqiPml(final String _sensorAqiPml) {
+        this._sensorAqiPml = _sensorAqiPml;
+    }
     @DynamoDBAttribute(attributeName = "sensor_aqi_so2")
     public Double getSensorAqiSo2() {
         return _sensorAqiSo2;
@@ -161,6 +171,14 @@ public class SenordataDO {
     public void setSensorPm(final Double _sensorPm) {
         this._sensorPm = _sensorPm;
     }
+    @DynamoDBAttribute(attributeName = "sensor_pml")
+    public Double getSensorPml() {
+        return _sensorPml;
+    }
+
+    public void setSensorPml(final Double _sensorPml) {
+        this._sensorPml = _sensorPml;
+    }
     @DynamoDBAttribute(attributeName = "sensor_raw_co")
     public Double getSensorRawCo() {
         return _sensorRawCo;
@@ -192,6 +210,14 @@ public class SenordataDO {
 
     public void setSensorRawPm(final Double _sensorRawPm) {
         this._sensorRawPm = _sensorRawPm;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_raw_pml")
+    public Double getSensorRawPml() {
+        return _sensorRawPml;
+    }
+
+    public void setSensorRawPml(final Double _sensorRawPml) {
+        this._sensorRawPml = _sensorRawPml;
     }
     @DynamoDBAttribute(attributeName = "sensor_raw_so2")
     public Double getSensorRawSo2() {

@@ -42,10 +42,12 @@ public class BroadcastReceiver_BLE_GATT extends BroadcastReceiver {
         if (Service_BLE_GATT.ACTION_GATT_CONNECTED.equals(action)) {
             mConnected = true;
             BLEUtilities.toast(linker.getContext(), "Connected to Device");
+            BLEDataLinker.getInstance().updateConnectivityStatus(true);
         }
         else if (Service_BLE_GATT.ACTION_GATT_DISCONNECTED.equals(action)) {
             mConnected = false;
             BLEUtilities.toast(linker.getContext(), "Disconnected From Device");
+            BLEDataLinker.getInstance().updateConnectivityStatus(false);
 //            linker.finish();
         }
         else if (Service_BLE_GATT.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
@@ -56,14 +58,11 @@ public class BroadcastReceiver_BLE_GATT extends BroadcastReceiver {
 //            activity.updateServices();
         }
         else if (Service_BLE_GATT.ACTION_DATA_AVAILABLE.equals(action)) {
-            DataInterpreter intrp = new DataInterpreter();
-
-
             String uuid = intent.getStringExtra(EXTRA_UUID);
             String data = intent.getStringExtra(EXTRA_DATA);
             Log.d("BroadcastReceiverBLE", "Data Available: Data: " + data + "  at UUID: " + uuid);
 
-            BLEDataLinker.getInstance().publishToDB(intrp.interpretBLEData(data));
+            BLEDataLinker.getInstance().publishToDB(DataInterpreter.getInstance().interpretBLEData(data));
 //            activity.updateCharacteristic();
         }
 

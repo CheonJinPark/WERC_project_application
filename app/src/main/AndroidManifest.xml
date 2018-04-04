@@ -67,15 +67,14 @@
 
         <service
             android:name=".ble.Service_BLE_GATT"
-            android:enabled="true"
-            android:exported="true"></service>
+            android:enabled="true"/>
         <service
-            android:name=".data.SendDataService"
+            android:name=".gps.LocationListenerService"
             android:enabled="true" />
 
         <activity
             android:name=".GetLocationMapAcitivy"
-            android:label="@string/title_activity_get_location_map_acitivy"></activity>
+            android:label="@string/title_activity_get_location_map_acitivy" />
     </application>
 
 </manifest>

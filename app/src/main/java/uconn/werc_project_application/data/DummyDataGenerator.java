@@ -10,7 +10,7 @@ import java.util.UUID;
 /**
  * Created by Bill on 2/25/2018.
  *
- * Singleton for spoof data generation. This is a debugging tool that will not see implementation
+ * For spoof data generation. This is a debugging tool that will not see implementation
  * in the final build.
  */
 

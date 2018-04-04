@@ -1,5 +1,6 @@
 package uconn.werc_project_application.ble;
 
+import android.app.Activity;
 import android.app.Service;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import uconn.werc_project_application.MainActivity;
 import uconn.werc_project_application.R;
 import uconn.werc_project_application.data.SensorContentContract;
 
@@ -57,7 +59,7 @@ public class BLEDataLinker {
     private static Context context;
     private static final int INSERT_TOKEN = 1003;
     private ContentResolver contentResolver;
-
+    private static MainActivity activity;
     private String name;
     private String address;
 
@@ -90,18 +92,18 @@ public class BLEDataLinker {
         }
     };
 
-    public static void initialize(Context context) {
+    public static void initialize(MainActivity activity) {
         if (instance == null)
         {
-            instance = new BLEDataLinker(context);
+            instance = new BLEDataLinker(activity);
         }
 
     }
 
-    private BLEDataLinker(Context context) {
+    private BLEDataLinker(MainActivity activity) {
         this.address = address;
-        this.context = context;
-
+        this.activity = activity;
+        this.context = activity.getApplicationContext();
         services_ArrayList = new ArrayList<BluetoothGattService>();
         characteristics_HashMap = new HashMap<String, BluetoothGattCharacteristic>();
         characteristics_HashMapList = new HashMap<String, ArrayList<BluetoothGattCharacteristic>>();
@@ -231,6 +233,14 @@ public class BLEDataLinker {
             return 0;
         }
 
+    }
+
+    public void updateConnectivityStatus(boolean connection)
+    {
+        if (connection)
+            activity.setConnection(MainActivity.BLE_CONNECT);
+        else
+            activity.setConnection(MainActivity.BLE_DISCONNECT);
     }
 
     public void close()

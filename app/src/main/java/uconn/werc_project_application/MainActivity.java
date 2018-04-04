@@ -43,9 +43,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import org.w3c.dom.Text;
 
 import uconn.werc_project_application.ble.BLEDataLinker;
+import uconn.werc_project_application.data.DataInterpreter;
 import uconn.werc_project_application.data.DummyDataGenerator;
-import uconn.werc_project_application.data.SendDataService;
+//import uconn.werc_project_application.data.SendDataService;
 import uconn.werc_project_application.data.SensorContentContract;
+import uconn.werc_project_application.gps.LocationListenerService;
 
 
 public class MainActivity extends AppCompatActivity{
@@ -53,13 +55,11 @@ public class MainActivity extends AppCompatActivity{
     Double longitude, latitude;
     Intent intent_test, intent_ble;
     String url;
-    LocationManager locationManager;
-    int REQUEST_LOCATION = 2;
     GPS g1, g2, g3, g4, g5;
     private static final int INSERT_TOKEN = 1003;
     TextView userName,apiValue, co_value,o3_value,no2_value,so2_value,pm_value,connection_state,data_point;
     Information info = new Information();
-    final String CONNECT = "connected", DISCONNECT = "disconnected";
+    public final static String BLE_CONNECT = "connected", BLE_DISCONNECT = "disconnected";
 
     private ContentResolver contentResolver;
 
@@ -74,6 +74,24 @@ public class MainActivity extends AppCompatActivity{
         ApplicationCrashHandler.installHandler();
         contentResolver = getApplicationContext().getContentResolver();
 
+        // Check permissions
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Check Permissions Now
+            Log.d("JIN","CHECKING PERMSSION" );
+
+
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    2);
+            Log.d("JIN","Request Permission" );
+        }
+        else {
+            // permission has been granted, continue as usual
+            startService(new Intent(this, LocationListenerService.class));
+
+        }
 
         /* Bill's Section - Temporary */
         /** AWS Initializations **/
@@ -81,9 +99,10 @@ public class MainActivity extends AppCompatActivity{
 
         /** BLE Initializations **/
         BLEDataLinker.initialize(this);
-        startService(new Intent(this, SendDataService.class));
+        DataInterpreter.initialize(this);
 
         /* End of Bill's Section - Temporary */
+
 
 
         //Here is basic set up functions for MainActivity View
@@ -91,7 +110,7 @@ public class MainActivity extends AppCompatActivity{
         setColors();
         setUserName("");
         setAQI(48);
-        setConnection(DISCONNECT);
+        setConnection(BLE_DISCONNECT);
         setDataPoints(224);
 
 
@@ -112,27 +131,27 @@ public class MainActivity extends AppCompatActivity{
         latitude = 222.0; // default latitude
 
 
-        //make the Loaction manager for gps
-        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        Toast.makeText(getApplicationContext(),"after get provider",Toast.LENGTH_LONG);
-        Log.d("JIN","LOCATION SERVICE IS OK" );
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Check Permissions Now
-            Log.d("JIN","CHECKING PERMSSION" );
-
-
-            // Check Permissions Now
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION);
-            Log.d("JIN","Request Permission" );
-        }
-        else {
-            // permission has been granted, continue as usual
-            Log.d("JIN","Permission os granted" );
-
-        }
+//        //make the Loaction manager for gps
+//        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+//        Toast.makeText(getApplicationContext(),"after get provider",Toast.LENGTH_LONG);
+//        Log.d("JIN","LOCATION SERVICE IS OK" );
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            // Check Permissions Now
+//            Log.d("JIN","CHECKING PERMSSION" );
+//
+//
+//            // Check Permissions Now
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                    REQUEST_LOCATION);
+//            Log.d("JIN","Request Permission" );
+//        }
+//        else {
+//            // permission has been granted, continue as usual
+//            Log.d("JIN","Permission os granted" );
+//
+//        }
         Button btn_gotoMap = (Button) findViewById(R.id.button_gotomap);
         btn_gotoMap.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
@@ -205,7 +224,7 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    void initiateView(){
+    public void initiateView(){
         userName = (TextView)findViewById(R.id.main_userName);
         apiValue = (TextView)findViewById(R.id.main_api_value);
         co_value = (TextView)findViewById(R.id.main_CO_value);
@@ -218,7 +237,7 @@ public class MainActivity extends AppCompatActivity{
 
 
     }
-    void setColors(){
+    public void setColors(){
 
 
         co_value.setTextColor(Color.parseColor(info.getTextColor(Integer.parseInt(co_value.getText().toString()))));
@@ -228,26 +247,26 @@ public class MainActivity extends AppCompatActivity{
         pm_value.setTextColor(Color.parseColor(info.getTextColor(Integer.parseInt(pm_value.getText().toString()))));
 
     }
-    void setUserName(String name){
+    public void setUserName(String name){
         userName.setText(name);
     }
-    void setAQI(int value){
+    public void setAQI(int value){
         apiValue.setText(Integer.toString(value));
         apiValue.setTextColor(Color.parseColor(info.getTextColor(value)));
     }
-    void setConnection(String state) {
+    public void setConnection(String state) {
         switch (state) {
-            case CONNECT:
-                connection_state.setText(CONNECT);
+            case BLE_CONNECT:
+                connection_state.setText(BLE_CONNECT);
                 connection_state.setTextColor(Color.parseColor("#7CFC00"));
                 break;
-            case DISCONNECT:
-                connection_state.setText(DISCONNECT);
+            case BLE_DISCONNECT:
+                connection_state.setText(BLE_DISCONNECT);
                 connection_state.setTextColor(Color.parseColor("#FF0000"));
                 break;
         }
     }
-    void setDataPoints(int value){
+    public void setDataPoints(int value){
         data_point.setText(Integer.toString(value)+ " data points");
     }
 

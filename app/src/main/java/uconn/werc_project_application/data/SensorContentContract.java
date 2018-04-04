@@ -59,6 +59,8 @@ public class SensorContentContract {
 
         public static final String SENSORPM = "sensor_pm";
 
+        public static final String SENSORPML = "sensor_pml";
+
         public static final String SENSORSO2 = "sensor_so2";
 
         public static final String SENSORTEMP = "sensor_temp";
@@ -70,6 +72,8 @@ public class SensorContentContract {
         public static final String SENSORRAWO3 = "sensor_raw_o3";
 
         public static final String SENSORRAWPM = "sensor_raw_pm";
+
+        public static final String SENSORRAWPML = "sensor_raw_pml";
 
         public static final String SENSORRAWSO2 = "sensor_raw_so2";
 
@@ -84,6 +88,8 @@ public class SensorContentContract {
         public static final String SENSORAQISO2 = "sensor_aqi_so2";
 
         public static final String SENSORAQIPM = "sensor_aqi_pm";
+
+        public static final String SENSORAQIPML = "sensor_aqi_pml";
 
 
 
@@ -126,19 +132,22 @@ public class SensorContentContract {
                 SENSORNO2,
                 SENSORO3,
                 SENSORPM,
+                SENSORPML,
                 SENSORSO2,
                 SENSORTEMP,
                 SENSORRAWCO,
                 SENSORRAWNO2,
                 SENSORRAWO3,
                 SENSORRAWPM,
+                SENSORRAWPML,
                 SENSORRAWSO2,
                 SENSORRAWTEMP,
                 SENSORAQICO,
                 SENSORAQINO2,
                 SENSORAQIO3,
                 SENSORAQISO2,
-                SENSORAQIPM
+                SENSORAQIPM,
+                SENSORAQIPML
         };
 
         /**

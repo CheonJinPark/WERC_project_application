@@ -31,6 +31,7 @@ public class Datapoint {
     private long sensor_no2;
     private long sensor_o3;
     private long sensor_pm;
+    private long sensor_pml;
     private long sensor_so2;
     private long sensor_temp;
     // Raw Sensor Data
@@ -38,6 +39,7 @@ public class Datapoint {
     private long sensor_raw_no2;
     private long sensor_raw_o3;
     private long sensor_raw_pm;
+    private long sensor_raw_pml;
     private long sensor_raw_so2;
     private long sensor_raw_temp;
     // Converted AQI Values
@@ -45,7 +47,32 @@ public class Datapoint {
     private long sensor_aqi_no2;
     private long sensor_aqi_o3;
     private long sensor_aqi_pm;
+    private long sensor_aqi_pml;
     private long sensor_aqi_so2;
+
+    public long getSensor_pml() {
+        return sensor_pml;
+    }
+
+    public void setSensor_pml(long sensor_pml) {
+        this.sensor_pml = sensor_pml;
+    }
+
+    public long getSensor_raw_pml() {
+        return sensor_raw_pml;
+    }
+
+    public void setSensor_raw_pml(long sensor_raw_pml) {
+        this.sensor_raw_pml = sensor_raw_pml;
+    }
+
+    public long getSensor_aqi_pml() {
+        return sensor_aqi_pml;
+    }
+
+    public void setSensor_aqi_pml(long sensor_aqi_pml) {
+        this.sensor_aqi_pml = sensor_aqi_pml;
+    }
 
     public long getSensor_aqi_co() {
         return sensor_aqi_co;
