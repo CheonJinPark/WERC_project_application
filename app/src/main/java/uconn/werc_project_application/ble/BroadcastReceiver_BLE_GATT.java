@@ -2,6 +2,7 @@ package uconn.werc_project_application.ble;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -61,8 +62,9 @@ public class BroadcastReceiver_BLE_GATT extends BroadcastReceiver {
             String uuid = intent.getStringExtra(EXTRA_UUID);
             String data = intent.getStringExtra(EXTRA_DATA);
             Log.d("BroadcastReceiverBLE", "Data Available: Data: " + data + "  at UUID: " + uuid);
-
-            BLEDataLinker.getInstance().publishToDB(DataInterpreter.getInstance().interpretBLEData(data));
+            ContentValues cvals = DataInterpreter.getInstance().interpretBLEData(data);
+            BLEDataLinker.getInstance().updateDashboard(cvals);
+            BLEDataLinker.getInstance().publishToDB(cvals);
 //            activity.updateCharacteristic();
         }
 

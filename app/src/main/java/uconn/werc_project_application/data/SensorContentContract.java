@@ -50,6 +50,9 @@ public class SensorContentContract {
 
         public static final String GPSLONG = "gps_long";
 
+        public static final String AQIVAL = "aqi_val";
+
+        public static final String AQISRC = "aqi_src";
 
         public static final String SENSORCO = "sensor_co";
 
@@ -128,6 +131,8 @@ public class SensorContentContract {
                 PACKETID,
                 GPSLAT,
                 GPSLONG,
+                AQIVAL,
+                AQISRC,
                 SENSORCO,
                 SENSORNO2,
                 SENSORO3,

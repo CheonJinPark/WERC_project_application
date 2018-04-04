@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -221,28 +222,28 @@ public class DataInterpreter {
          */
 
         // Convert CO
-        Double co_ppm = (1.0/(sensitivitycode_hashmap.get(SensorContentContract.Sensordata.SENSORCO) *
-                              tiagain_hashmap.get(SensorContentContract.Sensordata.SENSORCO) * Math.pow(10.0, -6.0)))
-                        * (Double.parseDouble(cv.get(SensorContentContract.Sensordata.SENSORCO).toString()) - (vRef + offset_hashmap.get(SensorContentContract.Sensordata.SENSORCO)));
+        Double co_ppm = (1.0 / (sensitivitycode_hashmap.get(SensorContentContract.Sensordata.SENSORCO) *
+                tiagain_hashmap.get(SensorContentContract.Sensordata.SENSORCO) * Math.pow(10.0, -6.0)))
+                * (Double.parseDouble(cv.get(SensorContentContract.Sensordata.SENSORCO).toString()) - (vRef + offset_hashmap.get(SensorContentContract.Sensordata.SENSORCO)));
         cv.put(SensorContentContract.Sensordata.SENSORCO, co_ppm);
         Log.d("Data Calculation", "CO PPM: " + Double.toString(co_ppm));
 
         // Convert NO2
-        Double no2_ppm = (1.0/(sensitivitycode_hashmap.get(SensorContentContract.Sensordata.SENSORNO2) *
+        Double no2_ppm = (1.0 / (sensitivitycode_hashmap.get(SensorContentContract.Sensordata.SENSORNO2) *
                 tiagain_hashmap.get(SensorContentContract.Sensordata.SENSORNO2) * Math.pow(10.0, -6.0)))
                 * (Double.parseDouble(cv.get(SensorContentContract.Sensordata.SENSORNO2).toString()) - (vRef + offset_hashmap.get(SensorContentContract.Sensordata.SENSORNO2)));
         cv.put(SensorContentContract.Sensordata.SENSORNO2, no2_ppm);
         Log.d("Data Calculation", "NO2 PPM: " + Double.toString(no2_ppm));
 
         // Convert O3
-        Double o3_ppm = (1.0/(sensitivitycode_hashmap.get(SensorContentContract.Sensordata.SENSORO3) *
+        Double o3_ppm = (1.0 / (sensitivitycode_hashmap.get(SensorContentContract.Sensordata.SENSORO3) *
                 tiagain_hashmap.get(SensorContentContract.Sensordata.SENSORO3) * Math.pow(10.0, -6.0)))
                 * (Double.parseDouble(cv.get(SensorContentContract.Sensordata.SENSORO3).toString()) - (vRef + offset_hashmap.get(SensorContentContract.Sensordata.SENSORO3)));
         cv.put(SensorContentContract.Sensordata.SENSORO3, o3_ppm);
         Log.d("Data Calculation", "O3 PPM: " + Double.toString(o3_ppm));
 
         // Convert SO2
-        Double so2_ppm = (1.0/(sensitivitycode_hashmap.get(SensorContentContract.Sensordata.SENSORSO2) *
+        Double so2_ppm = (1.0 / (sensitivitycode_hashmap.get(SensorContentContract.Sensordata.SENSORSO2) *
                 tiagain_hashmap.get(SensorContentContract.Sensordata.SENSORSO2) * Math.pow(10.0, -6.0)))
                 * (Double.parseDouble(cv.get(SensorContentContract.Sensordata.SENSORSO2).toString()) - (vRef + offset_hashmap.get(SensorContentContract.Sensordata.SENSORSO2)));
         cv.put(SensorContentContract.Sensordata.SENSORSO2, so2_ppm);
@@ -388,7 +389,29 @@ public class DataInterpreter {
         cv.put(SensorContentContract.Sensordata.SENSORAQIPML, pml_aqi);
         Log.d("Data Calculation", "PML AQI: " + Double.toString(pml_aqi));
 
-
+        // Determine Largest AQI Value and Source
+        if (co_aqi >= no2_aqi && co_aqi >= o3_aqi && co_aqi >= so2_aqi && co_aqi >= pm_aqi && co_aqi >= pml_aqi) {
+            cv.put(SensorContentContract.Sensordata.AQISRC, "Carbon Monoxide");
+            cv.put(SensorContentContract.Sensordata.AQIVAL, co_aqi);
+        } else if (no2_aqi >= co_aqi && no2_aqi >= o3_aqi && no2_aqi >= so2_aqi && no2_aqi >= pm_aqi && no2_aqi >= pml_aqi) {
+            cv.put(SensorContentContract.Sensordata.AQISRC, "Nitrogen Dioxide");
+            cv.put(SensorContentContract.Sensordata.AQIVAL, no2_aqi);
+        } else if (o3_aqi >= co_aqi && o3_aqi >= no2_aqi && o3_aqi >= so2_aqi && o3_aqi >= pm_aqi && o3_aqi >= pml_aqi) {
+            cv.put(SensorContentContract.Sensordata.AQISRC, "Ozone");
+            cv.put(SensorContentContract.Sensordata.AQIVAL, o3_aqi);
+        } else if (so2_aqi >= co_aqi && so2_aqi >= o3_aqi && so2_aqi >= no2_aqi && so2_aqi >= pm_aqi && so2_aqi >= pml_aqi) {
+            cv.put(SensorContentContract.Sensordata.AQISRC, "Sulfur Dioxide");
+            cv.put(SensorContentContract.Sensordata.AQIVAL, so2_aqi);
+        } else if (pm_aqi >= co_aqi && pm_aqi >= o3_aqi && pm_aqi >= no2_aqi && pm_aqi >= so2_aqi && pm_aqi >= pml_aqi) {
+            cv.put(SensorContentContract.Sensordata.AQISRC, "Small Particulate Matter");
+            cv.put(SensorContentContract.Sensordata.AQIVAL, pm_aqi);
+        } else if (pml_aqi >= co_aqi && pml_aqi >= o3_aqi && pml_aqi >= so2_aqi && pml_aqi >= pm_aqi && pml_aqi >= no2_aqi ) {
+            cv.put(SensorContentContract.Sensordata.AQISRC, "Large Particulate Matter");
+            cv.put(SensorContentContract.Sensordata.AQIVAL, pml_aqi);
+        } else {
+            cv.put(SensorContentContract.Sensordata.AQISRC, "Unknown. How did you find this");
+            cv.put(SensorContentContract.Sensordata.AQIVAL, co_aqi);
+        }
 
         return cv;
     }

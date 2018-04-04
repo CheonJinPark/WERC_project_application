@@ -211,6 +211,21 @@ public class BLEDataLinker {
         queryHandler.startInsert(INSERT_TOKEN, null, SensorContentContract.Sensordata.CONTENT_URI, cvals);
     }
 
+    public void updateDashboard(ContentValues cvals)
+    {
+        TextView tv_co = (TextView) activity.findViewById(R.id.main_CO_value);
+        TextView tv_no2 = (TextView) activity.findViewById(R.id.main_NO2_value);
+        TextView tv_o3 = (TextView) activity.findViewById(R.id.main_O3_value);
+        TextView tv_so2 = (TextView) activity.findViewById(R.id.main_SO2_value);
+        TextView tv_pm = (TextView) activity.findViewById(R.id.main_PM_value);
+
+        tv_co.setText(cvals.get(SensorContentContract.Sensordata.SENSORAQICO).toString());
+        tv_no2.setText(cvals.get(SensorContentContract.Sensordata.SENSORAQINO2).toString());
+        tv_o3.setText(cvals.get(SensorContentContract.Sensordata.SENSORAQIO3).toString());
+        tv_so2.setText(cvals.get(SensorContentContract.Sensordata.SENSORAQISO2).toString());
+        tv_pm.setText(cvals.get(SensorContentContract.Sensordata.SENSORAQIPM).toString());
+
+    }
     public int writeToBLE(String msg)
     {
         if (!mWriteCharacteristicList.isEmpty() && mBTLE_Service != null) {

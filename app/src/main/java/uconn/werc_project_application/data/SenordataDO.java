@@ -16,6 +16,8 @@ import java.util.Set;
 public class SenordataDO {
     private String _userId;
     private Double _time;
+    private String _aqiSrc;
+    private Double _aqiVal;
     private String _deviceId;
     private Double _gpsLat;
     private Double _gpsLong;
@@ -58,6 +60,22 @@ public class SenordataDO {
 
     public void setTime(final Double _time) {
         this._time = _time;
+    }
+    @DynamoDBAttribute(attributeName = "aqi_src")
+    public String getAqiSrc() {
+        return _aqiSrc;
+    }
+
+    public void setAqiSrc(final String _aqiSrc) {
+        this._aqiSrc = _aqiSrc;
+    }
+    @DynamoDBAttribute(attributeName = "aqi_val")
+    public Double getAqiVal() {
+        return _aqiVal;
+    }
+
+    public void setAqiVal(final Double _aqiVal) {
+        this._aqiVal = _aqiVal;
     }
     @DynamoDBAttribute(attributeName = "deviceId")
     public String getDeviceId() {
