@@ -33,7 +33,6 @@ public class Datapoint {
     private long sensor_pm;
     private long sensor_pml;
     private long sensor_so2;
-    private long sensor_temp;
     // Raw Sensor Data
     private long sensor_raw_co;
     private long sensor_raw_no2;
@@ -41,7 +40,6 @@ public class Datapoint {
     private long sensor_raw_pm;
     private long sensor_raw_pml;
     private long sensor_raw_so2;
-    private long sensor_raw_temp;
     // Converted AQI Values
     private long sensor_aqi_co;
     private long sensor_aqi_no2;
@@ -49,6 +47,25 @@ public class Datapoint {
     private long sensor_aqi_pm;
     private long sensor_aqi_pml;
     private long sensor_aqi_so2;
+    // AQI Aggregates
+    private long aqi_val;
+    private String aqi_src;
+
+    public long getAqi_val() {
+        return aqi_val;
+    }
+
+    public void setAqi_val(long aqi_val) {
+        this.aqi_val = aqi_val;
+    }
+
+    public String getAqi_src() {
+        return aqi_src;
+    }
+
+    public void setAqi_src(String aqi_src) {
+        this.aqi_src = aqi_src;
+    }
 
     public long getSensor_pml() {
         return sensor_pml;
@@ -128,13 +145,20 @@ public class Datapoint {
         dp.setUserId(getString(c, SensorContentContract.Sensordata._ID, ""));
         dp.setTime(getLong(c, SensorContentContract.Sensordata.TIME, -1));
         dp.setDeviceId(getString(c, SensorContentContract.Sensordata.DEVICEID, ""));
+
         dp.setGps_lat(getLong(c, SensorContentContract.Sensordata.GPSLAT, -1));
         dp.setGps_long(getLong(c, SensorContentContract.Sensordata.GPSLONG, -1 ));
-        dp.setSensor_co(getLong(c, SensorContentContract.Sensordata.SENSORCO, -1));
-        dp.setSensor_no2(getLong(c, SensorContentContract.Sensordata.SENSORNO2, -1));
-        dp.setSensor_o3(getLong(c, SensorContentContract.Sensordata.SENSORO3, -1));
-        dp.setSensor_pm(getLong(c, SensorContentContract.Sensordata.SENSORPM, -1));
-        dp.setSensor_so2(getLong(c, SensorContentContract.Sensordata.SENSORSO2, -1));
+
+        dp.setAqi_src(getString(c, SensorContentContract.Sensordata.AQISRC,"-1"));
+        dp.setAqi_val(getLong(c, SensorContentContract.Sensordata.AQIVAL, -1));
+
+
+        dp.setSensor_aqi_co(getLong(c, SensorContentContract.Sensordata.SENSORAQICO, -1));
+        dp.setSensor_aqi_no2(getLong(c, SensorContentContract.Sensordata.SENSORAQINO2, -1));
+        dp.setSensor_aqi_o3(getLong(c, SensorContentContract.Sensordata.SENSORAQIO3, -1));
+        dp.setSensor_aqi_pm(getLong(c, SensorContentContract.Sensordata.SENSORAQIPM, -1));
+        dp.setSensor_aqi_pml(getLong(c, SensorContentContract.Sensordata.SENSORAQIPML, -1));
+        dp.setSensor_aqi_so2(getLong(c, SensorContentContract.Sensordata.SENSORAQISO2, -1));
 
         return dp;
     }
@@ -185,13 +209,11 @@ public class Datapoint {
         cv.put(SensorContentContract.Sensordata.SENSORNO2, sensor_no2);
         cv.put(SensorContentContract.Sensordata.SENSORSO2, sensor_so2);
         cv.put(SensorContentContract.Sensordata.SENSORPM, sensor_pm);
-        cv.put(SensorContentContract.Sensordata.SENSORTEMP, sensor_temp);
         cv.put(SensorContentContract.Sensordata.SENSORRAWCO, sensor_raw_co);
         cv.put(SensorContentContract.Sensordata.SENSORRAWO3, sensor_raw_o3);
         cv.put(SensorContentContract.Sensordata.SENSORRAWNO2, sensor_raw_no2);
         cv.put(SensorContentContract.Sensordata.SENSORRAWSO2, sensor_raw_so2);
         cv.put(SensorContentContract.Sensordata.SENSORRAWPM, sensor_raw_pm);
-        cv.put(SensorContentContract.Sensordata.SENSORRAWTEMP, sensor_raw_temp);
         cv.put(SensorContentContract.Sensordata.SENSORAQICO, sensor_aqi_co);
         cv.put(SensorContentContract.Sensordata.SENSORAQINO2, sensor_raw_no2);
         cv.put(SensorContentContract.Sensordata.SENSORAQIO3, sensor_aqi_o3);
@@ -201,21 +223,6 @@ public class Datapoint {
         return cv;
     }
 
-    public long getSensor_temp() {
-        return sensor_temp;
-    }
-
-    public void setSensor_temp(long sensor_temp) {
-        this.sensor_temp = sensor_temp;
-    }
-
-    public long getSensor_raw_temp() {
-        return sensor_raw_temp;
-    }
-
-    public void setSensor_raw_temp(long sensor_raw_temp) {
-        this.sensor_raw_temp = sensor_raw_temp;
-    }
 
     public long getId() {
         return id;

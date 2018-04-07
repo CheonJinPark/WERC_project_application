@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -132,7 +133,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     {
                         Datapoint dp = Datapoint.fromCursorQuery(cursor);
                         // dp has all fields in it. Add to map from here.
-
+                        Log.d("ASyncQuery", "PacketId: " + dp.getPacketId());
                         // use dp.getSensor_co and other accessors to read data.
                         // See Datapoint class in data package for more info.
 

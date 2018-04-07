@@ -38,7 +38,7 @@ import static android.content.ContentValues.TAG;
  */
 
 public class BLEDataLinker {
-
+    private static final String TAG = "BLEDataLinker";
     private ArrayList<BluetoothGattCharacteristic> mWriteCharacteristicList = new ArrayList<BluetoothGattCharacteristic>();
     private ArrayList<BluetoothGattCharacteristic> mNotifyCharacteristicList = new ArrayList<BluetoothGattCharacteristic>();
     private ArrayList<BluetoothGattCharacteristic> mReadCharacteristicList = new ArrayList<BluetoothGattCharacteristic>();
@@ -117,7 +117,6 @@ public class BLEDataLinker {
             mBTLE_Service_Intent = new Intent(context, Service_BLE_GATT.class);
             context.bindService(mBTLE_Service_Intent, mBTLE_ServiceConnection, Context.BIND_AUTO_CREATE);
             context.startService(mBTLE_Service_Intent);
-            determineCharacteristics();
             Log.d("BLEDataLinker", "Linker Declared.");
         }
     }
@@ -208,6 +207,7 @@ public class BLEDataLinker {
 
             }
         };
+        Log.d(TAG, "Data Insert Initiated");
         queryHandler.startInsert(INSERT_TOKEN, null, SensorContentContract.Sensordata.CONTENT_URI, cvals);
     }
 
@@ -260,8 +260,10 @@ public class BLEDataLinker {
 
     public void close()
     {
-        context.unregisterReceiver(mGattUpdateReceiver);
+        if (mGattUpdateReceiver != null)
+            context.unregisterReceiver(mGattUpdateReceiver);
         context.unbindService(mBTLE_ServiceConnection);
+        context.stopService(mBTLE_Service_Intent);
         mBTLE_Service_Intent = null;
         mBTLE_Service.close();
     }

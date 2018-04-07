@@ -68,6 +68,7 @@ public class Service_BLE_GATT extends Service {
 
                 // Attempts to discover services after successful connection.
                 Log.i(TAG, "Attempting to start service discovery:" + mBluetoothGatt.discoverServices());
+//                BLEDataLinker.getInstance().determineCharacteristics();
 
             }
             else if (newState == BluetoothProfile.STATE_DISCONNECTED) {

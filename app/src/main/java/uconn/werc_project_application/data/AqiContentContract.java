@@ -1,19 +1,14 @@
 package uconn.werc_project_application.data;
 
-/**
- * Created by Bill on 2/23/2018.
- */
-
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
- * Per the official Android documentation, this class defines all publically available
- * elements, like the authority, the content URIs, columns, and content types for each
- * element
+ * Created by Bill on 4/6/2018.
  */
-public class SensorContentContract {
+
+public class AqiContentContract {
     /**
      * The authority of the notes content provider - this must match the authority
      * specified in the AndroidManifest.xml provider section
@@ -28,11 +23,11 @@ public class SensorContentContract {
     /**
      * Constants for the Notes table
      */
-    public static final class Sensordata implements BaseColumns {
+    public static final class Aqidata implements BaseColumns {
         /**
          * The Table Name
          */
-        public static final String TABLE_NAME = "sensordata";
+        public static final String TABLE_NAME = "aqidata";
 
         public static final String PROJECTID = "projectId";
 
@@ -55,30 +50,6 @@ public class SensorContentContract {
 
         public static final String AQISRC = "aqi_src";
 
-        public static final String SENSORCO = "sensor_co";
-
-        public static final String SENSORNO2 = "sensor_no2";
-
-        public static final String SENSORO3 = "sensor_o3";
-
-        public static final String SENSORPM = "sensor_pm";
-
-        public static final String SENSORPML = "sensor_pml";
-
-        public static final String SENSORSO2 = "sensor_so2";
-
-        public static final String SENSORRAWCO = "sensor_raw_co";
-
-        public static final String SENSORRAWNO2 = "sensor_raw_no2";
-
-        public static final String SENSORRAWO3 = "sensor_raw_o3";
-
-        public static final String SENSORRAWPM = "sensor_raw_pm";
-
-        public static final String SENSORRAWPML = "sensor_raw_pml";
-
-        public static final String SENSORRAWSO2 = "sensor_raw_so2";
-
         public static final String SENSORAQICO = "sensor_aqi_co";
 
         public static final String SENSORAQINO2 = "sensor_aqi_no2";
@@ -92,12 +63,10 @@ public class SensorContentContract {
         public static final String SENSORAQIPML = "sensor_aqi_pml";
 
 
+        public static final String DIR_BASEPATH = "aqidata";
 
 
-        public static final String DIR_BASEPATH = "sensordata";
-
-
-        public static final String ITEM_BASEPATH = "sensordata/*";
+        public static final String ITEM_BASEPATH = "aqidata/*";
 
 
         /**
@@ -110,13 +79,13 @@ public class SensorContentContract {
          * The mime type of a directory of items
          */
         public static final String CONTENT_DIR_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.uconn.werc_project_application.sensordata";
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.uconn.werc_project_application.aqidata";
 
         /**
          * The mime type of a single item
          */
         public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.uconn.werc_project_application.sensordata";
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.uconn.werc_project_application.aqidata";
 
         /**
          * A projection of all columns in the items table
@@ -131,18 +100,6 @@ public class SensorContentContract {
                 GPSLONG,
                 AQIVAL,
                 AQISRC,
-                SENSORCO,
-                SENSORNO2,
-                SENSORO3,
-                SENSORPM,
-                SENSORPML,
-                SENSORSO2,
-                SENSORRAWCO,
-                SENSORRAWNO2,
-                SENSORRAWO3,
-                SENSORRAWPM,
-                SENSORRAWPML,
-                SENSORRAWSO2,
                 SENSORAQICO,
                 SENSORAQINO2,
                 SENSORAQIO3,
@@ -158,7 +115,7 @@ public class SensorContentContract {
 
         /**
          * Build a URI for the provided note
-         * @param packetId the ID of the provided note
+         * @param packetId the ID of the provided packet
          * @return the URI of the provided datapoint.
          */
         public static Uri uriBuilder(String packetId) {

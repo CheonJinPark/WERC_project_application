@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.hardware.Sensor;
 import android.location.Location;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
@@ -30,7 +31,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import uconn.werc_project_application.data.DataInterpreter;
 import uconn.werc_project_application.data.Datapoint;
+import uconn.werc_project_application.data.DummyDataGenerator;
 import uconn.werc_project_application.data.SensorContentContract;
 
 public class CustomDPmakerActivity extends AppCompatActivity {
@@ -52,8 +55,11 @@ public class CustomDPmakerActivity extends AppCompatActivity {
 
         initialviews();
         initial_seekbar();
-        initial_GPSs();
+//        initial_GPSs();
         initial_Button();
+
+        GPS_Lat_textview.setText(Double.toString(DataInterpreter.getInstance().getGpsLat()));
+        GPS_Long_textview.setText(Double.toString(DataInterpreter.getInstance().getGpsLong()));
 
 
     }
@@ -192,46 +198,46 @@ public class CustomDPmakerActivity extends AppCompatActivity {
         return HAZARDOUS_COLOUR;
     }
 
-    public void initial_GPSs() {
-
-        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        Toast.makeText(getApplicationContext(),"after get provider",Toast.LENGTH_LONG);
-        Log.d("JIN","LOCATION SERVICE IS OK" );
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Check Permissions Now
-            Log.d("JIN","CHECKING PERMSSION" );
-
-
-            // Check Permissions Now
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION);
-            Log.d("JIN","Request Permission" );
-        }
-        else {
-            // permission has been granted, continue as usual
-            Log.d("JIN","Permission os granted" );
-
-        }
-
-        mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                // Got last known location. In some rare situations this can be null.
-                if (location != null) {
-                    Toast.makeText(getApplicationContext(), "Location Acquired", Toast.LENGTH_LONG).show();
-                    longitude = location.getLongitude();
-                    latitude = location.getLatitude();
-                    GPS_Lat_textview.setText(Double.toString(location.getLatitude()));
-                    GPS_Long_textview.setText(Double.toString(location.getLongitude()));
-                } else {
-                    Toast.makeText(getApplicationContext(), "No location", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }
+//    public void initial_GPSs() {
+//
+//        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+//
+//        Toast.makeText(getApplicationContext(),"after get provider",Toast.LENGTH_LONG);
+//        Log.d("JIN","LOCATION SERVICE IS OK" );
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            // Check Permissions Now
+//            Log.d("JIN","CHECKING PERMSSION" );
+//
+//
+//            // Check Permissions Now
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                    REQUEST_LOCATION);
+//            Log.d("JIN","Request Permission" );
+//        }
+//        else {
+//            // permission has been granted, continue as usual
+//            Log.d("JIN","Permission os granted" );
+//
+//        }
+//
+//        mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+//            @Override
+//            public void onSuccess(Location location) {
+//                // Got last known location. In some rare situations this can be null.
+//                if (location != null) {
+//                    Toast.makeText(getApplicationContext(), "Location Acquired", Toast.LENGTH_LONG).show();
+//                    longitude = location.getLongitude();
+//                    latitude = location.getLatitude();
+//                    GPS_Lat_textview.setText(Double.toString(location.getLatitude()));
+//                    GPS_Long_textview.setText(Double.toString(location.getLongitude()));
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "No location", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+//    }
     public void initial_Button(){
 
 
@@ -252,22 +258,21 @@ public class CustomDPmakerActivity extends AppCompatActivity {
         save_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Datapoint datapoint = new Datapoint();
+                DummyDataGenerator ddg = new DummyDataGenerator(SensorContentContract.Sensordata.PROJECTION_ALL);
+                ContentValues cv = ddg.generate(0.0, 3.0);
 
+                cv.put(SensorContentContract.Sensordata.DEVICEID, "customdp");
 
-                datapoint.setPacketId(UUID.randomUUID().toString());
-                datapoint.setDeviceId(Device_Edit.getText().toString());
-                datapoint.setTime(now);
 
                 //Here is a problem the lat and long should be double not long
                 //if u fix long to double then u can use this method
                //datapoint.setGps_lat(Double.parseDouble(GPS_Lat_textview.getText().toString()));
                //datapoint.setGps_long(Double.parseDouble(GPS_Long_textview.getText().toString()));
-                datapoint.setSensor_aqi_co(Long.parseLong(CO_textview.getText().toString()));
-                datapoint.setSensor_aqi_no2(Long.parseLong(NO2_textview.getText().toString()));
-                datapoint.setSensor_aqi_o3(Long.parseLong(O3_textview.getText().toString()));
-                datapoint.setSensor_aqi_pm(Long.parseLong(PM_textview.getText().toString()));
-                datapoint.setSensor_aqi_so2(Long.parseLong(SO2_textview.getText().toString()));
+                cv.put(SensorContentContract.Sensordata.SENSORAQICO, Double.parseDouble(CO_textview.getText().toString()));
+                cv.put(SensorContentContract.Sensordata.SENSORAQINO2, Double.parseDouble(NO2_textview.getText().toString()));
+                cv.put(SensorContentContract.Sensordata.SENSORAQIO3, Double.parseDouble(O3_textview.getText().toString()));
+                cv.put(SensorContentContract.Sensordata.SENSORAQISO2, Double.parseDouble(SO2_textview.getText().toString()));
+                cv.put(SensorContentContract.Sensordata.SENSORAQIPM, Double.parseDouble(PM_textview.getText().toString()));
 
                 //check how does it work
                 Log.d("JIN","Start Checking" );
@@ -286,7 +291,6 @@ public class CustomDPmakerActivity extends AppCompatActivity {
 
                 //part to save data to server ****
                 ContentResolver contentResolver = getApplicationContext().getContentResolver();
-                ContentValues cvals = datapoint.toContentValues();
                 AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
                     @Override
                     protected void onInsertComplete(int token, Object cookie, Uri uri) {
@@ -296,7 +300,7 @@ public class CustomDPmakerActivity extends AppCompatActivity {
 
                     }
                 };
-                queryHandler.startInsert(INSERT_TOKEN, null, SensorContentContract.Sensordata.CONTENT_URI, cvals);
+                queryHandler.startInsert(INSERT_TOKEN, null, SensorContentContract.Sensordata.CONTENT_URI, cv);
             }
         });
     }

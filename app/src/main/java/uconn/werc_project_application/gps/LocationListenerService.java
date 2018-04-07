@@ -51,7 +51,7 @@ public class LocationListenerService extends Service
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras)
         {
-            Log.e(TAG, "onStatusChanged: " + provider);
+//            Log.e(TAG, "onStatusChanged: " + provider);
         }
     }
     LocationListener[] mLocationListeners = new LocationListener[] {

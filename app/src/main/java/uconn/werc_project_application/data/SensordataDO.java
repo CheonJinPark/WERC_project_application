@@ -1,5 +1,6 @@
 package uconn.werc_project_application.data;
 
+
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexHashKey;
@@ -11,10 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@DynamoDBTable(tableName = "sensorem-mobilehub-1103649196-senordata")
+@DynamoDBTable(tableName = "sensorem-mobilehub-1103649196-sensordata")
 
-public class SenordataDO {
-    private String _userId;
+public class SensordataDO {
+    private String _projectId;
     private Double _time;
     private String _aqiSrc;
     private Double _aqiVal;
@@ -39,18 +40,17 @@ public class SenordataDO {
     private Double _sensorRawPm;
     private Double _sensorRawPml;
     private Double _sensorRawSo2;
-    private Double _sensorRawTemp;
     private Double _sensorSo2;
-    private Double _sensorTemp;
+    private String _userId;
 
-    @DynamoDBHashKey(attributeName = "userId")
-    @DynamoDBAttribute(attributeName = "userId")
-    public String getUserId() {
-        return _userId;
+    @DynamoDBHashKey(attributeName = "projectId")
+    @DynamoDBAttribute(attributeName = "projectId")
+    public String getProjectId() {
+        return _projectId;
     }
 
-    public void setUserId(final String _userId) {
-        this._userId = _userId;
+    public void setProjectId(final String _projectId) {
+        this._projectId = _projectId;
     }
     @DynamoDBRangeKey(attributeName = "time")
     @DynamoDBAttribute(attributeName = "time")
@@ -245,14 +245,6 @@ public class SenordataDO {
     public void setSensorRawSo2(final Double _sensorRawSo2) {
         this._sensorRawSo2 = _sensorRawSo2;
     }
-    @DynamoDBAttribute(attributeName = "sensor_raw_temp")
-    public Double getSensorRawTemp() {
-        return _sensorRawTemp;
-    }
-
-    public void setSensorRawTemp(final Double _sensorRawTemp) {
-        this._sensorRawTemp = _sensorRawTemp;
-    }
     @DynamoDBAttribute(attributeName = "sensor_so2")
     public Double getSensorSo2() {
         return _sensorSo2;
@@ -261,13 +253,13 @@ public class SenordataDO {
     public void setSensorSo2(final Double _sensorSo2) {
         this._sensorSo2 = _sensorSo2;
     }
-    @DynamoDBAttribute(attributeName = "sensor_temp")
-    public Double getSensorTemp() {
-        return _sensorTemp;
+    @DynamoDBAttribute(attributeName = "userId")
+    public String getUserId() {
+        return _userId;
     }
 
-    public void setSensorTemp(final Double _sensorTemp) {
-        this._sensorTemp = _sensorTemp;
+    public void setUserId(final String _userId) {
+        this._userId = _userId;
     }
 
 }

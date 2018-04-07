@@ -45,7 +45,7 @@ import org.w3c.dom.Text;
 import uconn.werc_project_application.ble.BLEDataLinker;
 import uconn.werc_project_application.data.DataInterpreter;
 import uconn.werc_project_application.data.DummyDataGenerator;
-//import uconn.werc_project_application.data.SendDataService;
+import uconn.werc_project_application.data.SendDataService;
 import uconn.werc_project_application.data.SensorContentContract;
 import uconn.werc_project_application.gps.LocationListenerService;
 
@@ -68,30 +68,29 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d("JIN","View는 만듬" );
-
         // Install the application crash handler.
         ApplicationCrashHandler.installHandler();
         contentResolver = getApplicationContext().getContentResolver();
 
-        // Check permissions
+        // Check GPS Access Permissions
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Check Permissions Now
-            Log.d("JIN","CHECKING PERMSSION" );
+            Log.d("GPS Permissions","Performing Check" );
 
 
             // Check Permissions Now
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     2);
-            Log.d("JIN","Request Permission" );
+            Log.d("GPS Permissions","Issuing Request" );
         }
         else {
             // permission has been granted, continue as usual
             startService(new Intent(this, LocationListenerService.class));
+            Log.d("GPS Permissions", "Permission Granted");
 
         }
+        startService(new Intent(this, SendDataService.class));
 
         /* Bill's Section - Temporary */
         /** AWS Initializations **/
@@ -179,11 +178,12 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View V) {
                 DummyDataGenerator ddg = new DummyDataGenerator(SensorContentContract.Sensordata.PROJECTION_ALL);
                 ContentValues values = ddg.generate(0.0, 3.0);
+                values.put(SensorContentContract.Sensordata.DEVICEID, "dummydata");
                 AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
                     @Override
                     protected void onInsertComplete(int token, Object cookie, Uri uri) {
                         super.onInsertComplete(token, cookie, uri);
-                        Log.d("DummyDataButtonPress", "insert completed");
+                        Log.d("DummyDataButtonPress",   "insert completed");
                         Toast.makeText(getApplicationContext(), "Dummy Data Uploaded", Toast.LENGTH_LONG).show();
 
                     }

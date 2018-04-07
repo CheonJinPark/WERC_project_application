@@ -20,14 +20,25 @@ import java.util.Random;
 import java.util.UUID;
 
 import uconn.werc_project_application.MainActivity;
+import uconn.werc_project_application.ble.BLEDataLinker;
 
 /**
  * Created by Bill Brown on 3/27/2018.
  */
 
 public class DataInterpreter {
+    private static final String TAG = "DataInterpreter";
+    private static final String PROJECTID = "werc";
     private String delimiter = ",";
-    private String[] prefix_identifiers = {"NM=","CO=", "O3=", "NO=", "SO=", "PM=", "P2=", "TM="};
+    private String[] prefix_identifiers = {"NM","CO", "O3", "NO", "SO", "PM", "P2", "ID"};
+    private String[] deviceIds = {"sens1", "sens2"};
+    private static final String ENDOFTX = "FIN";
+    private String receivedData = "";
+    private boolean data_ready = false;
+    private ContentValues data_packet;
+    private String deviceId;
+
+    private DataAverageContainer dac = new DataAverageContainer();
 
     private static DataInterpreter instance = null;
     private static MainActivity mActivity;
@@ -75,14 +86,7 @@ public class DataInterpreter {
 
     private void loadDefaultSCodes()
     {
-        sensitivitycode_hashmap = new HashMap<String, Double>();
-        sensitivitycode_hashmap.clear();
 
-        // Default values. Should be changed.
-        sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORCO, 10.0);
-        sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORNO2, 10.0);
-        sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORO3, 10.0);
-        sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORSO2, 10.0);
     }
 
     private void loadDefaultTGains()
@@ -112,7 +116,7 @@ public class DataInterpreter {
 
     private void loadDefaultVRef()
     {
-        vRef = 1.65;
+        vRef = 1.665;
     }
 
     private void loadAQIHashMaps()
@@ -180,28 +184,99 @@ public class DataInterpreter {
 
     }
 
-    public ContentValues interpretBLEData(String input) {
+    public void loadSensitivityCodes(String deviceId)
+    {
+        sensitivitycode_hashmap = new HashMap<String, Double>();
+        sensitivitycode_hashmap.clear();
+
+        // Default values. Should be changed.
+        if (deviceId.equals(deviceIds[0])) {
+            sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORCO, 3.22);
+            sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORNO2, -24.37);
+            sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORO3, -68.85);
+            sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORSO2, 30.22);
+        } else if (deviceId.equals(deviceIds[1])) {
+            sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORCO, 2.87);
+            sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORNO2, 10.0);
+            sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORO3, 10.0);
+            sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORSO2, 10.0);
+        } else {
+            sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORCO, 3.22);
+            sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORNO2, -24.37);
+            sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORO3, -68.85);
+            sensitivitycode_hashmap.put(SensorContentContract.Sensordata.SENSORSO2, 30.22);
+        }
+    }
+
+    public void loadOffsets(String deviceId)
+    {
+        offset_hashmap = new HashMap<String, Double>();
+        offset_hashmap.clear();
+
+        // Default values
+        if (deviceId.equals(deviceIds[0])) {
+            offset_hashmap.put(SensorContentContract.Sensordata.SENSORCO, 0.0);
+            offset_hashmap.put(SensorContentContract.Sensordata.SENSORNO2, 0.0);
+            offset_hashmap.put(SensorContentContract.Sensordata.SENSORO3, -0.033829);
+            offset_hashmap.put(SensorContentContract.Sensordata.SENSORSO2, 0.0);
+        } else if (deviceId.equals(deviceIds[1])) {
+            offset_hashmap.put(SensorContentContract.Sensordata.SENSORCO, 0.0);
+            offset_hashmap.put(SensorContentContract.Sensordata.SENSORNO2, 0.0);
+            offset_hashmap.put(SensorContentContract.Sensordata.SENSORO3, 0.0);
+            offset_hashmap.put(SensorContentContract.Sensordata.SENSORSO2, 0.0);
+        }
+    }
+
+
+    public Double getGpsLong() {
+        return gpsLong;
+    }
+
+    public Double getGpsLat() {
+        return gpsLat;
+    }
+
+    public void interpretBLEData(String input) {
         String[] values = parseValues(input);
+        Log.d(TAG, "Data: " + input);
         ContentValues cv = new ContentValues();
+        cv.put(SensorContentContract.Sensordata.PROJECTID, PROJECTID);
+        Log.d(TAG, "Project Id: " + PROJECTID);
+
         for (String val : values) {
             if (val.contains(prefix_identifiers[0])) {
-                cv.put(SensorContentContract.Sensordata.DEVICEID, Double.parseDouble(val.substring(0, val.length() - 3)));
+                cv.put(SensorContentContract.Sensordata.DEVICEID, val.substring(0, val.length() - 2));
+                Log.d(TAG, "Device Id: " + val.substring(0, val.length() - 2));
+                deviceId = val.substring(0, val.length() - 2);
+                loadSensitivityCodes(val.substring(0, val.length() - 2));
+                loadOffsets(val.substring(0, val.length() - 2));
             } else if (val.contains(prefix_identifiers[1])) {
-                cv.put(SensorContentContract.Sensordata.SENSORRAWCO, Double.parseDouble(val.substring(0, val.length() - 3)));
+                Log.d(TAG, "Raw CO: " + val.substring(0, val.length() - 2));
+                dac.average_voltage_co(Double.parseDouble(val.substring(0, val.length() - 2)));
+                cv.put(SensorContentContract.Sensordata.SENSORRAWCO, Double.parseDouble(val.substring(0, val.length() - 2)));
             } else if (val.contains(prefix_identifiers[2])) {
-                cv.put(SensorContentContract.Sensordata.SENSORRAWO3, Double.parseDouble(val.substring(0, val.length() - 3)));
+                Log.d(TAG, "Raw O3: " + val.substring(0, val.length() - 2));
+                dac.average_voltage_o3(Double.parseDouble(val.substring(0, val.length() - 2)));
+                cv.put(SensorContentContract.Sensordata.SENSORRAWO3, Double.parseDouble(val.substring(0, val.length() - 2)));
             } else if (val.contains(prefix_identifiers[3])) {
-                cv.put(SensorContentContract.Sensordata.SENSORRAWNO2, Double.parseDouble(val.substring(0, val.length() - 3)));
+                Log.d(TAG, "Raw NO2: " + val.substring(0, val.length() - 2));
+                dac.average_voltage_no2(Double.parseDouble(val.substring(0, val.length() - 2)));
+                cv.put(SensorContentContract.Sensordata.SENSORRAWNO2, Double.parseDouble(val.substring(0, val.length() - 2)));
             } else if (val.contains(prefix_identifiers[4])) {
-                cv.put(SensorContentContract.Sensordata.SENSORRAWSO2, Double.parseDouble(val.substring(0, val.length() - 3)));
+                Log.d(TAG, "Raw SO2: " + val.substring(0, val.length() - 2));
+                dac.average_voltage_so2(Double.parseDouble(val.substring(0, val.length() - 2)));
+                cv.put(SensorContentContract.Sensordata.SENSORRAWSO2, Double.parseDouble(val.substring(0, val.length() - 2)));
             } else if (val.contains(prefix_identifiers[5])) {
-                cv.put(SensorContentContract.Sensordata.SENSORRAWPM, Double.parseDouble(val.substring(0, val.length() - 3)));
+                Log.d(TAG, "Raw PM: " + val.substring(0, val.length() - 2));
+                dac.average_lpo_pm(Double.parseDouble(val.substring(0, val.length() - 2)));
+                cv.put(SensorContentContract.Sensordata.SENSORRAWPM, Double.parseDouble(val.substring(0, val.length() - 2)));
             } else if (val.contains(prefix_identifiers[6])) {
-                cv.put(SensorContentContract.Sensordata.SENSORRAWTEMP, Double.parseDouble(val.substring(0, val.length() - 3)));
+                Log.d(TAG, "Raw PML: " + val.substring(0, val.length() - 2));
+                dac.average_lpo_pml(Double.parseDouble(val.substring(0, val.length() - 2)));
+                cv.put(SensorContentContract.Sensordata.SENSORRAWPML, Double.parseDouble(val.substring(0, val.length() - 2)));
             }
         }
 
-        Random r = new Random();
         // Add Meta Fields
         // Set Time
         cv.put(SensorContentContract.Sensordata.TIME, new Date().getTime());
@@ -210,6 +285,8 @@ public class DataInterpreter {
         // Set GPS Data
         cv.put(SensorContentContract.Sensordata.GPSLAT, gpsLat);
         cv.put(SensorContentContract.Sensordata.GPSLONG, gpsLong);
+        Log.d(TAG, "GPS Latitude: " + gpsLat);
+        Log.d(TAG, "GPS Longitude: " + gpsLong);
 
         /*
         CALCULATIONS: Voltage to Parts Per Million (PPM) for CO, NO2, O3, SO2
@@ -224,37 +301,54 @@ public class DataInterpreter {
         // Convert CO
         Double co_ppm = (1.0 / (sensitivitycode_hashmap.get(SensorContentContract.Sensordata.SENSORCO) *
                 tiagain_hashmap.get(SensorContentContract.Sensordata.SENSORCO) * Math.pow(10.0, -6.0)))
-                * (Double.parseDouble(cv.get(SensorContentContract.Sensordata.SENSORCO).toString()) - (vRef + offset_hashmap.get(SensorContentContract.Sensordata.SENSORCO)));
+                * (Double.parseDouble(cv.get(SensorContentContract.Sensordata.SENSORRAWCO).toString()) - (vRef + offset_hashmap.get(SensorContentContract.Sensordata.SENSORCO)));
         cv.put(SensorContentContract.Sensordata.SENSORCO, co_ppm);
         Log.d("Data Calculation", "CO PPM: " + Double.toString(co_ppm));
+        dac.average_ppm_co(co_ppm);
 
         // Convert NO2
         Double no2_ppm = (1.0 / (sensitivitycode_hashmap.get(SensorContentContract.Sensordata.SENSORNO2) *
                 tiagain_hashmap.get(SensorContentContract.Sensordata.SENSORNO2) * Math.pow(10.0, -6.0)))
-                * (Double.parseDouble(cv.get(SensorContentContract.Sensordata.SENSORNO2).toString()) - (vRef + offset_hashmap.get(SensorContentContract.Sensordata.SENSORNO2)));
+                * (Double.parseDouble(cv.get(SensorContentContract.Sensordata.SENSORRAWNO2).toString()) - (vRef + offset_hashmap.get(SensorContentContract.Sensordata.SENSORNO2)));
         cv.put(SensorContentContract.Sensordata.SENSORNO2, no2_ppm);
         Log.d("Data Calculation", "NO2 PPM: " + Double.toString(no2_ppm));
+        dac.average_ppm_no2(no2_ppm);
 
         // Convert O3
         Double o3_ppm = (1.0 / (sensitivitycode_hashmap.get(SensorContentContract.Sensordata.SENSORO3) *
                 tiagain_hashmap.get(SensorContentContract.Sensordata.SENSORO3) * Math.pow(10.0, -6.0)))
-                * (Double.parseDouble(cv.get(SensorContentContract.Sensordata.SENSORO3).toString()) - (vRef + offset_hashmap.get(SensorContentContract.Sensordata.SENSORO3)));
+                * (Double.parseDouble(cv.get(SensorContentContract.Sensordata.SENSORRAWO3).toString()) - (vRef + offset_hashmap.get(SensorContentContract.Sensordata.SENSORO3)));
         cv.put(SensorContentContract.Sensordata.SENSORO3, o3_ppm);
         Log.d("Data Calculation", "O3 PPM: " + Double.toString(o3_ppm));
+        dac.average_ppm_o3(o3_ppm);
 
         // Convert SO2
         Double so2_ppm = (1.0 / (sensitivitycode_hashmap.get(SensorContentContract.Sensordata.SENSORSO2) *
                 tiagain_hashmap.get(SensorContentContract.Sensordata.SENSORSO2) * Math.pow(10.0, -6.0)))
-                * (Double.parseDouble(cv.get(SensorContentContract.Sensordata.SENSORSO2).toString()) - (vRef + offset_hashmap.get(SensorContentContract.Sensordata.SENSORSO2)));
+                * (Double.parseDouble(cv.get(SensorContentContract.Sensordata.SENSORRAWSO2).toString()) - (vRef + offset_hashmap.get(SensorContentContract.Sensordata.SENSORSO2)));
         cv.put(SensorContentContract.Sensordata.SENSORSO2, so2_ppm);
         Log.d("Data Calculation", "SO2 PPM: " + Double.toString(so2_ppm));
+        dac.average_ppm_so2(so2_ppm);
 
         /*
         CALCULATIONS: Voltage to Micrograms per Cubic Meter ug/m3 for Particulate Matter
-         */
-        Double pm_ug = (3.0 * r.nextDouble());
+        Follows 3rd Order Polynomial Trendline Generated from "Reference Only" Graph in Datasheet
+        x = Low Pulse Occupancy (LPO)
+        y = ug/m^3 of PM in air
 
-        Double pml_ug = (3.0 * r.nextDouble());
+        y = -0.11*x^3 + 6.55*x^2 + 28.9147*x + 40.2479
+         */
+        Double pm_raw = cv.getAsDouble(SensorContentContract.Sensordata.SENSORRAWPM);
+        Double pm_ug = (-0.11 * pm_raw * pm_raw * pm_raw) + (6.55 * pm_raw * pm_raw) + (28.9147 * pm_raw) + 40.2479;
+        cv.put(SensorContentContract.Sensordata.SENSORPM, pm_ug);
+        Log.d("Data Calcuation", "PM (ug/m3): " + Double.toString(pm_ug));
+        dac.average_ugm3_pm(pm_ug);
+
+        Double pml_raw = cv.getAsDouble(SensorContentContract.Sensordata.SENSORRAWPML);
+        Double pml_ug = (-0.11 * pml_raw * pml_raw * pml_raw) + (6.55 * pml_raw * pml_raw) + (28.9147 * pml_raw) + 40.2479;
+        cv.put(SensorContentContract.Sensordata.SENSORPML, pml_ug);
+        Log.d("Data Calcuation", "PML (ug/m3): " + Double.toString(pml_ug));
+        dac.average_ugm3_pml(pml_ug);
 
         /*
         CALCULATIONS: Parts-Per-Million to Air Quality Index (AQI)
@@ -281,6 +375,7 @@ public class DataInterpreter {
             co_aqi = 99.9; // error, shouldnt' happen.
         cv.put(SensorContentContract.Sensordata.SENSORAQICO, co_aqi);
         Log.d("Data Calculation", "CO AQI: " + Double.toString(co_aqi));
+        dac.average_aqi_co(co_aqi);
 
         // Calculate AQI for NO2
         Double no2_aqi;
@@ -302,6 +397,7 @@ public class DataInterpreter {
             no2_aqi = 99.9; // should never happen.
         cv.put(SensorContentContract.Sensordata.SENSORAQINO2, no2_aqi);
         Log.d("Data Calculation", "NO2 AQI: " + Double.toString(no2_aqi));
+        dac.average_aqi_no2(no2_aqi);
 
         // Calculate AQI for O3
         Double o3_aqi;
@@ -325,6 +421,7 @@ public class DataInterpreter {
             o3_aqi = 99.9; // should never happen
         cv.put(SensorContentContract.Sensordata.SENSORAQIO3, o3_aqi);
         Log.d("Data Calculation", "O3 AQI: " + Double.toString(o3_aqi));
+        dac.average_aqi_o3(o3_aqi);
 
         // Calculate AQI for SO2
         Double so2_aqi;
@@ -346,6 +443,7 @@ public class DataInterpreter {
             so2_aqi = 99.9;
         cv.put(SensorContentContract.Sensordata.SENSORAQISO2, so2_aqi);
         Log.d("Data Calculation", "SO2 AQI: " + Double.toString(so2_aqi));
+        dac.average_aqi_so2(so2_aqi);
 
         // Calculate AQI for PM
         Double pm_aqi;
@@ -367,6 +465,7 @@ public class DataInterpreter {
             pm_aqi = 99.9; // shouldn't happen.
         cv.put(SensorContentContract.Sensordata.SENSORAQIPM, pm_aqi);
         Log.d("Data Calculation", "PM AQI: " + Double.toString(pm_aqi));
+        dac.average_aqi_pm(pm_aqi);
 
         // Calculate AQI for PML
         Double pml_aqi;
@@ -388,6 +487,7 @@ public class DataInterpreter {
             pml_aqi = 99.9; // uh yeah.
         cv.put(SensorContentContract.Sensordata.SENSORAQIPML, pml_aqi);
         Log.d("Data Calculation", "PML AQI: " + Double.toString(pml_aqi));
+        dac.average_aqi_pml(pml_aqi);
 
         // Determine Largest AQI Value and Source
         if (co_aqi >= no2_aqi && co_aqi >= o3_aqi && co_aqi >= so2_aqi && co_aqi >= pm_aqi && co_aqi >= pml_aqi) {
@@ -413,9 +513,41 @@ public class DataInterpreter {
             cv.put(SensorContentContract.Sensordata.AQIVAL, co_aqi);
         }
 
-        return cv;
+        dac.increment_packet_counter();
+        dac.update_averages();
+        data_packet = cv;
+        data_ready = true;
+
+        Log.d(TAG, "Data Ready Status: " + data_ready);
+    }
+    public void receiveData(String input)
+    {
+        if (input.contains("sens")) {
+            receivedData = "";
+        }
+        receivedData = receivedData + input;
+        if (input.contains(ENDOFTX) && receivedData.contains("sens")) {
+            interpretBLEData(receivedData);
+            receivedData = "";
+        }
+
     }
 
+    public boolean isDataReady()
+    {
+        return data_ready;
+    }
+
+    public ContentValues getDataPacket()
+    {
+        data_ready = false;
+        return data_packet;
+    }
+
+    public void clearDataPacket()
+    {
+        data_packet.clear();
+    }
     public String[] parseValues(String input)
     {
         return input.split(delimiter);
@@ -431,6 +563,55 @@ public class DataInterpreter {
         this.gpsLong = longe;
     }
 
+    public boolean isSampleLargeEnough() {
+        return dac.overThreshold();
+    }
 
+    public ContentValues getDACPacket() {
+        ContentValues cv = dac.getContentValues();
+        cv.put(AqiContentContract.Aqidata.DEVICEID, deviceId);
+        cv.put(AqiContentContract.Aqidata.GPSLAT, gpsLat);
+        cv.put(AqiContentContract.Aqidata.GPSLONG, gpsLong);
+        cv.put(AqiContentContract.Aqidata.PROJECTID, PROJECTID);
+
+        cv.put(AqiContentContract.Aqidata.PACKETID, UUID.randomUUID().toString());
+
+        Double co_aqi = cv.getAsDouble(AqiContentContract.Aqidata.SENSORAQICO);
+        Double no2_aqi = cv.getAsDouble(AqiContentContract.Aqidata.SENSORAQINO2);
+        Double o3_aqi = cv.getAsDouble(AqiContentContract.Aqidata.SENSORAQIO3);
+        Double so2_aqi = cv.getAsDouble(AqiContentContract.Aqidata.SENSORAQISO2);
+        Double pm_aqi = cv.getAsDouble(AqiContentContract.Aqidata.SENSORAQIPM);
+        Double pml_aqi = cv.getAsDouble(AqiContentContract.Aqidata.SENSORAQIPML);
+        // Determine Largest AQI Value and Source
+        if (co_aqi >= no2_aqi && co_aqi >= o3_aqi && co_aqi >= so2_aqi && co_aqi >= pm_aqi && co_aqi >= pml_aqi) {
+            cv.put(AqiContentContract.Aqidata.AQISRC, "Carbon Monoxide");
+            cv.put(AqiContentContract.Aqidata.AQIVAL, co_aqi);
+        } else if (no2_aqi >= co_aqi && no2_aqi >= o3_aqi && no2_aqi >= so2_aqi && no2_aqi >= pm_aqi && no2_aqi >= pml_aqi) {
+            cv.put(AqiContentContract.Aqidata.AQISRC, "Nitrogen Dioxide");
+            cv.put(AqiContentContract.Aqidata.AQIVAL, no2_aqi);
+        } else if (o3_aqi >= co_aqi && o3_aqi >= no2_aqi && o3_aqi >= so2_aqi && o3_aqi >= pm_aqi && o3_aqi >= pml_aqi) {
+            cv.put(AqiContentContract.Aqidata.AQISRC, "Ozone");
+            cv.put(AqiContentContract.Aqidata.AQIVAL, o3_aqi);
+        } else if (so2_aqi >= co_aqi && so2_aqi >= o3_aqi && so2_aqi >= no2_aqi && so2_aqi >= pm_aqi && so2_aqi >= pml_aqi) {
+            cv.put(AqiContentContract.Aqidata.AQISRC, "Sulfur Dioxide");
+            cv.put(AqiContentContract.Aqidata.AQIVAL, so2_aqi);
+        } else if (pm_aqi >= co_aqi && pm_aqi >= o3_aqi && pm_aqi >= no2_aqi && pm_aqi >= so2_aqi && pm_aqi >= pml_aqi) {
+            cv.put(AqiContentContract.Aqidata.AQISRC, "Small Particulate Matter");
+            cv.put(AqiContentContract.Aqidata.AQIVAL, pm_aqi);
+        } else if (pml_aqi >= co_aqi && pml_aqi >= o3_aqi && pml_aqi >= so2_aqi && pml_aqi >= pm_aqi && pml_aqi >= no2_aqi ) {
+            cv.put(AqiContentContract.Aqidata.AQISRC, "Large Particulate Matter");
+            cv.put(AqiContentContract.Aqidata.AQIVAL, pml_aqi);
+        } else {
+            cv.put(AqiContentContract.Aqidata.AQISRC, "Unknown. How did you find this");
+            cv.put(AqiContentContract.Aqidata.AQIVAL, co_aqi);
+        }
+
+        return cv;
+    }
+
+    public void resetDac()
+    {
+        dac.reset();
+    }
 
 }
