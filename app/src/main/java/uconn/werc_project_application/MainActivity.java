@@ -65,14 +65,14 @@ import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 // AWS Database
 
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     Double longitude, latitude;
     Intent intent_test, intent_ble;
     String url;
     GPS g1, g2, g3, g4, g5;
     private static final int INSERT_TOKEN = 1003;
-    TextView userName,apiValue, co_value,o3_value,no2_value,so2_value,pm_value,connection_state,data_point;
+    TextView userName, apiValue, co_value, o3_value, no2_value, so2_value, pm_value, connection_state, data_point;
     Information info = new Information();
     public final static String BLE_CONNECT = "Sensorem Active", BLE_DISCONNECT = "Sensorem not connected";
 
@@ -94,16 +94,15 @@ public class MainActivity extends AppCompatActivity{
         // Check GPS Access Permissions
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            Log.d("GPS Permissions","Performing Check" );
+            Log.d("GPS Permissions", "Performing Check");
 
 
             // Check Permissions Now
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     2);
-            Log.d("GPS Permissions","Issuing Request" );
-        }
-        else {
+            Log.d("GPS Permissions", "Issuing Request");
+        } else {
             // permission has been granted, continue as usual
             startService(new Intent(this, LocationListenerService.class));
             Log.d("GPS Permissions", "Permission Granted");
@@ -122,7 +121,6 @@ public class MainActivity extends AppCompatActivity{
         /* End of Bill's Section - Temporary */
 
 
-
         //Here is basic set up functions for MainActivity View
         initiateView();
         setColors();
@@ -130,17 +128,17 @@ public class MainActivity extends AppCompatActivity{
         setDrawer();
 
         //Test GPSs
-        g1 = new GPS(-72.253981,41.807741); //Uconn
+        g1 = new GPS(-72.253981, 41.807741); //Uconn
         g1.setCo(20);
         g1.setDust(40);
         g1.setNo2(60);
         g1.setSo2(10);
         g1.setO3(30);
-        g2 = new GPS(-72.250645,41.803309); //Alumni Dorm
-        g3 = new GPS(-72.253430,41.804776); //Coop
-        g4 = new GPS(-72.259929,41.802675); //Hilltop Community Center
-        g5 = new GPS(-72.251748,41.806629); //Library
-        Log.d("JIN","GPS 문제" );
+        g2 = new GPS(-72.250645, 41.803309); //Alumni Dorm
+        g3 = new GPS(-72.253430, 41.804776); //Coop
+        g4 = new GPS(-72.259929, 41.802675); //Hilltop Community Center
+        g5 = new GPS(-72.251748, 41.806629); //Library
+        Log.d("JIN", "GPS 문제");
 
         longitude = -111.11; // default longitude
         latitude = 222.0; // default latitude
@@ -214,7 +212,7 @@ public class MainActivity extends AppCompatActivity{
                     @Override
                     protected void onInsertComplete(int token, Object cookie, Uri uri) {
                         super.onInsertComplete(token, cookie, uri);
-                        Log.d("DummyDataButtonPress",   "insert completed");
+                        Log.d("DummyDataButtonPress", "insert completed");
                         Toast.makeText(getApplicationContext(), "Dummy Data Uploaded", Toast.LENGTH_LONG).show();
 
                     }
@@ -228,7 +226,8 @@ public class MainActivity extends AppCompatActivity{
                 final AnalyticsEvent evt = mgr.createEvent("SendDummyData")
                         .withAttribute("packetId", values.getAsString(AqiContentContract.Aqidata.PACKETID));
                 mgr.recordEvent(evt);
-                mgr.submitEvents();            }
+                mgr.submitEvents();
+            }
 
 
         });
@@ -243,8 +242,6 @@ public class MainActivity extends AppCompatActivity{
         });
 
 
-
-
     }
 
     public static boolean isStringDouble(String s) {
@@ -256,18 +253,18 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    public void initiateView(){
-        co_value = (TextView)findViewById(R.id.main_CO_value);
-        o3_value = (TextView)findViewById(R.id.main_O3_value);
-        no2_value = (TextView)findViewById(R.id.main_NO2_value);
-        so2_value = (TextView)findViewById(R.id.main_SO2_value);
-        pm_value = (TextView)findViewById(R.id.main_PM_value);
-        connection_state = (TextView)findViewById(R.id.main_device_connectionState);
-
+    public void initiateView() {
+        co_value = (TextView) findViewById(R.id.main_CO_value);
+        o3_value = (TextView) findViewById(R.id.main_O3_value);
+        no2_value = (TextView) findViewById(R.id.main_NO2_value);
+        so2_value = (TextView) findViewById(R.id.main_SO2_value);
+        pm_value = (TextView) findViewById(R.id.main_PM_value);
+        connection_state = (TextView) findViewById(R.id.main_device_connectionState);
 
 
     }
-    public void setColors(){
+
+    public void setColors() {
 
 
         co_value.setTextColor(Color.parseColor(info.getTextColor(Integer.parseInt(co_value.getText().toString()))));
@@ -277,7 +274,6 @@ public class MainActivity extends AppCompatActivity{
         pm_value.setTextColor(Color.parseColor(info.getTextColor(Integer.parseInt(pm_value.getText().toString()))));
 
     }
-
 
 
     public void setConnection(String state) {
@@ -293,13 +289,12 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    public void setCoDisplay(int aqi)
-    {
+    public void setCoDisplay(int aqi) {
 
     }
 
     void setDrawer() {
-        final String[] items = {"Go to Map", "Bloo",  "Custom Data Maker"};
+        final String[] items = {"Go to Map", "Bloo", "Custom Data Maker"};
         ArrayList<String> drawlist = new ArrayList<>();
         drawlist.add("Go to Map");
         drawlist.add("Bluetooth");
@@ -328,43 +323,20 @@ public class MainActivity extends AppCompatActivity{
                         intent_ble = new Intent(MainActivity.this, BLEScanActivity.class);
                         startActivity(intent_ble);
                         break;
-                    case 2: // DUMMY DATA
-                        DummyDataGenerator ddg = new DummyDataGenerator(SensorContentContract.Sensordata.PROJECTION_ALL);
-                        ContentValues values = ddg.generate(0.0, 3.0);
-                        values.put(SensorContentContract.Sensordata.DEVICEID, "dummydata");
-                        AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
-                            @Override
-                            protected void onInsertComplete(int token, Object cookie, Uri uri) {
-                                super.onInsertComplete(token, cookie, uri);
-                                Log.d("DummyDataButtonPress", "insert completed");
-                                Toast.makeText(getApplicationContext(), "Dummy Data Uploaded", Toast.LENGTH_LONG).show();
-
-                            }
-                        };
-                        queryHandler.startInsert(INSERT_TOKEN, null, SensorContentContract.Sensordata.CONTENT_URI, values);
-
-
-                        final AnalyticsClient mgr = AWSProvider.getInstance()
-                                .getPinpointManager()
-                                .getAnalyticsClient();
-                        final AnalyticsEvent evt = mgr.createEvent("SendDummyData")
-                                .withAttribute("packetId", values.getAsString(AqiContentContract.Aqidata.PACKETID));
-                        mgr.recordEvent(evt);
-                        mgr.submitEvents();break;
-                    case 3: // Custom Data maker
+                    case 2: // Custom Data maker
                         Intent intent = new Intent(MainActivity.this, CustomDPmakerActivity.class);
                         startActivity(intent);
                         break;
 
 
                 }
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer) ;
-                drawer.closeDrawer(Gravity.LEFT) ;
-
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer);
+                drawer.closeDrawer(Gravity.LEFT);
 
 
             }
-        });}
+        });
+    }
 
     private class CustomAdapter extends ArrayAdapter<String> {
         private ArrayList<String> items;
@@ -381,19 +353,18 @@ public class MainActivity extends AppCompatActivity{
                 v = vi.inflate(R.layout.drawer_listview_layout, null);
             }
 
-            // ImageView 인스턴스
-            ImageView imageView = (ImageView)v.findViewById(R.id.imageView);
 
-            // 리스트뷰의 아이템에 이미지를 변경한다.
-            if(position == 0)
+            ImageView imageView = (ImageView) v.findViewById(R.id.imageView);
+
+
+            if (position == 0)
                 imageView.setImageResource(R.drawable.ic_map_white_24dp);
-            else if(position==1)
+            else if (position == 1)
                 imageView.setImageResource(R.drawable.ic_bluetooth_white_24dp);
-            else if(position==2)
+            else if (position == 2)
                 imageView.setImageResource(R.drawable.ic_edit_location_white_24dp);
-            TextView textView = (TextView)v.findViewById(R.id.textView);
-            textView.setText(" "+items.get(position));
-
+            TextView textView = (TextView) v.findViewById(R.id.textView);
+            textView.setText(" " + items.get(position));
 
 
             return v;
@@ -401,13 +372,11 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-
-
-            @Override
-            public void onDestroy() {
-                super.onDestroy();
-                BLEDataLinker.getInstance().close();
-            }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BLEDataLinker.getInstance().close();
+    }
 
 
 }
