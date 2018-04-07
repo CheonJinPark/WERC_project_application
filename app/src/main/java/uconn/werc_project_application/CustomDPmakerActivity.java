@@ -31,8 +31,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import uconn.werc_project_application.data.AqiContentContract;
 import uconn.werc_project_application.data.DataInterpreter;
-import uconn.werc_project_application.data.Datapoint;
+
 import uconn.werc_project_application.data.DummyDataGenerator;
 import uconn.werc_project_application.data.SensorContentContract;
 
@@ -258,21 +259,21 @@ public class CustomDPmakerActivity extends AppCompatActivity {
         save_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DummyDataGenerator ddg = new DummyDataGenerator(SensorContentContract.Sensordata.PROJECTION_ALL);
+                DummyDataGenerator ddg = new DummyDataGenerator(AqiContentContract.Aqidata.PROJECTION_ALL);
                 ContentValues cv = ddg.generate(0.0, 3.0);
 
-                cv.put(SensorContentContract.Sensordata.DEVICEID, "customdp");
+                cv.put(AqiContentContract.Aqidata.DEVICEID, "customdp");
 
 
                 //Here is a problem the lat and long should be double not long
                 //if u fix long to double then u can use this method
                //datapoint.setGps_lat(Double.parseDouble(GPS_Lat_textview.getText().toString()));
                //datapoint.setGps_long(Double.parseDouble(GPS_Long_textview.getText().toString()));
-                cv.put(SensorContentContract.Sensordata.SENSORAQICO, Double.parseDouble(CO_textview.getText().toString()));
-                cv.put(SensorContentContract.Sensordata.SENSORAQINO2, Double.parseDouble(NO2_textview.getText().toString()));
-                cv.put(SensorContentContract.Sensordata.SENSORAQIO3, Double.parseDouble(O3_textview.getText().toString()));
-                cv.put(SensorContentContract.Sensordata.SENSORAQISO2, Double.parseDouble(SO2_textview.getText().toString()));
-                cv.put(SensorContentContract.Sensordata.SENSORAQIPM, Double.parseDouble(PM_textview.getText().toString()));
+                cv.put(AqiContentContract.Aqidata.SENSORAQICO, Double.parseDouble(CO_textview.getText().toString()));
+                cv.put(AqiContentContract.Aqidata.SENSORAQINO2, Double.parseDouble(NO2_textview.getText().toString()));
+                cv.put(AqiContentContract.Aqidata.SENSORAQIO3, Double.parseDouble(O3_textview.getText().toString()));
+                cv.put(AqiContentContract.Aqidata.SENSORAQISO2, Double.parseDouble(SO2_textview.getText().toString()));
+                cv.put(AqiContentContract.Aqidata.SENSORAQIPM, Double.parseDouble(PM_textview.getText().toString()));
 
                 //check how does it work
                 Log.d("JIN","Start Checking" );
@@ -300,7 +301,7 @@ public class CustomDPmakerActivity extends AppCompatActivity {
 
                     }
                 };
-                queryHandler.startInsert(INSERT_TOKEN, null, SensorContentContract.Sensordata.CONTENT_URI, cv);
+                queryHandler.startInsert(INSERT_TOKEN, null, AqiContentContract.Aqidata.CONTENT_URI, cv);
             }
         });
     }

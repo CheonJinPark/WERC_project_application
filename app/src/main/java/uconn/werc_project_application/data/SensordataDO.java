@@ -1,6 +1,5 @@
 package uconn.werc_project_application.data;
 
-
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexHashKey;
@@ -23,24 +22,12 @@ public class SensordataDO {
     private Double _gpsLat;
     private Double _gpsLong;
     private String _packetId;
-    private Double _sensorAqiCo;
-    private Double _sensorAqiNo2;
-    private Double _sensorAqiO3;
-    private Double _sensorAqiPm;
-    private Double _sensorAqiPml;
-    private Double _sensorAqiSo2;
-    private Double _sensorCo;
-    private Double _sensorNo2;
-    private Double _sensorO3;
-    private Double _sensorPm;
-    private Double _sensorPml;
     private Double _sensorRawCo;
     private Double _sensorRawNo2;
     private Double _sensorRawO3;
     private Double _sensorRawPm;
     private Double _sensorRawPml;
     private Double _sensorRawSo2;
-    private Double _sensorSo2;
     private String _userId;
 
     @DynamoDBHashKey(attributeName = "projectId")
@@ -109,94 +96,6 @@ public class SensordataDO {
     public void setPacketId(final String _packetId) {
         this._packetId = _packetId;
     }
-    @DynamoDBAttribute(attributeName = "sensor_aqi_co")
-    public Double getSensorAqiCo() {
-        return _sensorAqiCo;
-    }
-
-    public void setSensorAqiCo(final Double _sensorAqiCo) {
-        this._sensorAqiCo = _sensorAqiCo;
-    }
-    @DynamoDBAttribute(attributeName = "sensor_aqi_no2")
-    public Double getSensorAqiNo2() {
-        return _sensorAqiNo2;
-    }
-
-    public void setSensorAqiNo2(final Double _sensorAqiNo2) {
-        this._sensorAqiNo2 = _sensorAqiNo2;
-    }
-    @DynamoDBAttribute(attributeName = "sensor_aqi_o3")
-    public Double getSensorAqiO3() {
-        return _sensorAqiO3;
-    }
-
-    public void setSensorAqiO3(final Double _sensorAqiO3) {
-        this._sensorAqiO3 = _sensorAqiO3;
-    }
-    @DynamoDBAttribute(attributeName = "sensor_aqi_pm")
-    public Double getSensorAqiPm() {
-        return _sensorAqiPm;
-    }
-
-    public void setSensorAqiPm(final Double _sensorAqiPm) {
-        this._sensorAqiPm = _sensorAqiPm;
-    }
-    @DynamoDBAttribute(attributeName = "sensor_aqi_pml")
-    public Double getSensorAqiPml() {
-        return _sensorAqiPml;
-    }
-
-    public void setSensorAqiPml(final Double _sensorAqiPml) {
-        this._sensorAqiPml = _sensorAqiPml;
-    }
-    @DynamoDBAttribute(attributeName = "sensor_aqi_so2")
-    public Double getSensorAqiSo2() {
-        return _sensorAqiSo2;
-    }
-
-    public void setSensorAqiSo2(final Double _sensorAqiSo2) {
-        this._sensorAqiSo2 = _sensorAqiSo2;
-    }
-    @DynamoDBAttribute(attributeName = "sensor_co")
-    public Double getSensorCo() {
-        return _sensorCo;
-    }
-
-    public void setSensorCo(final Double _sensorCo) {
-        this._sensorCo = _sensorCo;
-    }
-    @DynamoDBAttribute(attributeName = "sensor_no2")
-    public Double getSensorNo2() {
-        return _sensorNo2;
-    }
-
-    public void setSensorNo2(final Double _sensorNo2) {
-        this._sensorNo2 = _sensorNo2;
-    }
-    @DynamoDBAttribute(attributeName = "sensor_o3")
-    public Double getSensorO3() {
-        return _sensorO3;
-    }
-
-    public void setSensorO3(final Double _sensorO3) {
-        this._sensorO3 = _sensorO3;
-    }
-    @DynamoDBAttribute(attributeName = "sensor_pm")
-    public Double getSensorPm() {
-        return _sensorPm;
-    }
-
-    public void setSensorPm(final Double _sensorPm) {
-        this._sensorPm = _sensorPm;
-    }
-    @DynamoDBAttribute(attributeName = "sensor_pml")
-    public Double getSensorPml() {
-        return _sensorPml;
-    }
-
-    public void setSensorPml(final Double _sensorPml) {
-        this._sensorPml = _sensorPml;
-    }
     @DynamoDBAttribute(attributeName = "sensor_raw_co")
     public Double getSensorRawCo() {
         return _sensorRawCo;
@@ -244,14 +143,6 @@ public class SensordataDO {
 
     public void setSensorRawSo2(final Double _sensorRawSo2) {
         this._sensorRawSo2 = _sensorRawSo2;
-    }
-    @DynamoDBAttribute(attributeName = "sensor_so2")
-    public Double getSensorSo2() {
-        return _sensorSo2;
-    }
-
-    public void setSensorSo2(final Double _sensorSo2) {
-        this._sensorSo2 = _sensorSo2;
     }
     @DynamoDBAttribute(attributeName = "userId")
     public String getUserId() {

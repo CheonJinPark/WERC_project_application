@@ -41,7 +41,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import uconn.werc_project_application.data.Datapoint;
 import uconn.werc_project_application.data.SensorContentContract;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -131,9 +130,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     cursor.moveToFirst();
                     while(cursor.moveToNext())
                     {
-                        Datapoint dp = Datapoint.fromCursorQuery(cursor);
+                        //Datapoint dp = Datapoint.fromCursorQuery(cursor);
                         // dp has all fields in it. Add to map from here.
-                        Log.d("ASyncQuery", "PacketId: " + dp.getPacketId());
+                        //Log.d("ASyncQuery", "PacketId: " + dp.getPacketId());
                         // use dp.getSensor_co and other accessors to read data.
                         // See Datapoint class in data package for more info.
 

@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity{
                         .getPinpointManager()
                         .getAnalyticsClient();
                 final AnalyticsEvent evt = mgr.createEvent("SendDummyData")
-                        .withAttribute("packetId", values.getAsString(SensorContentContract.Sensordata.SENSORCO));
+                        .withAttribute("packetId","");
                 mgr.recordEvent(evt);
                 mgr.submitEvents();
             }

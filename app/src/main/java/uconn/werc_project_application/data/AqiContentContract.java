@@ -62,6 +62,29 @@ public class AqiContentContract {
 
         public static final String SENSORAQIPML = "sensor_aqi_pml";
 
+        public static final String SENSORPPMCO = "sensor_ppm_co";
+
+        public static final String SENSORPPMNO2 = "sensor_ppm_no2";
+
+        public static final String SENSORPPMO3 = "sensor_ppm_o3";
+
+        public static final String SENSORPPMSO2 = "sensor_ppm_so2";
+
+        public static final String SENSORUGM3PM = "sensor_ugm3_pm";
+
+        public static final String SENSORUGM3PML = "sensor_ugm3_pml";
+
+        public static final String SENSORVOLTCO = "sensor_volt_co";
+
+        public static final String SENSORVOLTNO2 = "sensor_volt_no2";
+
+        public static final String SENSORVOLTO3 = "sensor_volt_o3";
+
+        public static final String SENSORVOLTSO2 = "sensor_volt_so2";
+
+        public static final String SENSORLPOPM = "sensor_lpo_pm";
+
+        public static final String SENSORLPOPML = "sensor_lpo_pml";
 
         public static final String DIR_BASEPATH = "aqidata";
 
@@ -105,7 +128,19 @@ public class AqiContentContract {
                 SENSORAQIO3,
                 SENSORAQISO2,
                 SENSORAQIPM,
-                SENSORAQIPML
+                SENSORAQIPML,
+                SENSORPPMCO,
+                SENSORPPMNO2,
+                SENSORPPMO3,
+                SENSORPPMSO2,
+                SENSORUGM3PM,
+                SENSORUGM3PML,
+                SENSORVOLTCO,
+                SENSORVOLTNO2,
+                SENSORVOLTO3,
+                SENSORVOLTSO2,
+                SENSORLPOPM,
+                SENSORLPOPML
         };
 
         /**

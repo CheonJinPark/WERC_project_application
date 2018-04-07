@@ -51,22 +51,6 @@ public class SensorContentContract {
 
         public static final String GPSLONG = "gps_long";
 
-        public static final String AQIVAL = "aqi_val";
-
-        public static final String AQISRC = "aqi_src";
-
-        public static final String SENSORCO = "sensor_co";
-
-        public static final String SENSORNO2 = "sensor_no2";
-
-        public static final String SENSORO3 = "sensor_o3";
-
-        public static final String SENSORPM = "sensor_pm";
-
-        public static final String SENSORPML = "sensor_pml";
-
-        public static final String SENSORSO2 = "sensor_so2";
-
         public static final String SENSORRAWCO = "sensor_raw_co";
 
         public static final String SENSORRAWNO2 = "sensor_raw_no2";
@@ -78,21 +62,6 @@ public class SensorContentContract {
         public static final String SENSORRAWPML = "sensor_raw_pml";
 
         public static final String SENSORRAWSO2 = "sensor_raw_so2";
-
-        public static final String SENSORAQICO = "sensor_aqi_co";
-
-        public static final String SENSORAQINO2 = "sensor_aqi_no2";
-
-        public static final String SENSORAQIO3 = "sensor_aqi_o3";
-
-        public static final String SENSORAQISO2 = "sensor_aqi_so2";
-
-        public static final String SENSORAQIPM = "sensor_aqi_pm";
-
-        public static final String SENSORAQIPML = "sensor_aqi_pml";
-
-
-
 
         public static final String DIR_BASEPATH = "sensordata";
 
@@ -129,26 +98,12 @@ public class SensorContentContract {
                 PACKETID,
                 GPSLAT,
                 GPSLONG,
-                AQIVAL,
-                AQISRC,
-                SENSORCO,
-                SENSORNO2,
-                SENSORO3,
-                SENSORPM,
-                SENSORPML,
-                SENSORSO2,
                 SENSORRAWCO,
                 SENSORRAWNO2,
                 SENSORRAWO3,
                 SENSORRAWPM,
                 SENSORRAWPML,
-                SENSORRAWSO2,
-                SENSORAQICO,
-                SENSORAQINO2,
-                SENSORAQIO3,
-                SENSORAQISO2,
-                SENSORAQIPM,
-                SENSORAQIPML
+                SENSORRAWSO2
         };
 
         /**

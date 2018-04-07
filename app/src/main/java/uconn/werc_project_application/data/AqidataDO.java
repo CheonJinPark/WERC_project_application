@@ -28,6 +28,18 @@ public class AqidataDO {
     private Double _sensorAqiPm;
     private Double _sensorAqiPml;
     private Double _sensorAqiSo2;
+    private Double _sensorLpoPm;
+    private Double _sensorLpoPml;
+    private Double _sensorPpmCo;
+    private Double _sensorPpmNo2;
+    private Double _sensorPpmO3;
+    private Double _sensorPpmSo2;
+    private Double _sensorUgm3Pm;
+    private Double _sensorUgm3Pml;
+    private Double _sensorVoltCo;
+    private Double _sensorVoltNo2;
+    private Double _sensorVoltO3;
+    private Double _sensorVoltSo2;
     private String _userId;
 
     @DynamoDBHashKey(attributeName = "projectId")
@@ -143,6 +155,102 @@ public class AqidataDO {
 
     public void setSensorAqiSo2(final Double _sensorAqiSo2) {
         this._sensorAqiSo2 = _sensorAqiSo2;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_lpo_pm")
+    public Double getSensorLpoPm() {
+        return _sensorLpoPm;
+    }
+
+    public void setSensorLpoPm(final Double _sensorLpoPm) {
+        this._sensorLpoPm = _sensorLpoPm;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_lpo_pml")
+    public Double getSensorLpoPml() {
+        return _sensorLpoPml;
+    }
+
+    public void setSensorLpoPml(final Double _sensorLpoPml) {
+        this._sensorLpoPml = _sensorLpoPml;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_ppm_co")
+    public Double getSensorPpmCo() {
+        return _sensorPpmCo;
+    }
+
+    public void setSensorPpmCo(final Double _sensorPpmCo) {
+        this._sensorPpmCo = _sensorPpmCo;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_ppm_no2")
+    public Double getSensorPpmNo2() {
+        return _sensorPpmNo2;
+    }
+
+    public void setSensorPpmNo2(final Double _sensorPpmNo2) {
+        this._sensorPpmNo2 = _sensorPpmNo2;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_ppm_o3")
+    public Double getSensorPpmO3() {
+        return _sensorPpmO3;
+    }
+
+    public void setSensorPpmO3(final Double _sensorPpmO3) {
+        this._sensorPpmO3 = _sensorPpmO3;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_ppm_so2")
+    public Double getSensorPpmSo2() {
+        return _sensorPpmSo2;
+    }
+
+    public void setSensorPpmSo2(final Double _sensorPpmSo2) {
+        this._sensorPpmSo2 = _sensorPpmSo2;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_ugm3_pm")
+    public Double getSensorUgm3Pm() {
+        return _sensorUgm3Pm;
+    }
+
+    public void setSensorUgm3Pm(final Double _sensorUgm3Pm) {
+        this._sensorUgm3Pm = _sensorUgm3Pm;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_ugm3_pml")
+    public Double getSensorUgm3Pml() {
+        return _sensorUgm3Pml;
+    }
+
+    public void setSensorUgm3Pml(final Double _sensorUgm3Pml) {
+        this._sensorUgm3Pml = _sensorUgm3Pml;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_volt_co")
+    public Double getSensorVoltCo() {
+        return _sensorVoltCo;
+    }
+
+    public void setSensorVoltCo(final Double _sensorVoltCo) {
+        this._sensorVoltCo = _sensorVoltCo;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_volt_no2")
+    public Double getSensorVoltNo2() {
+        return _sensorVoltNo2;
+    }
+
+    public void setSensorVoltNo2(final Double _sensorVoltNo2) {
+        this._sensorVoltNo2 = _sensorVoltNo2;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_volt_o3")
+    public Double getSensorVoltO3() {
+        return _sensorVoltO3;
+    }
+
+    public void setSensorVoltO3(final Double _sensorVoltO3) {
+        this._sensorVoltO3 = _sensorVoltO3;
+    }
+    @DynamoDBAttribute(attributeName = "sensor_volt_so2")
+    public Double getSensorVoltSo2() {
+        return _sensorVoltSo2;
+    }
+
+    public void setSensorVoltSo2(final Double _sensorVoltSo2) {
+        this._sensorVoltSo2 = _sensorVoltSo2;
     }
     @DynamoDBAttribute(attributeName = "userId")
     public String getUserId() {

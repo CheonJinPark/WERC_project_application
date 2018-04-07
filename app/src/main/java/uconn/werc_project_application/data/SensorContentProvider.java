@@ -18,6 +18,7 @@ import android.util.Log;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
 
+import java.util.AbstractQueue;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -88,7 +89,18 @@ public class SensorContentProvider extends ContentProvider {
         datapacket.setSensorAqiSo2(values.getAsDouble(AqiContentContract.Aqidata.SENSORAQISO2));
         datapacket.setSensorAqiPm(values.getAsDouble(AqiContentContract.Aqidata.SENSORAQIPM));
         datapacket.setSensorAqiPml(values.getAsDouble(AqiContentContract.Aqidata.SENSORAQIPML));
-
+        datapacket.setSensorPpmCo(values.getAsDouble(AqiContentContract.Aqidata.SENSORPPMCO));
+        datapacket.setSensorPpmNo2(values.getAsDouble(AqiContentContract.Aqidata.SENSORPPMNO2));
+        datapacket.setSensorPpmO3(values.getAsDouble(AqiContentContract.Aqidata.SENSORPPMO3));
+        datapacket.setSensorPpmSo2(values.getAsDouble(AqiContentContract.Aqidata.SENSORPPMSO2));
+        datapacket.setSensorUgm3Pm(values.getAsDouble(AqiContentContract.Aqidata.SENSORUGM3PM));
+        datapacket.setSensorUgm3Pml(values.getAsDouble(AqiContentContract.Aqidata.SENSORUGM3PML));
+        datapacket.setSensorVoltCo(values.getAsDouble(AqiContentContract.Aqidata.SENSORVOLTCO));
+        datapacket.setSensorVoltNo2(values.getAsDouble(AqiContentContract.Aqidata.SENSORVOLTNO2));
+        datapacket.setSensorVoltO3(values.getAsDouble(AqiContentContract.Aqidata.SENSORVOLTO3));
+        datapacket.setSensorVoltSo2(values.getAsDouble(AqiContentContract.Aqidata.SENSORVOLTSO2));
+        datapacket.setSensorLpoPm(values.getAsDouble(AqiContentContract.Aqidata.SENSORLPOPM));
+        datapacket.setSensorLpoPml(values.getAsDouble(AqiContentContract.Aqidata.SENSORLPOPML));
         datapacket.setAqiSrc(values.getAsString(AqiContentContract.Aqidata.AQISRC));
         datapacket.setAqiVal(values.getAsDouble(AqiContentContract.Aqidata.AQIVAL));
 
@@ -149,32 +161,12 @@ public class SensorContentProvider extends ContentProvider {
         datapacket.setTime(values.getAsDouble(SensorContentContract.Sensordata.TIME));
         datapacket.setGpsLat(values.getAsDouble(SensorContentContract.Sensordata.GPSLAT));
         datapacket.setGpsLong(values.getAsDouble(SensorContentContract.Sensordata.GPSLONG));
-        datapacket.setPacketId(values.getAsString(SensorContentContract.Sensordata.PACKETID));
-        datapacket.setSensorCo(values.getAsDouble(SensorContentContract.Sensordata.SENSORCO));
-        datapacket.setSensorNo2(values.getAsDouble(SensorContentContract.Sensordata.SENSORNO2));
-        datapacket.setSensorO3(values.getAsDouble(SensorContentContract.Sensordata.SENSORO3));
-        datapacket.setSensorPm(values.getAsDouble(SensorContentContract.Sensordata.SENSORPM));
-        datapacket.setSensorPml(values.getAsDouble(SensorContentContract.Sensordata.SENSORPML));
-        datapacket.setSensorSo2(values.getAsDouble(SensorContentContract.Sensordata.SENSORSO2));
         datapacket.setSensorRawCo(values.getAsDouble(SensorContentContract.Sensordata.SENSORRAWCO));
         datapacket.setSensorRawNo2(values.getAsDouble(SensorContentContract.Sensordata.SENSORRAWNO2));
         datapacket.setSensorRawO3(values.getAsDouble(SensorContentContract.Sensordata.SENSORRAWO3));
         datapacket.setSensorRawPm(values.getAsDouble(SensorContentContract.Sensordata.SENSORRAWPM));
         datapacket.setSensorRawSo2(values.getAsDouble(SensorContentContract.Sensordata.SENSORRAWSO2));
         datapacket.setSensorRawPml(values.getAsDouble(SensorContentContract.Sensordata.SENSORRAWPML));
-        datapacket.setSensorAqiCo(values.getAsDouble(SensorContentContract.Sensordata.SENSORAQICO));
-        datapacket.setSensorAqiNo2(values.getAsDouble(SensorContentContract.Sensordata.SENSORAQINO2));
-        datapacket.setSensorAqiO3(values.getAsDouble(SensorContentContract.Sensordata.SENSORAQIO3));
-        datapacket.setSensorAqiSo2(values.getAsDouble(SensorContentContract.Sensordata.SENSORAQISO2));
-        datapacket.setSensorAqiPm(values.getAsDouble(SensorContentContract.Sensordata.SENSORAQIPM));
-        datapacket.setSensorAqiPml(values.getAsDouble(SensorContentContract.Sensordata.SENSORAQIPML));
-
-        datapacket.setAqiSrc(values.getAsString(SensorContentContract.Sensordata.AQISRC));
-        datapacket.setAqiVal(values.getAsDouble(SensorContentContract.Sensordata.AQIVAL));
-
-
-
-
 
         return datapacket;
     }
@@ -197,18 +189,6 @@ public class SensorContentProvider extends ContentProvider {
                 r[i] = datapacket.getGpsLat();
             } else if (fields[i].equals(SensorContentContract.Sensordata.GPSLONG)) {
                 r[i] = datapacket.getGpsLong();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORCO)) {
-                r[i] = datapacket.getSensorCo();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORNO2)) {
-                r[i] = datapacket.getSensorNo2();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORO3)) {
-                r[i] = datapacket.getSensorO3();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORPM)) {
-                r[i] = datapacket.getSensorPm();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORPML)) {
-                r[i] = datapacket.getSensorPml();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORSO2)) {
-                r[i] = datapacket.getSensorSo2();
             } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORRAWCO)) {
                 r[i] = datapacket.getSensorRawCo();
             } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORRAWNO2)) {
@@ -221,22 +201,6 @@ public class SensorContentProvider extends ContentProvider {
                 r[i] = datapacket.getSensorRawSo2();
             } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORRAWPML)) {
                 r[i] = datapacket.getSensorRawPml();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORAQICO)) {
-                r[i] = datapacket.getSensorAqiCo();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORAQINO2)) {
-                r[i] = datapacket.getSensorAqiNo2();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORAQIO3)) {
-                r[i] = datapacket.getSensorAqiO3();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORAQISO2)) {
-                r[i] = datapacket.getSensorAqiSo2();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORAQIPM)) {
-                r[i] = datapacket.getSensorAqiPm();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.SENSORAQIPML)) {
-                r[i] = datapacket.getSensorAqiPml();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.AQIVAL)) {
-                r[i] = datapacket.getAqiVal();
-            } else if (fields[i].equals(SensorContentContract.Sensordata.AQISRC)) {
-                r[i] = datapacket.getAqiSrc();
             } else {
                 r[i] = new Integer(0);
             }
