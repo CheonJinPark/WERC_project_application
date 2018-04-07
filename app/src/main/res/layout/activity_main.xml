@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context="uconn.werc_project_application.MainActivity">
 
+
+    <android.support.v4.widget.DrawerLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/drawer">
+
+
     <RelativeLayout
         android:id="@+id/main_relativelayout"
         android:layout_width="0dp"
@@ -358,6 +369,12 @@
     </RelativeLayout>
 
 
+    <ListView android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:background="#FFFFFF"
+        android:id="@+id/drawer_menulist" />
+</android.support.v4.widget.DrawerLayout>
 
 
 </android.support.constraint.ConstraintLayout>

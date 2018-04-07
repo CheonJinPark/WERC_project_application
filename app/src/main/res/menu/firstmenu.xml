@@ -10,7 +10,8 @@
 
         <item android:id="@+id/popup_datatype"
 
-            android:title="Data Type">
+            android:title="Data Type"
+            >
 
             <menu>
                 <item android:id="@+id/popup_o3"
@@ -33,24 +34,7 @@
             </menu>
     </item>
 
-        <item android:id="@+id/popup_display"
 
-            android:title="All or Self">
-
-            <menu>
-
-                <item android:id="@+id/popup_all"
-
-                    android:title="All"/>
-
-                <item android:id="@+id/popup_self"
-
-                    android:title="Self"/>
-
-
-            </menu>
-
-        </item>
 
 
 </menu>

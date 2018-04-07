@@ -275,6 +275,7 @@ op_btn.setText(optionlist[item]);
         MenuInflater inflater = popup.getMenuInflater();
         Menu menu = popup.getMenu();
         inflater.inflate(R.menu.firstmenu, menu);
+
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -314,16 +315,16 @@ op_btn.setText(optionlist[item]);
                         updateMap();
                         break;
 
-                    case R.id.popup_all:
-
-                        ALLorSelf = "ALL";
-                        updateMap();
-                        break;
-                    case R.id.popup_self:
-
-                        ALLorSelf = "SELF";
-                        updateMap();
-                        break;
+//                   case R.id.popup_all:
+//
+//                        ALLorSelf = "ALL";
+//                        updateMap();
+//                        break;
+//                    case R.id.popup_self:
+//
+//                        ALLorSelf = "SELF";
+ //                       updateMap();
+ //                       break;
 
 
 

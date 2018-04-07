@@ -1,7 +1,7 @@
 package uconn.werc_project_application;
 
 import android.Manifest;
-import android.app.Activity;
+import android.app.ActionBar;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -16,11 +16,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,11 +48,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import org.w3c.dom.Text;
 
 import uconn.werc_project_application.ble.BLEDataLinker;
+import uconn.werc_project_application.data.AqiContentContract;
 import uconn.werc_project_application.data.DataInterpreter;
 import uconn.werc_project_application.data.DummyDataGenerator;
 import uconn.werc_project_application.data.SendDataService;
 import uconn.werc_project_application.data.SensorContentContract;
 import uconn.werc_project_application.gps.LocationListenerService;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
+
+// AWS Database
 
 
 public class MainActivity extends AppCompatActivity{
@@ -71,6 +81,10 @@ public class MainActivity extends AppCompatActivity{
         // Install the application crash handler.
         ApplicationCrashHandler.installHandler();
         contentResolver = getApplicationContext().getContentResolver();
+
+
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.actionbar_layout);
 
         // Check GPS Access Permissions
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -111,7 +125,7 @@ public class MainActivity extends AppCompatActivity{
         setAQI(48);
         setConnection(BLE_DISCONNECT);
         setDataPoints(224);
-
+        setDrawer();
 
         //Test GPSs
         g1 = new GPS(-72.253981,41.807741); //Uconn
@@ -164,6 +178,21 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
+        RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.main_relativelayout);
+        mainLayout.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            @Override
+            public void onSwipeLeft() {
+                Log.d("onSwipeTouchListener", "onSwipeLeft");
+                intent_test = new Intent(MainActivity.this, MapsActivity.class);
+                intent_test.putExtra("g1", g1);
+                intent_test.putExtra("g2", g2);
+                intent_test.putExtra("g3", g3);
+                intent_test.putExtra("g4", g4);
+                intent_test.putExtra("g5", g5);
+                startActivity(intent_test);
+            }
+        });
+
         Button btn_ble_scan = (Button) findViewById(R.id.button_ble);
 
         btn_ble_scan.setOnClickListener(new Button.OnClickListener() {
@@ -195,10 +224,9 @@ public class MainActivity extends AppCompatActivity{
                         .getPinpointManager()
                         .getAnalyticsClient();
                 final AnalyticsEvent evt = mgr.createEvent("SendDummyData")
-                        .withAttribute("packetId","");
+                        .withAttribute("packetId", values.getAsString(AqiContentContract.Aqidata.PACKETID));
                 mgr.recordEvent(evt);
-                mgr.submitEvents();
-            }
+                mgr.submitEvents();            }
 
 
         });
@@ -211,6 +239,8 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         });
+
+
 
 
     }
@@ -254,6 +284,7 @@ public class MainActivity extends AppCompatActivity{
         apiValue.setText(Integer.toString(value));
         apiValue.setTextColor(Color.parseColor(info.getTextColor(value)));
     }
+
     public void setConnection(String state) {
         switch (state) {
             case BLE_CONNECT:
@@ -270,13 +301,75 @@ public class MainActivity extends AppCompatActivity{
         data_point.setText(Integer.toString(value)+ " data points");
     }
 
+    void setDrawer() {
+        final String[] items = {"Go to Map", "BLUETOOTH", "Dummy Data", "Custom Data Maker"};
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items);
 
-    @Override
-    public void onDestroy()
-    {
-        super.onDestroy();
-        BLEDataLinker.getInstance().close();
-    }
+        ListView listview = (ListView) findViewById(R.id.drawer_menulist);
+        listview.setAdapter(adapter);
+
+        listview.setOnItemClickListener(new ListView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+                switch (position) {
+                    case 0: // Go to Map
+                        intent_test = new Intent(MainActivity.this, MapsActivity.class);
+                        intent_test.putExtra("g1", g1);
+                        intent_test.putExtra("g2", g2);
+                        intent_test.putExtra("g3", g3);
+                        intent_test.putExtra("g4", g4);
+                        intent_test.putExtra("g5", g5);
+                        startActivity(intent_test);
+                        break;
+                    case 1: // BLUETOOTH
+                        intent_ble = new Intent(MainActivity.this, BLEScanActivity.class);
+                        startActivity(intent_ble);
+                        break;
+                    case 2: // DUMMY DATA
+                        DummyDataGenerator ddg = new DummyDataGenerator(SensorContentContract.Sensordata.PROJECTION_ALL);
+                        ContentValues values = ddg.generate(0.0, 3.0);
+                        values.put(SensorContentContract.Sensordata.DEVICEID, "dummydata");
+                        AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
+                            @Override
+                            protected void onInsertComplete(int token, Object cookie, Uri uri) {
+                                super.onInsertComplete(token, cookie, uri);
+                                Log.d("DummyDataButtonPress", "insert completed");
+                                Toast.makeText(getApplicationContext(), "Dummy Data Uploaded", Toast.LENGTH_LONG).show();
+
+                            }
+                        };
+                        queryHandler.startInsert(INSERT_TOKEN, null, SensorContentContract.Sensordata.CONTENT_URI, values);
+
+
+                        final AnalyticsClient mgr = AWSProvider.getInstance()
+                                .getPinpointManager()
+                                .getAnalyticsClient();
+                        final AnalyticsEvent evt = mgr.createEvent("SendDummyData")
+                                .withAttribute("packetId", values.getAsString(AqiContentContract.Aqidata.PACKETID));
+                        mgr.recordEvent(evt);
+                        mgr.submitEvents();break;
+                    case 3: // Custom Data maker
+                        Intent intent = new Intent(MainActivity.this, CustomDPmakerActivity.class);
+                        startActivity(intent);
+                        break;
+
+
+                }
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer) ;
+                drawer.closeDrawer(Gravity.LEFT) ;
+
+
+
+            }
+        });}
+
+            @Override
+            public void onDestroy() {
+                super.onDestroy();
+                BLEDataLinker.getInstance().close();
+            }
 
 
 }
