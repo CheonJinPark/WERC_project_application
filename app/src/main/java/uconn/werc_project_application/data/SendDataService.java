@@ -37,16 +37,12 @@ Bill Brown
 public class SendDataService extends Service {
     private final LocalBinder mBinder = new LocalBinder();
     protected Handler handler;
-    protected Toast mToast;
-    protected TimerTask tTask;
     protected Timer timer;
     private static final int INSERT_TOKEN = 1003;
     private ContentResolver contentResolver;
 
-    LocationManager locationManager;
-    int REQUEST_LOCATION = 2;
 
-    public static final long INSTANT_DATA_INTERVAL = 10 * 1000; // 10 seconds
+    public static final long INSTANT_DATA_INTERVAL = 7 * 1000; // 10 seconds
 
     public static final long HOUR_DATA_INTERNAL = 1000 * 60 * 60;
 

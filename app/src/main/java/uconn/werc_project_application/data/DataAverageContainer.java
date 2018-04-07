@@ -15,7 +15,7 @@ import uconn.werc_project_application.MainActivity;
 public class DataAverageContainer {
     private static final String TAG = "DataAverageContainer";
     private static final String CAG = "DAC Calculations";
-    private static final int PACKETTHRESHOLD = 80;
+    private static final int PACKETTHRESHOLD = 160;
     private String[] deviceIds = {"sens1", "sens2"};
     private static final String deviceId = "sens1";
     // Metadata

@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity{
     private static final int INSERT_TOKEN = 1003;
     TextView userName,apiValue, co_value,o3_value,no2_value,so2_value,pm_value,connection_state,data_point;
     Information info = new Information();
-    public final static String BLE_CONNECT = "connected", BLE_DISCONNECT = "disconnected";
+    public final static String BLE_CONNECT = "Sensorem Active", BLE_DISCONNECT = "Sensorem not connected";
 
     private ContentResolver contentResolver;
 
@@ -126,10 +126,7 @@ public class MainActivity extends AppCompatActivity{
         //Here is basic set up functions for MainActivity View
         initiateView();
         setColors();
-        setUserName("");
-        setAQI(48);
         setConnection(BLE_DISCONNECT);
-        setDataPoints(224);
         setDrawer();
 
         //Test GPSs
@@ -260,15 +257,13 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void initiateView(){
-        userName = (TextView)findViewById(R.id.main_userName);
-        apiValue = (TextView)findViewById(R.id.main_api_value);
         co_value = (TextView)findViewById(R.id.main_CO_value);
         o3_value = (TextView)findViewById(R.id.main_O3_value);
         no2_value = (TextView)findViewById(R.id.main_NO2_value);
         so2_value = (TextView)findViewById(R.id.main_SO2_value);
         pm_value = (TextView)findViewById(R.id.main_PM_value);
         connection_state = (TextView)findViewById(R.id.main_device_connectionState);
-        data_point = (TextView)findViewById(R.id.main_data_point);
+
 
 
     }
@@ -282,28 +277,25 @@ public class MainActivity extends AppCompatActivity{
         pm_value.setTextColor(Color.parseColor(info.getTextColor(Integer.parseInt(pm_value.getText().toString()))));
 
     }
-    public void setUserName(String name){
-        userName.setText(name);
-    }
-    public void setAQI(int value){
-        apiValue.setText(Integer.toString(value));
-        apiValue.setTextColor(Color.parseColor(info.getTextColor(value)));
-    }
+
+
 
     public void setConnection(String state) {
         switch (state) {
             case BLE_CONNECT:
                 connection_state.setText(BLE_CONNECT);
-                connection_state.setTextColor(Color.parseColor("#7CFC00"));
+                connection_state.setTextColor(Color.parseColor("#FFBB80CB"));
                 break;
             case BLE_DISCONNECT:
                 connection_state.setText(BLE_DISCONNECT);
-                connection_state.setTextColor(Color.parseColor("#FF0000"));
+                connection_state.setTextColor(Color.parseColor("#FF8B8B8B"));
                 break;
         }
     }
-    public void setDataPoints(int value){
-        data_point.setText(Integer.toString(value)+ " data points");
+
+    public void setCoDisplay(int aqi)
+    {
+
     }
 
     void setDrawer() {

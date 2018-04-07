@@ -1,11 +1,26 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="signin_theme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <!--<item name="android:textColorPrimary">@color/text_color_signin</item>-->
+    </style>
+
+    <style name="sensorem" parent="Theme.AppCompat" >
+        <item name="android:textColorPrimary">@color/text_color_primary</item>
+        <item name="android:colorBackground">@color/background_material_light</item>
+        <item name="android:navigationBarColor">@color/navigation_bar</item>
+        <item name="android:statusBarColor">@color/status_bar</item>
+        <item name="android:actionBarStyle">@style/action_bar_style</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+    </style>
+
+    <style name="action_bar_style" parent="Widget.AppCompat.ActionBar" >
+        <item name="android:background">@color/action_bar</item>
+        <item name="android:textColor">@color/action_bar_text</item>
     </style>
 
 </resources>
