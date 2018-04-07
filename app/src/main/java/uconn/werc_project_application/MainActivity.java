@@ -394,11 +394,11 @@ public class MainActivity extends AppCompatActivity{
 
             // 리스트뷰의 아이템에 이미지를 변경한다.
             if(position == 0)
-                imageView.setImageResource(R.drawable.ic_map_black_24dp);
+                imageView.setImageResource(R.drawable.ic_map_white_24dp);
             else if(position==1)
-                imageView.setImageResource(R.drawable.ic_bluetooth_black_24dp);
+                imageView.setImageResource(R.drawable.ic_bluetooth_white_24dp);
             else if(position==2)
-                imageView.setImageResource(R.drawable.ic_edit_location_black_24dp);
+                imageView.setImageResource(R.drawable.ic_edit_location_white_24dp);
             TextView textView = (TextView)v.findViewById(R.id.textView);
             textView.setText(" "+items.get(position));
 

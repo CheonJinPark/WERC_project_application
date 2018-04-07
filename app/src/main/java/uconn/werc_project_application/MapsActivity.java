@@ -283,35 +283,35 @@ op_btn.setText(optionlist[item]);
                     case R.id.popup_co:
 
                         DataType = info.CO;
-                        Radius = 100;
+                        Radius = info.CO_RANGE;
                         updateMap();
                         break;
 
                     case R.id.popup_o3:
 
                         DataType = info.O3;
-                        Radius = 200;
+                        Radius = info.O3_RANGE;
                         updateMap();
                         break;
 
                     case R.id.popup_no2:
 
                         DataType = info.NO2;
-                        Radius = 300;
+                        Radius = info.NO2_RANGE;
                         updateMap();
                         break;
 
                     case R.id.popup_so2:
 
                         DataType = info.SO2;
-                        Radius = 400;
+                        Radius = info.SO2_RANGE;
                         updateMap();
                         break;
 
                     case R.id.popup_dust:
 
                         DataType = info.DUST;
-                        Radius = 500;
+                        Radius = info.Dust_RANGE;
                         updateMap();
                         break;
 

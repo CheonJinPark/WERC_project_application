@@ -12,10 +12,10 @@ public class Information {
 
     //Ranges
     public final static int O3_RANGE = 100;
-    public final static int CO_RANGE = 200;
-    public final static int NO2_RANGE = 300;
-    public final static int SO2_RANGE = 400;
-    public final static int Dust_RANGE = 500;
+    public final static int CO_RANGE = 100;
+    public final static int NO2_RANGE = 100;
+    public final static int SO2_RANGE = 100;
+    public final static int Dust_RANGE = 100;
 
     public final static String O3 = "O3";
     public final static String CO = "CO";
