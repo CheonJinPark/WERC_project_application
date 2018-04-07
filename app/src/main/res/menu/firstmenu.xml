@@ -8,12 +8,6 @@
 
 
 
-        <item android:id="@+id/popup_datatype"
-
-            android:title="Data Type"
-            >
-
-            <menu>
                 <item android:id="@+id/popup_o3"
 
                     android:title="O3"/>
@@ -31,8 +25,8 @@
                 <item android:id="@+id/popup_dust"
 
                     android:title="DUST"/>
-            </menu>
-    </item>
+
+
 
 
 
