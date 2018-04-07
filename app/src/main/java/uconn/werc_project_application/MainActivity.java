@@ -20,10 +20,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -46,6 +49,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 
 import uconn.werc_project_application.ble.BLEDataLinker;
 import uconn.werc_project_application.data.AqiContentContract;
@@ -302,8 +307,12 @@ public class MainActivity extends AppCompatActivity{
     }
 
     void setDrawer() {
-        final String[] items = {"Go to Map", "BLUETOOTH", "Dummy Data", "Custom Data Maker"};
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items);
+        final String[] items = {"Go to Map", "Bloo",  "Custom Data Maker"};
+        ArrayList<String> drawlist = new ArrayList<>();
+        drawlist.add("Go to Map");
+        drawlist.add("Bluetooth");
+        drawlist.add("Custom Data\n Maker");
+        CustomAdapter adapter = new CustomAdapter(this, 0, drawlist);
 
         ListView listview = (ListView) findViewById(R.id.drawer_menulist);
         listview.setAdapter(adapter);
@@ -364,6 +373,43 @@ public class MainActivity extends AppCompatActivity{
 
             }
         });}
+
+    private class CustomAdapter extends ArrayAdapter<String> {
+        private ArrayList<String> items;
+
+        public CustomAdapter(Context context, int textViewResourceId, ArrayList<String> objects) {
+            super(context, textViewResourceId, objects);
+            this.items = objects;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v = convertView;
+            if (v == null) {
+                LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = vi.inflate(R.layout.drawer_listview_layout, null);
+            }
+
+            // ImageView 인스턴스
+            ImageView imageView = (ImageView)v.findViewById(R.id.imageView);
+
+            // 리스트뷰의 아이템에 이미지를 변경한다.
+            if(position == 0)
+                imageView.setImageResource(R.drawable.ic_map_black_24dp);
+            else if(position==1)
+                imageView.setImageResource(R.drawable.ic_bluetooth_black_24dp);
+            else if(position==2)
+                imageView.setImageResource(R.drawable.ic_edit_location_black_24dp);
+            TextView textView = (TextView)v.findViewById(R.id.textView);
+            textView.setText(" "+items.get(position));
+
+
+
+            return v;
+        }
+    }
+
+
+
 
             @Override
             public void onDestroy() {
