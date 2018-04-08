@@ -54,7 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     Double Long, Lat;
-    GPS g1, g2, g3, g4, g5;
+    GPS g0, g1, g2, g3, g4, g5;
     Information info;
     Button op_btn;
     String DataType, ALLorSelf;
@@ -94,8 +94,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         all_list = new ArrayList<>();
         info = new Information();
         //Test GPSs
+        //Dummy data to set 300 is one of the max for gradient;
+        g0 = new GPS(0, 0); //Uconn
+        g0.setCo(300);
+        g0.setPM(300);
+        g0.setNo2(300);
+        g0.setSo2(300);
+        g0.setO3(300);
+        g0.setAqival(300);
+
         g1 = new GPS(-72.253981, 41.807741); //Uconn
-        g1.setCo(20);
+        g1.setCo(300);
         g1.setPM(40);
         g1.setNo2(60);
         g1.setSo2(10);
@@ -105,30 +114,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         g2.setCo(50);
         g2.setPM(20);
         g2.setNo2(120);
-        g2.setSo2(200);
+        g2.setSo2(10);
         g2.setO3(301);
         g2.setAqival(10);
         g3 = new GPS(-72.253430, 41.804776); //Coop
         g3.setCo(30);
         g3.setPM(70);
         g3.setNo2(120);
-        g3.setSo2(200);
+        g3.setSo2(10);
         g3.setO3(10);
         g3.setAqival(5);
         g4 = new GPS(-72.259929, 41.802675); //Hilltop Community Center
         g4.setCo(300);
         g4.setPM(150);
         g4.setNo2(120);
-        g4.setSo2(150);
+        g4.setSo2(10);
         g4.setO3(20);
         g4.setAqival(301);
         g5 = new GPS(-72.251748, 41.806629); //Library
         g5.setCo(10);
         g5.setPM(40);
         g5.setNo2(60);
-        g5.setSo2(10);
-        g5.setO3(10);
+        g5.setSo2(310);
+        g5.setO3(300);
         g5.setAqival(80);
+        all_list.add(g0);
         all_list.add(g1);
         all_list.add(g2);
         all_list.add(g3);
@@ -334,35 +344,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         DataType = info.CO;
                         Radius = info.CO_RANGE;
-                        updateMap();
+                        //updateMap();
+                        saveLList();
+                        updateHeatMap();
                         break;
 
                     case R.id.popup_o3:
 
                         DataType = info.O3;
                         Radius = info.O3_RANGE;
-                        updateMap();
+                        //updateMap();
+                        saveLList();
+                        updateHeatMap();
                         break;
 
                     case R.id.popup_no2:
 
                         DataType = info.NO2;
                         Radius = info.NO2_RANGE;
-                        updateMap();
+                        //updateMap();
+                        saveLList();
+                        updateHeatMap();
                         break;
 
                     case R.id.popup_so2:
 
                         DataType = info.SO2;
                         Radius = info.SO2_RANGE;
-                        updateMap();
+                        //updateMap();
+                        saveLList();
+                        updateHeatMap();
                         break;
 
                     case R.id.popup_dust:
 
                         DataType = info.DUST;
                         Radius = info.Dust_RANGE;
-                        updateMap();
+                        //updateMap();
+                        saveLList();
+                        updateHeatMap();
+                        break;
+
+                    case R.id.popup_aqi_value:
+                        DataType = info.AQIvalue;
+                        Radius= 100;
+                        saveLList();
+                        updateHeatMap();
                         break;
 
 //                   case R.id.popup_all:
@@ -408,14 +435,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mProvider.setRadius(50);
         mOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-
+        Long = all_list.get(all_list.size() - 1).getLongitude();
+        Lat = all_list.get(all_list.size() - 1).getLatitude();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(Lat, Long)), 15));
     }
 
     void saveLList() {
+        WLLlist.clear();
         for (int i = 0; i < all_list.size(); i++) {
-            WeightedLatLng WLL = new WeightedLatLng(new LatLng(all_list.get(i).getLatitude(), all_list.get(i).getLongitude()), all_list.get(i).getAqival());
+            WeightedLatLng WLL = new WeightedLatLng(new LatLng(all_list.get(i).getLatitude(), all_list.get(i).getLongitude()), all_list.get(i).get(DataType));
+            Log.d("MapsActivity", "save list the data type is : "+DataType+" the value is : "+Integer.toString(all_list.get(i).get(DataType)));
             WLLlist.add(WLL);
         }
+    }
+    void updateHeatMap(){
+        mProvider.setWeightedData(WLLlist);
+        mOverlay.clearTileCache();
+        moveToCenter();
     }
 //    @Override
 //    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -426,6 +462,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                null,
 //                SensorContentContract.Sensordata.SORT_ORDER_DEFAULT);
 //    }
+
+    void moveToCenter(){
+        Long = all_list.get(all_list.size() - 1).getLongitude();
+        Lat = all_list.get(all_list.size() - 1).getLatitude();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(Lat, Long)), 15));
+    }
 
 
 }
