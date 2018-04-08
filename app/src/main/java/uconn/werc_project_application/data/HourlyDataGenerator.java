@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import uconn.werc_project_application.MainActivity;
@@ -12,12 +13,13 @@ import uconn.werc_project_application.MainActivity;
  * Created by Bill on 4/6/2018.
  */
 
-public class DataAverageContainer {
-    private static final String TAG = "DataAverageContainer";
+public class HourlyDataGenerator {
+    private static final String TAG = "HourlyDataGenerator";
     private static final String CAG = "DAC Calculations";
     private static final int PACKETTHRESHOLD = 160;
     private String[] deviceIds = {"sens1", "sens2"};
-    private static final String deviceId = "sens1";
+
+    private String deviceId = null;
     // Metadata
     private int packetCount = 0;
 
@@ -41,6 +43,7 @@ public class DataAverageContainer {
     private HashMap<Double, Double> aqihm_pm;
     private HashMap<Double, Double> aqihm_pml;
 
+
         /* Average Values
      */
 
@@ -55,140 +58,24 @@ public class DataAverageContainer {
 
     private Double vRef;
 
-    public DataAverageContainer() {
-        loadDefaultValues();
+    public HourlyDataGenerator(String deviceId, HashMap<String, Double> sensitivitycode_hashmap, HashMap<String, Double> tiagain_hashmap, HashMap<String, Double> offset_hashmap, HashMap<Double, Double> aqihm_co, HashMap<Double, Double> aqihm_no2, HashMap<Double, Double> aqihm_o3, HashMap<Double, Double> aqihm_so2, HashMap<Double, Double> aqihm_pm, HashMap<Double, Double> aqihm_pml, Double vRef) {
+        this.deviceId = deviceId;
+        this.sensitivitycode_hashmap = sensitivitycode_hashmap;
+        this.tiagain_hashmap = tiagain_hashmap;
+        this.offset_hashmap = offset_hashmap;
+        this.aqihm_co = aqihm_co;
+        this.aqihm_no2 = aqihm_no2;
+        this.aqihm_o3 = aqihm_o3;
+        this.aqihm_so2 = aqihm_so2;
+        this.aqihm_pm = aqihm_pm;
+        this.aqihm_pml = aqihm_pml;
+        this.vRef = vRef;
     }
 
-    private void loadDefaultValues()
-    {
-        loadDefaultTGains();
-        loadDefaultVRef();
-        loadAQIHashMaps();
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    private void loadDefaultTGains()
-    {
-        tiagain_hashmap = new HashMap<String, Double>();
-        tiagain_hashmap.clear();
-
-        // Default values
-        tiagain_hashmap.put(AqiContentContract.Aqidata.SENSORAQICO, 100.0);
-        tiagain_hashmap.put(AqiContentContract.Aqidata.SENSORAQINO2, 499.0);
-        tiagain_hashmap.put(AqiContentContract.Aqidata.SENSORAQIO3, 499.0);
-        tiagain_hashmap.put(AqiContentContract.Aqidata.SENSORAQISO2, 100.0);
-    }
-
-    private void loadDefaultVRef()
-    {
-        vRef = 1.665;
-    }
-
-    private void loadAQIHashMaps()
-    {
-        // CO Hashmap
-        aqihm_co = new HashMap<Double, Double>();
-        aqihm_co.put(0.0, 11.36);
-        aqihm_co.put(4.5, 10.0);
-        aqihm_co.put(9.5, 16.89);
-        aqihm_co.put(12.5, 16.89);
-        aqihm_co.put(15.5, 6.64);
-        aqihm_co.put(30.5, 10.0);
-        aqihm_co.put(40.5, 10.0);
-
-        // NO2 Hashmap
-        aqihm_no2 = new HashMap<Double, Double>();
-        aqihm_no2.put(0.0, 943.4);
-        aqihm_no2.put(0.054, 1065.2);
-        aqihm_no2.put(0.101, 189.2);
-        aqihm_no2.put(0.361, 170.1);
-        aqihm_no2.put(0.65, 165.3);
-        aqihm_no2.put(1.25, 248.1);
-        aqihm_no2.put(1.65, 248.1);
-
-        // O3 Hashmap
-        aqihm_o3 = new HashMap<Double, Double>();
-        aqihm_o3.put(0.0, 925.9);
-        aqihm_o3.put(0.055, 3266.7);
-        aqihm_o3.put(0.071, 3500.0);
-        aqihm_o3.put(0.086, 2578.9);
-        aqihm_o3.put(0.106, 1053.2);
-        aqihm_o3.put(0.201, 487.0);
-        aqihm_o3.put(0.405, 1000.0);
-        aqihm_o3.put(0.505, 1000.0);
-
-        // SO2 Hashmap
-        aqihm_so2 = new HashMap<Double, Double>();
-        aqihm_so2.put(0.0, 1428.6);
-        aqihm_so2.put(0.036, 1256.4);
-        aqihm_so2.put(0.076, 449.5);
-        aqihm_so2.put(0.186, 415.3);
-        aqihm_so2.put(0.305, 331.1);
-        aqihm_so2.put(0.605, 497.5);
-        aqihm_so2.put(0.805, 497.5);
-
-        // PM Hashmap
-        aqihm_pm = new HashMap<Double, Double>();
-        aqihm_pm.put(0.0, 4.17);
-        aqihm_pm.put(12.1, 2.1);
-        aqihm_pm.put(35.5, 2.46);
-        aqihm_pm.put(55.5, 0.516);
-        aqihm_pm.put(150.5, 1.0);
-        aqihm_pm.put(250.5, 1.0);
-        aqihm_pm.put(350.5, 0.662);
-
-        // PML
-        aqihm_pml = new HashMap<Double, Double>();
-        aqihm_pml.put(0.0, 0.926);
-        aqihm_pml.put(55.0, 0.495);
-        aqihm_pml.put(155.0, 0.495);
-        aqihm_pml.put(255.0, 0.495);
-        aqihm_pml.put(355.0, 1.435);
-        aqihm_pml.put(425.0, 1.25);
-        aqihm_pml.put(505.0, 1.0);
-
-    }
-
-    public void loadSensitivityCodes(String deviceId)
-    {
-        sensitivitycode_hashmap = new HashMap<String, Double>();
-        sensitivitycode_hashmap.clear();
-
-        if (deviceId.equals(deviceIds[0])) {
-            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQICO, 3.22);
-            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQINO2, -24.37);
-            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQIO3, -68.85);
-            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQISO2, 30.22);
-        } else if (deviceId.equals(deviceIds[1])) {
-            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQICO, 2.87);
-            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQINO2, 10.0);
-            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQIO3, 10.0);
-            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQISO2, 10.0);
-        } else {
-            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQICO, 3.22);
-            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQINO2, -24.37);
-            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQIO3, -68.85);
-            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQISO2, 30.22);
-        }
-    }
-
-    public void loadOffsets(String deviceId)
-    {
-        offset_hashmap = new HashMap<String, Double>();
-        offset_hashmap.clear();
-
-        // Default values
-        if (deviceId.equals(deviceIds[0])) {
-            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQICO, 0.002546656);
-            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQINO2, -1.6319031);
-            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQIO3, -0.0366916);
-            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQISO2, 0.09017894);
-        } else if (deviceId.equals(deviceIds[1])) {
-            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQICO, 0.0);
-            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQINO2, 0.0);
-            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQIO3, 0.0);
-            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQISO2, 0.0);
-        }
-    }
 
     public void average_voltage_co(Double val)
     {
@@ -249,9 +136,12 @@ public class DataAverageContainer {
     }
 
     public ContentValues getContentValues() {
-        loadOffsets(deviceId);
-        loadSensitivityCodes(deviceId);
+        if (deviceId == null) {
+
+
+        }
         ContentValues cv = new ContentValues();
+        cv.put(AqiContentContract.Aqidata.TIME, new Date().getTime());
 
          /*
         CALCULATIONS: Voltage to Parts Per Million (PPM) for CO, NO2, O3, SO2
@@ -300,12 +190,12 @@ public class DataAverageContainer {
         y = -0.11*x^3 + 6.55*x^2 + 28.9147*x + 40.2479
          */
         Double pm_raw = av_l_pm;
-        Double pm_ug = (-0.11 * pm_raw * pm_raw * pm_raw) + (6.55 * pm_raw * pm_raw) + (28.9147 * pm_raw) + 40.2479;
+        Double pm_ug = (-0.11 * pm_raw * pm_raw * pm_raw) + (6.55 * pm_raw * pm_raw) + (28.9147 * pm_raw) + 0.8098;
         cv.put(AqiContentContract.Aqidata.SENSORLPOPM, pm_ug);
         Log.d("Data Calcuation", "PM (ug/m3): " + Double.toString(pm_ug));
 
         Double pml_raw = av_l_pml;
-        Double pml_ug = (-0.11 * pml_raw * pml_raw * pml_raw) + (6.55 * pml_raw * pml_raw) + (28.9147 * pml_raw) + 40.2479;
+        Double pml_ug = (-0.11 * pml_raw * pml_raw * pml_raw) + (6.55 * pml_raw * pml_raw) + (28.9147 * pml_raw);
         cv.put(AqiContentContract.Aqidata.SENSORLPOPML, pml_ug);
         Log.d("Data Calcuation", "PML (ug/m3): " + Double.toString(pml_ug));
 
@@ -331,8 +221,9 @@ public class DataAverageContainer {
         else if (co_ppm >= 0.0)
             co_aqi = aqihm_co.get(0.0) * (co_ppm);
         else
-            co_aqi = 99.9; // error, shouldnt' happen.
-        cv.put(AqiContentContract.Aqidata.SENSORAQICO, co_aqi);
+            co_aqi = -1.0; // error, shouldnt' happen.
+        if (co_aqi > 0)
+            cv.put(AqiContentContract.Aqidata.SENSORAQICO, co_aqi);
         Log.d("Data Calculation", "CO AQI: " + Double.toString(co_aqi));
 
         // Calculate AQI for NO2
@@ -352,7 +243,7 @@ public class DataAverageContainer {
         else if (no2_ppm >= 0.0)
             no2_aqi = aqihm_no2.get(0.0) * (no2_ppm);
         else
-            no2_aqi = 99.9; // should never happen.
+            no2_aqi = 2.0; // should never happen.
         cv.put(AqiContentContract.Aqidata.SENSORAQINO2, no2_aqi);
         Log.d("Data Calculation", "NO2 AQI: " + Double.toString(no2_aqi));
 
@@ -376,8 +267,9 @@ public class DataAverageContainer {
         else if (o3_ppm >= 0.0)
             o3_aqi = aqihm_o3.get(0.0) * (o3_ppm);
         else
-            o3_aqi = 99.9; // should never happen
-        cv.put(AqiContentContract.Aqidata.SENSORAQIO3, o3_aqi);
+            o3_aqi = -1.0; // should never happen
+        if (o3_aqi > 0)
+            cv.put(AqiContentContract.Aqidata.SENSORAQIO3, o3_aqi);
         Log.d("Data Calculation", "O3 AQI: " + Double.toString(o3_aqi));
 
         // Calculate AQI for SO2
@@ -397,8 +289,9 @@ public class DataAverageContainer {
         else if (so2_ppm >= 0.0)
             so2_aqi = aqihm_so2.get(0.0) * (so2_ppm);
         else
-            so2_aqi = 99.9;
-        cv.put(AqiContentContract.Aqidata.SENSORAQISO2, so2_aqi);
+            so2_aqi = -1.0;
+        if (so2_aqi > 0)
+            cv.put(AqiContentContract.Aqidata.SENSORAQISO2, so2_aqi);
         Log.d("Data Calculation", "SO2 AQI: " + Double.toString(so2_aqi));
 
         // Calculate AQI for PM
@@ -418,8 +311,9 @@ public class DataAverageContainer {
         else if (pm_ug >= 0)
             pm_aqi = aqihm_pm.get(0.0) * (pm_ug);
         else
-            pm_aqi = 99.9; // shouldn't happen.
-        cv.put(AqiContentContract.Aqidata.SENSORAQIPM, pm_aqi);
+            pm_aqi = -1.0; // shouldn't happen.
+        if (pm_aqi > 0)
+            cv.put(AqiContentContract.Aqidata.SENSORAQIPM, pm_aqi);
         Log.d("Data Calculation", "PM AQI: " + Double.toString(pm_aqi));
 
         // Calculate AQI for PML
@@ -439,8 +333,9 @@ public class DataAverageContainer {
         else if (pml_ug >= 0.0)
             pml_aqi = aqihm_pml.get(0.0) * (pml_ug);
         else
-            pml_aqi = 99.9; // uh yeah.
-        cv.put(AqiContentContract.Aqidata.SENSORAQIPML, pml_aqi);
+            pml_aqi = -1.0; // uh yeah.
+        if (pml_aqi > 0)
+            cv.put(AqiContentContract.Aqidata.SENSORAQIPML, pml_aqi);
         Log.d("Data Calculation", "PML AQI: " + Double.toString(pml_aqi));
 
 
@@ -467,7 +362,7 @@ public class DataAverageContainer {
         packetCount = 0;
     }
 
-    private double calculateAverage(ArrayList<Double> marks) {
+    public static double calculateAverage(ArrayList<Double> marks) {
         Double sum = 0.0;
         if(!marks.isEmpty()) {
             for (Double mark : marks) {

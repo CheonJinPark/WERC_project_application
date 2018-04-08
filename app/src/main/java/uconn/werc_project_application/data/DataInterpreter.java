@@ -1,26 +1,16 @@
 package uconn.werc_project_application.data;
 
-import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.hardware.Sensor;
-import android.location.Location;
-import android.support.v4.app.ActivityCompat;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.UUID;
 
 import uconn.werc_project_application.MainActivity;
-import uconn.werc_project_application.ble.BLEDataLinker;
 
 /**
  * Created by Bill Brown on 3/27/2018.
@@ -29,8 +19,16 @@ import uconn.werc_project_application.ble.BLEDataLinker;
 public class DataInterpreter {
     private static final String TAG = "DataInterpreter";
     private static final String PROJECTID = "werc";
+    private static final String O3 = "Ozone";
+    private static final String NO2 = "Nitrogen Dioxide";
+    private static final String CO = "Carbon Monoxide";
+    private static final String SO2 = "Sulfur Dioxide";
+    private static final String PM = "Particulate (2.5u)";
+    private static final String PML = "Particulate (10u)";
+
+    private static final int AVERAGER_WARMUP = 60;
     private String delimiter = ",";
-    private String[] prefix_identifiers = {"NM","CO", "O3", "NO", "SO", "PM", "P2", "ID"};
+    private String[] prefix_identifiers = {"NM","CO", "O3", "NO", "SO", "PM", "P2", "FIN"};
     private String[] deviceIds = {"sens1", "sens2"};
 
 
@@ -39,8 +37,11 @@ public class DataInterpreter {
     private boolean data_ready = false;
     private ContentValues data_packet;
     private String deviceId;
+    private int warning_counter = 0;
 
-    private DataAverageContainer dac = new DataAverageContainer();
+
+    private HourlyDataGenerator hdg;
+    private ContinuousAverager cav;
 
     private static DataInterpreter instance = null;
     private static MainActivity mActivity;
@@ -73,7 +74,17 @@ public class DataInterpreter {
     private DataInterpreter(MainActivity activity) {
         this.mActivity = activity;
         this.mContext = activity.getApplicationContext();
+
+        loadDefaultValues();
     }
+
+    private void loadDefaultValues()
+    {
+        loadDefaultTGains();
+        loadDefaultVRef();
+        loadAQIHashMaps();
+    }
+
 
     private void loadDefaultVRef()
     {
@@ -145,6 +156,59 @@ public class DataInterpreter {
 
     }
 
+    public void loadSensitivityCodes(String deviceId)
+    {
+        sensitivitycode_hashmap = new HashMap<String, Double>();
+        sensitivitycode_hashmap.clear();
+
+        if (deviceId.equals(deviceIds[0])) {
+            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQICO, 3.22);
+            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQINO2, -24.37);
+            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQIO3, -68.85);
+            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQISO2, 30.22);
+        } else if (deviceId.equals(deviceIds[1])) {
+            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQICO, 3.09);
+            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQINO2, 24.58);
+            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQIO3, -79.44);
+            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQISO2, 37.06);
+        } else {
+            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQICO, 3.22);
+            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQINO2, -24.37);
+            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQIO3, -68.85);
+            sensitivitycode_hashmap.put(AqiContentContract.Aqidata.SENSORAQISO2, 30.22);
+        }
+    }
+
+    public void loadOffsets(String deviceId)
+    {
+        offset_hashmap = new HashMap<String, Double>();
+        offset_hashmap.clear();
+
+        // Default values
+        if (deviceId.equals(deviceIds[0])) {
+            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQICO, 0.002546656);
+            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQINO2, -1.6319031);
+            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQIO3, -0.0366916);
+            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQISO2, 0.09017894);
+        } else if (deviceId.equals(deviceIds[1])) {
+            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQICO, 0.0);
+            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQINO2, 0.0);
+            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQIO3, 0.0);
+            offset_hashmap.put(AqiContentContract.Aqidata.SENSORAQISO2, 0.0);
+        }
+    }
+
+    private void loadDefaultTGains()
+    {
+        tiagain_hashmap = new HashMap<String, Double>();
+        tiagain_hashmap.clear();
+
+        // Default values
+        tiagain_hashmap.put(AqiContentContract.Aqidata.SENSORAQICO, 100.0);
+        tiagain_hashmap.put(AqiContentContract.Aqidata.SENSORAQINO2, 499.0);
+        tiagain_hashmap.put(AqiContentContract.Aqidata.SENSORAQIO3, 499.0);
+        tiagain_hashmap.put(AqiContentContract.Aqidata.SENSORAQISO2, 100.0);
+    }
 
 
     public Double getGpsLong() {
@@ -160,37 +224,56 @@ public class DataInterpreter {
         Log.d(TAG, "Data: " + input);
         ContentValues cv = new ContentValues();
         cv.put(SensorContentContract.Sensordata.PROJECTID, PROJECTID);
-        Log.d(TAG, "Project Id: " + PROJECTID);
+
+        if (warning_counter > AVERAGER_WARMUP)
+            mActivity.setAveragerWarmupWarning(false);
+        else
+            warning_counter++;
 
         for (String val : values) {
             if (val.contains(prefix_identifiers[0])) {
                 cv.put(SensorContentContract.Sensordata.DEVICEID, val.substring(0, val.length() - 2));
                 Log.d(TAG, "Device Id: " + val.substring(0, val.length() - 2));
                 deviceId = val.substring(0, val.length() - 2);
+                if (hdg == null) {
+                    loadSensitivityCodes(deviceId);
+                    loadOffsets(deviceId);
+                    hdg = new HourlyDataGenerator(deviceId, sensitivitycode_hashmap, tiagain_hashmap, offset_hashmap, aqihm_co, aqihm_no2, aqihm_o3, aqihm_so2, aqihm_pm, aqihm_pml, vRef);
+                    cav = new ContinuousAverager(sensitivitycode_hashmap, tiagain_hashmap, offset_hashmap, aqihm_co, aqihm_no2, aqihm_o3, aqihm_so2, aqihm_pm, aqihm_pml);
+                }
             } else if (val.contains(prefix_identifiers[1])) {
                 Log.d(TAG, "Raw CO: " + val.substring(0, val.length() - 2));
-                dac.average_voltage_co(Double.parseDouble(val.substring(0, val.length() - 2)));
+                hdg.average_voltage_co(Double.parseDouble(val.substring(0, val.length() - 2)));
+                cav.average_voltage_co(Double.parseDouble(val.substring(0, val.length() - 2)));
                 cv.put(SensorContentContract.Sensordata.SENSORRAWCO, Double.parseDouble(val.substring(0, val.length() - 2)));
             } else if (val.contains(prefix_identifiers[2])) {
                 Log.d(TAG, "Raw O3: " + val.substring(0, val.length() - 2));
-                dac.average_voltage_o3(Double.parseDouble(val.substring(0, val.length() - 2)));
+                hdg.average_voltage_o3(Double.parseDouble(val.substring(0, val.length() - 2)));
+                cav.average_voltage_o3(Double.parseDouble(val.substring(0, val.length() - 2)));
                 cv.put(SensorContentContract.Sensordata.SENSORRAWO3, Double.parseDouble(val.substring(0, val.length() - 2)));
             } else if (val.contains(prefix_identifiers[3])) {
                 Log.d(TAG, "Raw NO2: " + val.substring(0, val.length() - 2));
-                dac.average_voltage_no2(Double.parseDouble(val.substring(0, val.length() - 2)));
+                hdg.average_voltage_no2(Double.parseDouble(val.substring(0, val.length() - 2)));
+                cav.average_voltage_no2(Double.parseDouble(val.substring(0, val.length() - 2)));
                 cv.put(SensorContentContract.Sensordata.SENSORRAWNO2, Double.parseDouble(val.substring(0, val.length() - 2)));
             } else if (val.contains(prefix_identifiers[4])) {
                 Log.d(TAG, "Raw SO2: " + val.substring(0, val.length() - 2));
-                dac.average_voltage_so2(Double.parseDouble(val.substring(0, val.length() - 2)));
+                hdg.average_voltage_so2(Double.parseDouble(val.substring(0, val.length() - 2)));
+                cav.average_voltage_so2(Double.parseDouble(val.substring(0, val.length() - 2)));
                 cv.put(SensorContentContract.Sensordata.SENSORRAWSO2, Double.parseDouble(val.substring(0, val.length() - 2)));
             } else if (val.contains(prefix_identifiers[5])) {
                 Log.d(TAG, "Raw PM: " + val.substring(0, val.length() - 2));
-                dac.average_lpo_pm(Double.parseDouble(val.substring(0, val.length() - 2)));
+                hdg.average_lpo_pm(Double.parseDouble(val.substring(0, val.length() - 2)));
+                cav.average_lpo_pm(Double.parseDouble(val.substring(0, val.length() - 2)));
                 cv.put(SensorContentContract.Sensordata.SENSORRAWPM, Double.parseDouble(val.substring(0, val.length() - 2)));
             } else if (val.contains(prefix_identifiers[6])) {
                 Log.d(TAG, "Raw PML: " + val.substring(0, val.length() - 2));
-                dac.average_lpo_pml(Double.parseDouble(val.substring(0, val.length() - 2)));
+                hdg.average_lpo_pml(Double.parseDouble(val.substring(0, val.length() - 2)));
+                cav.average_lpo_pml(Double.parseDouble(val.substring(0, val.length() - 2)));
                 cv.put(SensorContentContract.Sensordata.SENSORRAWPML, Double.parseDouble(val.substring(0, val.length() - 2)));
+            } else if (val.contains(prefix_identifiers[7])) {
+                Log.d(TAG, "Data Valid: " + val.substring(0, val.length() - 4));
+                mActivity.setSensorWarmupWarning(Integer.parseInt(val.substring(0, val.length() - 4)));
             }
         }
 
@@ -205,8 +288,8 @@ public class DataInterpreter {
         Log.d(TAG, "GPS Latitude: " + gpsLat);
         Log.d(TAG, "GPS Longitude: " + gpsLong);
 
-        dac.increment_packet_counter();
-        dac.update_averages();
+        hdg.increment_packet_counter();
+        hdg.update_averages();
         data_packet = cv;
         data_ready = true;
 
@@ -232,6 +315,7 @@ public class DataInterpreter {
 
     public ContentValues getDataPacket()
     {
+        mActivity.updateDisplay(cav.sampleAverage());
         data_ready = false;
         return data_packet;
     }
@@ -256,11 +340,14 @@ public class DataInterpreter {
     }
 
     public boolean isSampleLargeEnough() {
-        return dac.overThreshold();
+        if (hdg != null)
+            return hdg.overThreshold();
+        else
+            return false;
     }
 
     public ContentValues getDACPacket() {
-        ContentValues cv = dac.getContentValues();
+        ContentValues cv = hdg.getContentValues();
         cv.put(AqiContentContract.Aqidata.DEVICEID, deviceId);
         cv.put(AqiContentContract.Aqidata.GPSLAT, gpsLat);
         cv.put(AqiContentContract.Aqidata.GPSLONG, gpsLong);
@@ -301,9 +388,224 @@ public class DataInterpreter {
         return cv;
     }
 
+    public String getAdvisory(int aqi, String src)
+    {
+        if (aqi > 300) {
+            if (src.equals(O3))
+                return "Hazardous: Severe respiratory effects and impaired " +
+                        "breathing likely in people with lung disease " +
+                        "(such as asthma), children, older adults, " +
+                        "people who are active outdoors (including " +
+                        "outdoor workers), people with certain genetic " +
+                        "variants, and people with diets limited in " +
+                        "certain nutrients; increasingly severe " +
+                        "respiratory effects likely in general population.";
+            else if (src.equals(PM) || src.equals(PML))
+                return "Serious aggravation of respiratory symptoms in " +
+                        "sensitive groups including older adults, children, " +
+                        "and people of lower socioeconomic status; serious " +
+                        "aggravation of heart or lung disease and premature " +
+                        "mortality in people with heart or lung disease; " +
+                        "serious risk of respiratory effects in general " +
+                        "population.";
+            else if (src.equals(CO))
+                return "Serious aggravation of " +
+                        "cardiovascular " +
+                        "symptoms, such as " +
+                        "chest pain, in people " +
+                        "with heart disease; " +
+                        "impairment of strenuous " +
+                        "activities in general " +
+                        "population.";
+            else if (src.equals(SO2))
+                return "Severe respiratory " +
+                        "symptoms, such as " +
+                        "wheezing and shortness " +
+                        "of breath, in people with " +
+                        "asthma; increased " +
+                        "aggravation of other lung " +
+                        "diseases; possible " +
+                        "respiratory effects in " +
+                        "general population.";
+            else if (src.equals("Nitrogen Dioxide"))
+                return "Severe respiratory " +
+                        "symptoms, such as " +
+                        "wheezing and shortness " +
+                        "of breath, in people with " +
+                        "asthma; increased " +
+                        "aggravation of other " +
+                        "lung diseases; possible " +
+                        "respiratory effects in " +
+                        "general population.";
+            else
+                return "Severe respiratory " +
+                        "symptoms, such as " +
+                        "wheezing and shortness " +
+                        "of breath, in people with " +
+                        "asthma; increased " +
+                        "aggravation of other " +
+                        "lung diseases; possible " +
+                        "respiratory effects in " +
+                        "general population.";
+        } else if (aqi > 200) {
+            if (src.equals(O3))
+                return "Increasingly severe symptoms and impaired " +
+                        "breathing likely in people with lung disease " +
+                        "(such as asthma), children, older adults, " +
+                        "people who are active outdoors (including " +
+                        "outdoor workers), people with certain genetic " +
+                        "variants, and people with diets limited in " +
+                        "certain nutrients; increasing likelihood of " +
+                        "respiratory effects in general population.";
+            else if (src.equals(PM) || src.equals(PML))
+                return "Significant aggravation of respiratory symptoms in " +
+                        "sensitive groups including older adults, children, " +
+                        "and people of lower socioeconomic status; " +
+                        "significant aggravation of heart or lung disease and " +
+                        "premature mortality in people with heart or lung " +
+                        "disease; significant increase in respiratory effects in " +
+                        "general population.";
+            else if (src.equals(CO))
+                return "Significant aggravation " +
+                        "of cardiovascular " +
+                        "symptoms, such as " +
+                        "chest pain, in people " +
+                        "with heart disease.";
+            else if (src.equals(SO2))
+                return "Significant increase in " +
+                        "respiratory symptoms, " +
+                        "such as wheezing and " +
+                        "shortness of breath, in " +
+                        "people with asthma; " +
+                        "aggravation of other lung " +
+                        "diseases.";
+            else if (src.equals(NO2))
+                return "Significant increase in " +
+                        "respiratory symptoms, " +
+                        "such as wheezing and " +
+                        "shortness of breath, in " +
+                        "people with asthma; " +
+                        "aggravation of other " +
+                        "lung diseases.";
+            else
+                return "Significant increase in " +
+                        "respiratory symptoms, " +
+                        "such as wheezing and " +
+                        "shortness of breath, in " +
+                        "people with asthma; " +
+                        "aggravation of other " +
+                        "lung diseases.";
+        } else if (aqi > 150) {
+            if (src.equals(O3))
+                return "Greater likelihood of respiratory symptoms and " +
+                        "breathing in people with lung disease (such as " +
+                        "asthma), children, older adults, people who are " +
+                        "active outdoors (including outdoor workers), " +
+                        "people with certain genetic variants, and " +
+                        "people with diets limited in certain nutrients; " +
+                        "possible respiratory effects in general " +
+                        "population.";
+            else if (src.equals(PM) || src.equals(PML))
+                return "Increased aggravation of respiratory symptoms in " +
+                        "sensitive groups including older adults, children, " +
+                        "and people of lower socioeconomic status; " +
+                        "increased aggravation of heart or lung disease and " +
+                        "premature mortality in people with heart or lung " +
+                        "disease; increased respiratory effects in general " +
+                        "population.";
+            else if (src.equals(CO))
+                return "Reduced exercise " +
+                        "tolerance due to " +
+                        "increased " +
+                        "cardiovascular " +
+                        "symptoms, such as " +
+                        "chest pain, in people " +
+                        "with heart disease.";
+            else if (src.equals(SO2))
+                return "Increased respiratory " +
+                        "symptoms, such as chest " +
+                        "tightness and wheezing " +
+                        "in people with asthma; " +
+                        "possible aggravation of " +
+                        "other lung diseases";
+            else if (src.equals(NO2))
+                return "Increased respiratory " +
+                        "symptoms, such as " +
+                        "chest tightness and " +
+                        "wheezing in people with " +
+                        "asthma; possible " +
+                        "aggravation of other " +
+                        "lung diseases";
+            else
+                return "Increased respiratory " +
+                        "symptoms, such as " +
+                        "chest tightness and " +
+                        "wheezing in people with " +
+                        "asthma; possible " +
+                        "aggravation of other " +
+                        "lung diseases";
+        } else if (aqi > 100) {
+            if (src.equals(O3))
+                return "Increasing likelihood of respiratory symptoms " +
+                        "and breathing discomfort in people with lung " +
+                        "disease (such as asthma), children, older " +
+                        "adults, people who are active outdoors " +
+                        "(including outdoor workers), people with " +
+                        "certain genetic variants, and people with diets " +
+                        "limited in certain nutrients.";
+            else if (src.equals(PM) || src.equals(PML))
+                return "Increasing likelihood of respiratory symptoms in " +
+                        "sensitive groups including older adults, children, " +
+                        "and people of lower socioeconomic status; " +
+                        "aggravation of heart or lung disease and premature " +
+                        "mortality in people with heart or lung disease";
+            else if (src.equals(CO))
+                return "Increasing likelihood of " +
+                        "reduced exercise " +
+                        "tolerance due to " +
+                        "increased " +
+                        "cardiovascular " +
+                        "symptoms, such as " +
+                        "chest pain, in people " +
+                        "with heart disease.";
+            else if (src.equals(SO2))
+                return "Increasing likelihood of " +
+                        "respiratory symptoms, " +
+                        "such as chest tightness " +
+                        "and breathing discomfort, " +
+                        "in people with asthma.";
+            else if (src.equals(NO2))
+                return "Increasing likelihood of " +
+                        "respiratory symptoms, " +
+                        "such as chest tightness " +
+                        "and breathing " +
+                        "discomfort, in people " +
+                        "with asthma.";
+            else
+                return "Increasing likelihood of " +
+                        "respiratory symptoms, " +
+                        "such as chest tightness " +
+                        "and breathing " +
+                        "discomfort, in people " +
+                        "with asthma.";
+        } else if (aqi > 50) {
+            if (src.equals(PM) || src.equals(PML))
+                return "Respiratory symptoms possible in unusually " +
+                        "sensitive individuals; possible aggravation of heart " +
+                        "or lung disease in people with cardiopulmonary " +
+                        "disease and older adults.";
+            else
+                return "Good air quality. Enjoy the beautiful clean air!";
+        } else if (aqi >= 0) {
+            return "Good air quality. Enjoy the beautiful clean air!";
+        } else {
+            return "Good air quality. Enjoy the beautiful clean air!";
+        }
+    }
+
     public void resetDac()
     {
-        dac.reset();
+        hdg.reset();
     }
 
 }

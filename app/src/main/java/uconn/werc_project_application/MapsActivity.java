@@ -385,12 +385,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         updateHeatMap();
                         break;
 
-                    case R.id.popup_aqi_value:
-                        DataType = info.AQIvalue;
-                        Radius= 100;
-                        saveLList();
-                        updateHeatMap();
-                        break;
+//                    case R.id.popup_aqi_value:
+//                        DataType = info.AQIvalue;
+//                        Radius= 100;
+//                        saveLList();
+//                        updateHeatMap();
+//                        break;
 
 //                   case R.id.popup_all:
 //
