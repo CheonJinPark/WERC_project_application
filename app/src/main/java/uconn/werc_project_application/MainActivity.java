@@ -361,31 +361,31 @@ public class MainActivity extends AppCompatActivity{
             tv_aqi_val.setTextColor(Color.parseColor(MAROON));
             tv_aqi.setTextColor(Color.parseColor(MAROON));
             pb_aqi.setMax(200);
-            pb_aqi.setProgress((aqi_val - 300) , true);
+            pb_aqi.setProgress((aqi_val - 300) );
             pb_aqi.setProgressTintList(ColorStateList.valueOf(Color.parseColor(MAROON)));
         } else if (aqi_val > 200) {
             tv_aqi_val.setTextColor(Color.parseColor(PURPLE));
             tv_aqi.setTextColor(Color.parseColor(PURPLE));
             pb_aqi.setMax(100);
-            pb_aqi.setProgress((aqi_val - 200) , true);
+            pb_aqi.setProgress((aqi_val - 200) );
             pb_aqi.setProgressTintList(ColorStateList.valueOf(Color.parseColor(PURPLE)));
         } else if (aqi_val > 150) {
             tv_aqi_val.setTextColor(Color.parseColor(RED));
             tv_aqi.setTextColor(Color.parseColor(RED));
             pb_aqi.setMax(50);
-            pb_aqi.setProgress((aqi_val - 150) , true);
+            pb_aqi.setProgress((aqi_val - 150) );
             pb_aqi.setProgressTintList(ColorStateList.valueOf(Color.parseColor(RED)));
         } else if (aqi_val > 100) {
             tv_aqi_val.setTextColor(Color.parseColor(ORANGE));
             tv_aqi.setTextColor(Color.parseColor(ORANGE));
             pb_aqi.setMax(50);
-            pb_aqi.setProgress((aqi_val - 100) , true);
+            pb_aqi.setProgress((aqi_val - 100) );
             pb_aqi.setProgressTintList(ColorStateList.valueOf(Color.parseColor(ORANGE)));
         } else if (aqi_val > 50) {
             tv_aqi_val.setTextColor(Color.parseColor(YELLOW));
             tv_aqi.setTextColor(Color.parseColor(YELLOW));
             pb_aqi.setMax(50);
-            pb_aqi.setProgress((aqi_val - 50) , true);
+            pb_aqi.setProgress((aqi_val - 50) );
             pb_aqi.setProgressTintList(ColorStateList.valueOf(Color.parseColor(YELLOW)));
         } else if (aqi_val >= 0) {
             tv_aqi_val.setTextColor(Color.parseColor(GREEN));
@@ -410,27 +410,27 @@ public class MainActivity extends AppCompatActivity{
         if (aqi > 300) {
             tv_co_val.setTextColor(Color.parseColor(MAROON));
             pb_co.setMax(200);
-            pb_co.setProgress((aqi - 300) , true);
+            pb_co.setProgress((aqi - 300));
             pb_co.setProgressTintList(ColorStateList.valueOf(Color.parseColor(MAROON)));
         } else if (aqi > 200) {
             tv_co_val.setTextColor(Color.parseColor(PURPLE));
             pb_co.setMax(100);
-            pb_co.setProgress((aqi - 200) , true);
+            pb_co.setProgress((aqi - 200));
             pb_co.setProgressTintList(ColorStateList.valueOf(Color.parseColor(PURPLE)));
         } else if (aqi > 150) {
             tv_co_val.setTextColor(Color.parseColor(RED));
             pb_co.setMax(50);
-            pb_co.setProgress((aqi - 150) , true);
+            pb_co.setProgress((aqi - 150));
             pb_co.setProgressTintList(ColorStateList.valueOf(Color.parseColor(RED)));
         } else if (aqi > 100) {
             tv_co_val.setTextColor(Color.parseColor(ORANGE));
             pb_co.setMax(50);
-            pb_co.setProgress((aqi - 100) , true);
+            pb_co.setProgress((aqi - 100));
             pb_co.setProgressTintList(ColorStateList.valueOf(Color.parseColor(ORANGE)));
         } else if (aqi > 50) {
             tv_co_val.setTextColor(Color.parseColor(YELLOW));
             pb_co.setMax(50);
-            pb_co.setProgress((aqi - 50) , true);
+            pb_co.setProgress((aqi - 50));
             pb_co.setProgressTintList(ColorStateList.valueOf(Color.parseColor(YELLOW)));
         } else if (aqi >= 0) {
             tv_co_val.setTextColor(Color.parseColor(GREEN));
@@ -452,27 +452,27 @@ public class MainActivity extends AppCompatActivity{
         if (aqi > 300) {
             tv_no2_val.setTextColor(Color.parseColor(MAROON));
             pb_no2.setMax(200);
-            pb_no2.setProgress((aqi - 300) , true);
+            pb_no2.setProgress((aqi - 300) );
             pb_no2.setProgressTintList(ColorStateList.valueOf(Color.parseColor(MAROON)));
         } else if (aqi > 200) {
             tv_no2_val.setTextColor(Color.parseColor(PURPLE));
             pb_no2.setMax(100);
-            pb_no2.setProgress((aqi - 200) , true);
+            pb_no2.setProgress((aqi - 200) );
             pb_no2.setProgressTintList(ColorStateList.valueOf(Color.parseColor(PURPLE)));
         } else if (aqi > 150) {
             tv_no2_val.setTextColor(Color.parseColor(RED));
             pb_no2.setMax(50);
-            pb_no2.setProgress((aqi - 150) , true);
+            pb_no2.setProgress((aqi - 150) );
             pb_no2.setProgressTintList(ColorStateList.valueOf(Color.parseColor(RED)));
         } else if (aqi > 100) {
             tv_no2_val.setTextColor(Color.parseColor(ORANGE));
             pb_no2.setMax(50);
-            pb_no2.setProgress((aqi - 100) , true);
+            pb_no2.setProgress((aqi - 100) );
             pb_no2.setProgressTintList(ColorStateList.valueOf(Color.parseColor(ORANGE)));
         } else if (aqi > 50) {
             tv_no2_val.setTextColor(Color.parseColor(YELLOW));
             pb_no2.setMax(50);
-            pb_no2.setProgress((aqi - 50) , true);
+            pb_no2.setProgress((aqi - 50) );
             pb_no2.setProgressTintList(ColorStateList.valueOf(Color.parseColor(YELLOW)));
         } else if (aqi >= 0) {
             tv_no2_val.setTextColor(Color.parseColor(GREEN));
@@ -494,27 +494,27 @@ public class MainActivity extends AppCompatActivity{
         if (aqi > 300) {
             tv_o3_val.setTextColor(Color.parseColor(MAROON));
             pb_o3.setMax(200);
-            pb_o3.setProgress((aqi - 300) , true);
+            pb_o3.setProgress((aqi - 300) );
             pb_o3.setProgressTintList(ColorStateList.valueOf(Color.parseColor(MAROON)));
         } else if (aqi > 200) {
             tv_o3_val.setTextColor(Color.parseColor(PURPLE));
             pb_o3.setMax(100);
-            pb_o3.setProgress((aqi - 200) , true);
+            pb_o3.setProgress((aqi - 200) );
             pb_o3.setProgressTintList(ColorStateList.valueOf(Color.parseColor(PURPLE)));
         } else if (aqi > 150) {
             tv_o3_val.setTextColor(Color.parseColor(RED));
             pb_o3.setMax(50);
-            pb_o3.setProgress((aqi - 150) , true);
+            pb_o3.setProgress((aqi - 150) );
             pb_o3.setProgressTintList(ColorStateList.valueOf(Color.parseColor(RED)));
         } else if (aqi > 100) {
             tv_o3_val.setTextColor(Color.parseColor(ORANGE));
             pb_o3.setMax(50);
-            pb_o3.setProgress((aqi - 100) , true);
+            pb_o3.setProgress((aqi - 100) );
             pb_o3.setProgressTintList(ColorStateList.valueOf(Color.parseColor(ORANGE)));
         } else if (aqi > 50) {
             tv_o3_val.setTextColor(Color.parseColor(YELLOW));
             pb_o3.setMax(50);
-            pb_o3.setProgress((aqi - 50) , true);
+            pb_o3.setProgress((aqi - 50) );
             pb_o3.setProgressTintList(ColorStateList.valueOf(Color.parseColor(YELLOW)));
         } else if (aqi >= 0) {
             tv_o3_val.setTextColor(Color.parseColor(GREEN));
@@ -536,27 +536,27 @@ public class MainActivity extends AppCompatActivity{
         if (aqi > 300) {
             tv_so2_val.setTextColor(Color.parseColor(MAROON));
             pb_So2.setMax(200);
-            pb_So2.setProgress((aqi - 300) , true);
+            pb_So2.setProgress((aqi - 300) );
             pb_So2.setProgressTintList(ColorStateList.valueOf(Color.parseColor(MAROON)));
         } else if (aqi > 200) {
             tv_so2_val.setTextColor(Color.parseColor(PURPLE));
             pb_So2.setMax(100);
-            pb_So2.setProgress((aqi - 200) , true);
+            pb_So2.setProgress((aqi - 200) );
             pb_So2.setProgressTintList(ColorStateList.valueOf(Color.parseColor(PURPLE)));
         } else if (aqi > 150) {
             tv_so2_val.setTextColor(Color.parseColor(RED));
             pb_So2.setMax(50);
-            pb_So2.setProgress((aqi - 150) , true);
+            pb_So2.setProgress((aqi - 150) );
             pb_So2.setProgressTintList(ColorStateList.valueOf(Color.parseColor(RED)));
         } else if (aqi > 100) {
             tv_so2_val.setTextColor(Color.parseColor(ORANGE));
             pb_So2.setMax(50);
-            pb_So2.setProgress((aqi - 100) , true);
+            pb_So2.setProgress((aqi - 100) );
             pb_So2.setProgressTintList(ColorStateList.valueOf(Color.parseColor(ORANGE)));
         } else if (aqi > 50) {
             tv_so2_val.setTextColor(Color.parseColor(YELLOW));
             pb_So2.setMax(50);
-            pb_So2.setProgress((aqi - 50) , true);
+            pb_So2.setProgress((aqi - 50) );
             pb_So2.setProgressTintList(ColorStateList.valueOf(Color.parseColor(YELLOW)));
         } else if (aqi >= 0) {
             tv_so2_val.setTextColor(Color.parseColor(GREEN));
@@ -578,27 +578,27 @@ public class MainActivity extends AppCompatActivity{
         if (aqi > 300) {
             tv_pm_val.setTextColor(Color.parseColor(MAROON));
             pb_pm.setMax(200);
-            pb_pm.setProgress((aqi - 300), true);
+            pb_pm.setProgress((aqi - 300));
             pb_pm.setProgressTintList(ColorStateList.valueOf(Color.parseColor(MAROON)));
         } else if (aqi > 200) {
             tv_pm_val.setTextColor(Color.parseColor(PURPLE));
             pb_pm.setMax(100);
-            pb_pm.setProgress((aqi - 200), true);
+            pb_pm.setProgress((aqi - 200));
             pb_pm.setProgressTintList(ColorStateList.valueOf(Color.parseColor(PURPLE)));
         } else if (aqi > 150) {
             tv_pm_val.setTextColor(Color.parseColor(RED));
             pb_pm.setMax(50);
-            pb_pm.setProgress((aqi - 150), true);
+            pb_pm.setProgress((aqi - 150));
             pb_pm.setProgressTintList(ColorStateList.valueOf(Color.parseColor(RED)));
         } else if (aqi > 100) {
             tv_pm_val.setTextColor(Color.parseColor(ORANGE));
             pb_pm.setMax(50);
-            pb_pm.setProgress((aqi - 100), true);
+            pb_pm.setProgress((aqi - 100));
             pb_pm.setProgressTintList(ColorStateList.valueOf(Color.parseColor(ORANGE)));
         } else if (aqi > 50) {
             tv_pm_val.setTextColor(Color.parseColor(YELLOW));
             pb_pm.setMax(50);
-            pb_pm.setProgress((aqi - 50), true);
+            pb_pm.setProgress((aqi - 50));
             pb_pm.setProgressTintList(ColorStateList.valueOf(Color.parseColor(YELLOW)));
         } else if (aqi >= 0) {
             tv_pm_val.setTextColor(Color.parseColor(GREEN));
