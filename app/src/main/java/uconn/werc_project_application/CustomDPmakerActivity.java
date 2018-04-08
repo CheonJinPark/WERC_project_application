@@ -1,6 +1,7 @@
 package uconn.werc_project_application;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -53,6 +54,9 @@ public class CustomDPmakerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_dpmaker);
+
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.actionbar_layout);
 
         initialviews();
         initial_seekbar();

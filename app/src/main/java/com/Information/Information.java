@@ -180,8 +180,29 @@ public class Information {
             return VERY_UNHEALTHY_COLOUR;
         }
         return HAZARDOUS_COLOUR;
+
     }
 
+    public String define_color_aqivalue(String type, int value) {
+        //if the type is not correct return null
+        if (value >= 0 && value <= 50) {
+            return SAFE_COLOUR;
+        }
+        if (value >= 51 && value <= 100) {
+            return MODERATE_COLOUR;
+        }
+        if (value >= 101 && value <= 150) {
+            return USG_COLOUR;
+        }
+        if (value >= 151 && value <= 200) {
+            return UNHEALTHY_COLOUR;
+        }
+        if (value >= 201 && value <= 300) {
+            return VERY_UNHEALTHY_COLOUR;
+        }
+        return HAZARDOUS_COLOUR;
+
+    }
 }
 
 

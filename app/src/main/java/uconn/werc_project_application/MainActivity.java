@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
     Double longitude, latitude;
     Intent intent_test, intent_ble;
     String url;
-    GPS g1, g2, g3, g4, g5;
     private static final int INSERT_TOKEN = 1003;
     TextView userName, apiValue, co_value, o3_value, no2_value, so2_value, pm_value, connection_state, data_point;
     Information info = new Information();
@@ -127,23 +126,6 @@ public class MainActivity extends AppCompatActivity {
         setConnection(BLE_DISCONNECT);
         setDrawer();
 
-        //Test GPSs
-        g1 = new GPS(-72.253981, 41.807741); //Uconn
-        g1.setCo(20);
-        g1.setDust(40);
-        g1.setNo2(60);
-        g1.setSo2(10);
-        g1.setO3(30);
-        g2 = new GPS(-72.250645, 41.803309); //Alumni Dorm
-        g3 = new GPS(-72.253430, 41.804776); //Coop
-        g4 = new GPS(-72.259929, 41.802675); //Hilltop Community Center
-        g5 = new GPS(-72.251748, 41.806629); //Library
-        Log.d("JIN", "GPS 문제");
-
-        longitude = -111.11; // default longitude
-        latitude = 222.0; // default latitude
-
-
 //        //make the Loaction manager for gps
 //        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 //        Toast.makeText(getApplicationContext(),"after get provider",Toast.LENGTH_LONG);
@@ -169,11 +151,6 @@ public class MainActivity extends AppCompatActivity {
         btn_gotoMap.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 intent_test = new Intent(MainActivity.this, MapsActivity.class);
-                intent_test.putExtra("g1", g1);
-                intent_test.putExtra("g2", g2);
-                intent_test.putExtra("g3", g3);
-                intent_test.putExtra("g4", g4);
-                intent_test.putExtra("g5", g5);
                 startActivity(intent_test);
             }
         });
@@ -184,11 +161,6 @@ public class MainActivity extends AppCompatActivity {
             public void onSwipeLeft() {
                 Log.d("onSwipeTouchListener", "onSwipeLeft");
                 intent_test = new Intent(MainActivity.this, MapsActivity.class);
-                intent_test.putExtra("g1", g1);
-                intent_test.putExtra("g2", g2);
-                intent_test.putExtra("g3", g3);
-                intent_test.putExtra("g4", g4);
-                intent_test.putExtra("g5", g5);
                 startActivity(intent_test);
             }
         });
@@ -312,11 +284,6 @@ public class MainActivity extends AppCompatActivity {
                 switch (position) {
                     case 0: // Go to Map
                         intent_test = new Intent(MainActivity.this, MapsActivity.class);
-                        intent_test.putExtra("g1", g1);
-                        intent_test.putExtra("g2", g2);
-                        intent_test.putExtra("g3", g3);
-                        intent_test.putExtra("g4", g4);
-                        intent_test.putExtra("g5", g5);
                         startActivity(intent_test);
                         break;
                     case 1: // BLUETOOTH
