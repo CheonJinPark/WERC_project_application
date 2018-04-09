@@ -197,44 +197,7 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        Button btn_send_data = (Button) findViewById(R.id.button_senddata);
-        btn_send_data.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View V) {
-                DummyDataGenerator ddg = new DummyDataGenerator(SensorContentContract.Sensordata.PROJECTION_ALL);
-                ContentValues values = ddg.generate(0.0, 3.0);
-                values.put(SensorContentContract.Sensordata.DEVICEID, "dummydata");
-                AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
-                    @Override
-                    protected void onInsertComplete(int token, Object cookie, Uri uri) {
-                        super.onInsertComplete(token, cookie, uri);
-                        Log.d("DummyDataButtonPress", "insert completed");
-                        Toast.makeText(getApplicationContext(), "Dummy Data Uploaded", Toast.LENGTH_LONG).show();
 
-                    }
-                };
-                queryHandler.startInsert(INSERT_TOKEN, null, SensorContentContract.Sensordata.CONTENT_URI, values);
-
-
-                final AnalyticsClient mgr = AWSProvider.getInstance()
-                        .getPinpointManager()
-                        .getAnalyticsClient();
-                final AnalyticsEvent evt = mgr.createEvent("SendDummyData")
-                        .withAttribute("packetId", values.getAsString(AqiContentContract.Aqidata.PACKETID));
-                mgr.recordEvent(evt);
-                mgr.submitEvents();
-            }
-
-
-        });
-
-        Button gcdp = (Button) findViewById(R.id.gotoDPmaker);
-        gcdp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CustomDPmakerActivity.class);
-                startActivity(intent);
-            }
-        });
 
         final TextView aqi_src = (TextView) findViewById(R.id.tv_aqi_src);
 

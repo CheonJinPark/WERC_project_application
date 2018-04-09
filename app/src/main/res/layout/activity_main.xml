@@ -352,14 +352,8 @@
             android:id="@+id/main_third_linearlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/main_fourth_linearlayout">
+            android:layout_alignParentBottom="true">
 
-            <Button
-                android:id="@+id/button_gotomap"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:text="Go to map" />
 
             <Button
                 android:id="@+id/button_ble"
@@ -368,30 +362,16 @@
                 android:layout_weight="1"
                 android:text="Bluetooth" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/main_fourth_linearlayout"
-            android:layout_alignParentBottom="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            >
-
             <Button
-                android:id="@+id/button_senddata"
-                android:layout_width="wrap_content"
+                android:id="@+id/button_gotomap"
+                android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_weight="1"
-                android:text="Dummy Data" />
+                android:text="Go to map" />
 
-            <Button
-                android:id="@+id/gotoDPmaker"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:text="CustomDataPointMaker" />
         </LinearLayout>
+
+
 
     </RelativeLayout>
 

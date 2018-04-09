@@ -231,7 +231,7 @@ public class SensorContentProvider extends ContentProvider {
         int uriType = sUriMatcher.match(uri);
 
         DynamoDBMapper dbMapper = AWSProvider.getInstance().getDynamoDBMapper();
-        MatrixCursor cursor = new MatrixCursor(SensorContentContract.Sensordata.PROJECTION_ALL);
+        MatrixCursor cursor = new MatrixCursor(AqiContentContract.Aqidata.PROJECTION_ALL);
         String userId = AWSProvider.getInstance().getIdentityManager().getCachedUserID();
 
         String projectId = "werc";
@@ -240,20 +240,20 @@ public class SensorContentProvider extends ContentProvider {
                 // In this (simplified) version of a content provider, we only allow searching
                 // for all records that the user owns.  The first step to this is establishing
                 // a template record that has the partition key pre-populated.
-                SensordataDO template = new SensordataDO();
+                AqidataDO template = new AqidataDO();
                 template.setProjectId(projectId);
                 // Now create a query expression that is based on the template record.
-                DynamoDBQueryExpression<SensordataDO> queryExpression;
-                queryExpression = new DynamoDBQueryExpression<SensordataDO>()
+                DynamoDBQueryExpression<AqidataDO> queryExpression;
+                queryExpression = new DynamoDBQueryExpression<AqidataDO>()
                         .withHashKeyValues(template);
                 // Finally, do the query with that query expression.
-                List<SensordataDO> result = dbMapper.query(SensordataDO.class, queryExpression);
+                List<AqidataDO> result = dbMapper.query(AqidataDO.class, queryExpression);
                 Log.d("SensorContentProvider", "Number of entries returned: " + Integer.toString(result.size()));
-                Iterator<SensordataDO> iterator = result.iterator();
+                Iterator<AqidataDO> iterator = result.iterator();
                 while (iterator.hasNext()) {
-                    final SensordataDO note = iterator.next();
+                    final AqidataDO note = iterator.next();
                     Log.d("SensorContentProvider", "PacketId: " + note.getPacketId());
-                    Object[] columnValues = fromSensordataDO(note);
+                    Object[] columnValues = fromAqidataDO(note);
                     cursor.addRow(columnValues);
                 }
 
