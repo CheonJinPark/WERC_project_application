@@ -1,6 +1,7 @@
 package uconn.werc_project_application;
 
 import android.database.Cursor;
+import android.icu.text.IDNA;
 
 import com.Information.Information;
 
@@ -25,6 +26,15 @@ public class GPS implements Serializable{
     private int pm;
     private int no2;
     private int aqival;
+    private String aqi_type;
+
+    public String getAqi_type() {
+        return aqi_type;
+    }
+
+    public void setAqi_type(String aqi_type) {
+        this.aqi_type = aqi_type;
+    }
 
     public GPS(){
 
@@ -134,7 +144,29 @@ public class GPS implements Serializable{
     }
 
     public void savefromCursorQuery(Cursor cursor){
-
+        String type = cursor.getString(cursor.getColumnIndex(AqiContentContract.Aqidata.AQISRC));
+        switch (type){
+            case "Carbon Monoxide":
+                this.setAqi_type(Information.CO);
+                break;
+            case "Nitrogen Dioxide":
+                this.setAqi_type(Information.NO2);
+                break;
+            case "Ozone":
+                this.setAqi_type(Information.O3);
+            case "Sulfur Dioxide":
+                this.setAqi_type(Information.SO2);
+                break;
+            case "Small Particulate Matter":
+                this.setAqi_type(Information.DUST);
+                break;
+            case "Large Particulate Matter":
+                this.setAqi_type(Information.DUST);
+                break;
+            case "Unknown. How did you find this":
+                this.setAqi_type(Information.DUST);
+                break;
+        }
         this.setUserID(cursor.getString(cursor.getColumnIndex(AqiContentContract.Aqidata._ID)));
         this.setLatitude(cursor.getDouble(cursor.getColumnIndex(AqiContentContract.Aqidata.GPSLAT)));
         this.setLongitude(cursor.getDouble(cursor.getColumnIndex((AqiContentContract.Aqidata.GPSLONG))));
@@ -147,5 +179,6 @@ public class GPS implements Serializable{
 
 
     }
+
 }
 

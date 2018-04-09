@@ -92,13 +92,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Test GPSs
         //Dummy data to set 300 is one of the max for gradient;
-        g0 = new GPS(0, 0); //Uconn
-        g0.setCo(300);
-        g0.setPM(300);
-        g0.setNo2(300);
-        g0.setSo2(300);
-        g0.setO3(300);
-        g0.setAqival(300);
 
         g1 = new GPS(-72.253981, 41.807741); //Uconn
         g1.setCo(300);
@@ -107,6 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         g1.setSo2(10);
         g1.setO3(30);
         g1.setAqival(60);
+        g1.setAqi_type(Information.DUST);
         g2 = new GPS(-72.250645, 41.803309); //Alumni Dorm
         g2.setCo(50);
         g2.setPM(20);
@@ -114,6 +108,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         g2.setSo2(10);
         g2.setO3(301);
         g2.setAqival(10);
+        g2.setAqi_type(Information.DUST);
         g3 = new GPS(-72.253430, 41.804776); //Coop
         g3.setCo(30);
         g3.setPM(70);
@@ -121,6 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         g3.setSo2(10);
         g3.setO3(10);
         g3.setAqival(5);
+        g3.setAqi_type(Information.DUST);
         g4 = new GPS(-72.259929, 41.802675); //Hilltop Community Center
         g4.setCo(300);
         g4.setPM(150);
@@ -128,6 +124,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         g4.setSo2(10);
         g4.setO3(20);
         g4.setAqival(301);
+        g4.setAqi_type(Information.DUST);
         g5 = new GPS(-72.251748, 41.806629); //Library
         g5.setCo(10);
         g5.setPM(40);
@@ -135,7 +132,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         g5.setSo2(310);
         g5.setO3(300);
         g5.setAqival(80);
-        all_list.add(g0);
+        g5.setAqi_type(Information.DUST);
+
         all_list.add(g1);
         all_list.add(g2);
         all_list.add(g3);
@@ -193,7 +191,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Double long_begin = DataInterpreter.getInstance().getGpsLong();
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(lat_begin, long_begin)), 15));
-        //updateMap();
+
         downloadFromServer();
         // Add a marker in Sydney and move the camera
 
@@ -257,19 +255,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 drawCircle_loop(mMap, all_list.get(j), DataType, Radius);
 
             }
-            if (all_list.size() != 0) {
-                Long = all_list.get(all_list.size() - 1).getLongitude();
-                Lat = all_list.get(all_list.size() - 1).getLatitude();
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(Lat, Long)), 15));
-            }
         } else {
 
             for (int j = 0; j < mylist.size(); j++) {
                 drawCircle_loop(mMap, mylist.get(j), DataType, Radius);
             }
-            Long = mylist.get(mylist.size() - 1).getLongitude();
-            Lat = mylist.get(mylist.size() - 1).getLatitude();
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(Lat, Long)), 15));
 
         }
     }
@@ -284,26 +274,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    private void DialogRadio() {
-        final String[] optionlist = {"100", "200", "300", "400", "500"};
-        AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
-        alt_bld.setTitle("Options");
-        alt_bld.setSingleChoiceItems(optionlist, -1, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                mMap.clear();
-                drawCircle_loop(mMap, g1, info.SAFE_COLOUR, Integer.parseInt(optionlist[item]));
-                drawCircle_loop(mMap, g2, info.SAFE_COLOUR, Integer.parseInt(optionlist[item]));
-                drawCircle_loop(mMap, g3, info.SAFE_COLOUR, Integer.parseInt(optionlist[item]));
-                drawCircle_loop(mMap, g4, info.SAFE_COLOUR, Integer.parseInt(optionlist[item]));
-                drawCircle_loop(mMap, g5, info.SAFE_COLOUR, Integer.parseInt(optionlist[item]));
-                op_btn.setText(optionlist[item]);
-                //Toast.makeText(getApplicationContext(), "Phone Model = "+PhoneModels[item], Toast.LENGTH_SHORT).show();
-                dialog.cancel();
-            }
-        });
-        AlertDialog alert = alt_bld.create();
-        alert.show();
-    }
+
 
     public void setupPopup(View v) {
         PopupMenu popup = new PopupMenu(this, v);
@@ -321,63 +292,63 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         DataType = info.CO;
                         Radius = info.CO_RANGE;
-                        //updateMap();
-                        saveLList();
-                        updateHeatMap();
+                        updateMap();
+                        //saveLList();
+                        //updateHeatMap();
                         break;
 
                     case R.id.popup_o3:
 
                         DataType = info.O3;
                         Radius = info.O3_RANGE;
-                        //updateMap();
-                        saveLList();
-                        updateHeatMap();
+                        updateMap();
+                        //saveLList();
+                        //updateHeatMap();
                         break;
 
                     case R.id.popup_no2:
 
                         DataType = info.NO2;
                         Radius = info.NO2_RANGE;
-                        //updateMap();
-                        saveLList();
-                        updateHeatMap();
+                        updateMap();
+                        //saveLList();
+                        //updateHeatMap();
                         break;
 
                     case R.id.popup_so2:
 
                         DataType = info.SO2;
                         Radius = info.SO2_RANGE;
-                        //updateMap();
-                        saveLList();
-                        updateHeatMap();
+                        updateMap();
+                        //saveLList();
+                        //updateHeatMap();
                         break;
 
                     case R.id.popup_dust:
 
                         DataType = info.DUST;
                         Radius = info.Dust_RANGE;
-                        //updateMap();
-                        saveLList();
-                        updateHeatMap();
+                        updateMap();
+                        //saveLList();
+                        //updateHeatMap();
                         break;
 
                     case R.id.popup_aqi_value:
                         DataType = info.AQIvalue;
-                        Radius = 100;
-                        saveLList();
-                        updateHeatMap();
+                        updateMap_withAQI();
+                        //saveLList();
+                        //updateHeatMap();
                         break;
 
                     case R.id.popup_all:
 
                         ALLorSelf = "ALL";
-//                        updateMap();
+                        updateMap();
                         break;
                     case R.id.popup_self:
 
                         ALLorSelf = "SELF";
-//                        updateMap();
+                       updateMap();
                         break;
 
 
@@ -472,6 +443,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         gps.savefromCursorQuery(cursor);
                         Log.d("MapsActivity", "Cursor's UserID : " + gps.getUserID());
                         if (myID.equals(gps.getUserID())) {
+                            mylist.add(gps);
                             //    mylist.add(gps);
                         }
                         all_list.add(gps);
@@ -481,8 +453,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 } finally {
                     cursor.close();
                     Log.d("MapsActivity", "Cursor is closed");
-                    saveLList();
-                    addheatmap();
+                    //saveLList();
+                    //addheatmap();
+                    updateMap();
 
                 }
             }
@@ -490,6 +463,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         queryHandler.startQuery(QUERY_TOKEN, null, dataUri, SensorContentContract.Sensordata.PROJECTION_ALL, null, null, null);
 
 
+    }
+
+    public void updateMap_withAQI() {
+        Double Long, Lang;
+        mMap.clear();
+        if (ALLorSelf.equals("ALL")) {
+            Log.d("MapsActivity", "all_list's size is : " + all_list.size());
+            for (int j = 0; j < all_list.size(); j++) {
+                drawCircle_loop(mMap, all_list.get(j), DataType, info.getTheRadius(all_list.get(j).getAqi_type()));
+
+            }
+        } else {
+
+            for (int j = 0; j < mylist.size(); j++) {
+                drawCircle_loop(mMap, mylist.get(j), DataType, info.getTheRadius(mylist.get(j).getAqi_type()));
+            }
+
+        }
     }
 
 

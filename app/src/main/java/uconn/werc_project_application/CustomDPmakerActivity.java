@@ -273,6 +273,8 @@ public class CustomDPmakerActivity extends AppCompatActivity {
                 //if u fix long to double then u can use this method
                //datapoint.setGps_lat(Double.parseDouble(GPS_Lat_textview.getText().toString()));
                //datapoint.setGps_long(Double.parseDouble(GPS_Long_textview.getText().toString()));
+                cv.put(AqiContentContract.Aqidata.GPSLAT, latitude);
+                cv.put(AqiContentContract.Aqidata.GPSLONG, longitude);
                 cv.put(AqiContentContract.Aqidata.SENSORAQICO, Double.parseDouble(CO_textview.getText().toString()));
                 cv.put(AqiContentContract.Aqidata.SENSORAQINO2, Double.parseDouble(NO2_textview.getText().toString()));
                 cv.put(AqiContentContract.Aqidata.SENSORAQIO3, Double.parseDouble(O3_textview.getText().toString()));
@@ -309,18 +311,6 @@ public class CustomDPmakerActivity extends AppCompatActivity {
                 }
 
                 //check how does it work
-                Log.d("JIN","Start Checking" );
-                Log.d("JIN, PacketID",PacketId_Edit.getText().toString());
-                Log.d("JIN, UserID",UserId_Edit.getText().toString() );
-                Log.d("JIN, DeviceID",Device_Edit.getText().toString() );
-                Log.d("JIN, Time",Long.toString(now) );
-                Log.d("JIN, GPS_Lat",GPS_Lat_textview.getText().toString() );
-                Log.d("JIN, GPS_long",GPS_Long_textview.getText().toString() );
-                Log.d("JIN, CO",CO_textview.getText().toString());
-                Log.d("JIN, NO2",NO2_textview.getText().toString() );
-                Log.d("JIN, O3",O3_textview.getText().toString());
-                Log.d("JIN, PM",PM_textview.getText().toString());
-                Log.d("JIN, SO2",SO2_textview.getText().toString());
 
 
                 //part to save data to server ****

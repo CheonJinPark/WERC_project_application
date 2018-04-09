@@ -11,11 +11,12 @@ public class Information {
     }
 
     //Ranges
-    public final static int O3_RANGE = 100;
-    public final static int CO_RANGE = 100;
-    public final static int NO2_RANGE = 100;
-    public final static int SO2_RANGE = 100;
-    public final static int Dust_RANGE = 100;
+    public final static int O3_RANGE = 400;
+    public final static int CO_RANGE = 300;
+    public final static int NO2_RANGE = 300;
+    public final static int SO2_RANGE = 300;
+    public final static int Dust_RANGE = 300;
+
 
     public final static String O3 = "O3";
     public final static String CO = "CO";
@@ -25,15 +26,13 @@ public class Information {
     public final static String AQIvalue = "AQI_VALUE";
 
 
-    public final static String SAFE_COLOUR = "#447CFC00";
+    public final static String SAFE_COLOUR = "#1103C03C";
+    public final static String MODERATE_COLOUR = "#11FFD300";
+    public final static String USG_COLOUR = "#11FF9966"; //Unhealthy for Sensitive Groups
+    public final static String UNHEALTHY_COLOUR = "#11CE2029";
+    public final static String VERY_UNHEALTHY_COLOUR = "#117851A9";
+    public final static String HAZARDOUS_COLOUR = "#11B03060";
 
-
-    public final static String GOOD_COLOUR = "";
-    public final static String MODERATE_COLOUR = "#44FFFF00";
-    public final static String USG_COLOUR = "#44FF8C00"; //Unhealthy for Sensitive Groups
-    public final static String UNHEALTHY_COLOUR = "#44000080";
-    public final static String VERY_UNHEALTHY_COLOUR = "#444B0082";
-    public final static String HAZARDOUS_COLOUR = "#44FF0000";
 
 
     public final static String DANGER_1 = "#44FF8C00";
@@ -158,12 +157,12 @@ public class Information {
         return color;
     }
     public String getTextColor(int value) {
-        final String SAFE_COLOUR = "#7CFC00";
-        final String MODERATE_COLOUR = "#FFFF00";
-        final String USG_COLOUR = "#FF8C00";
-        final String UNHEALTHY_COLOUR = "#000080";
-        final String VERY_UNHEALTHY_COLOUR = "#4B0082";
-        final String HAZARDOUS_COLOUR = "#FF0000";
+        final String SAFE_COLOUR = "#03C03C";
+        final String MODERATE_COLOUR = "#FFD300";
+        final String USG_COLOUR = "#FF9966";
+        final String UNHEALTHY_COLOUR = "#CE2029";
+        final String VERY_UNHEALTHY_COLOUR = "#7851A9";
+        final String HAZARDOUS_COLOUR = "#B03060";
 
         if (value >= 0 && value <= 50) {
             return SAFE_COLOUR;
@@ -204,6 +203,33 @@ public class Information {
         return HAZARDOUS_COLOUR;
 
     }
+
+    public int getTheRadius(String dataType){
+        int radius = 100;
+        if(dataType!=null) {
+            switch (dataType) {
+                case Information.CO:
+                    radius = CO_RANGE;
+                    break;
+                case Information.NO2:
+                    radius = NO2_RANGE;
+                    break;
+                case Information.SO2:
+                    radius = SO2_RANGE;
+                    break;
+                case Information.DUST:
+                    radius = Dust_RANGE;
+                    break;
+                case Information.O3:
+                    radius = O3_RANGE;
+                    break;
+            }
+
+        }
+        return radius;
+    }
+
+
 }
 
 
