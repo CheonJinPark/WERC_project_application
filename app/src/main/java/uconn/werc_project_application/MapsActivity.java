@@ -1,5 +1,6 @@
 package uconn.werc_project_application;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.AsyncQueryHandler;
@@ -9,10 +10,14 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -26,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.Information.Information;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -51,7 +57,7 @@ import uconn.werc_project_application.data.AqiContentContract;
 import uconn.werc_project_application.data.DataInterpreter;
 import uconn.werc_project_application.data.SensorContentContract;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 
     private GoogleMap mMap;
     Double Long, Lat;
@@ -141,7 +147,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         all_list.add(g5);
 
 
-
         //saveLList();
 
 
@@ -151,7 +156,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         ALLorSelf = "ALL";
-        DataType = info.CO;
+        DataType = info.AQIvalue;
         Radius = info.CO_RANGE;
 
 
@@ -167,7 +172,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
 
 
     }
@@ -192,6 +196,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(lat_begin, long_begin)), 15));
 
         downloadFromServer();
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        mMap.setOnMyLocationButtonClickListener(this);
+        mMap.setOnMyLocationClickListener(this);
         // Add a marker in Sydney and move the camera
 
         //LatLng Uconn = new LatLng(g1.getLatitude(),g1.getLongitude());
@@ -454,7 +472,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.d("MapsActivity", "Cursor is closed");
                     //saveLList();
                     //addheatmap();
-                    updateMap();
+                    updateMap_withAQI();
 
                 }
             }
@@ -483,5 +501,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+    @Override
+    public boolean onMyLocationButtonClick() {
+        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+        // Return false so that we don't consume the event and the default behavior still occurs
+        // (the camera animates to the user's current position).
+
+        return false;
+    }
+
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
+        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+
+    }
 }
 
