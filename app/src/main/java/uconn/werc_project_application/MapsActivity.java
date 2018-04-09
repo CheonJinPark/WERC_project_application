@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uconn.werc_project_application.data.AqiContentContract;
+import uconn.werc_project_application.data.DataInterpreter;
 import uconn.werc_project_application.data.SensorContentContract;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -83,16 +84,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        contentResolver = this.getContentResolver();
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
         //define the ArrayList<GPS>
         mylist = new ArrayList<>();
         all_list = new ArrayList<>();
         info = new Information();
+        WLLlist = new ArrayList<WeightedLatLng>();
+
         //Test GPSs
         //Dummy data to set 300 is one of the max for gradient;
         g0 = new GPS(0, 0); //Uconn
@@ -144,53 +141,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         all_list.add(g3);
         all_list.add(g4);
         all_list.add(g5);
-        DataType = info.CO;
-        Radius = info.CO_RANGE;
 
-        WLLlist = new ArrayList<WeightedLatLng>();
 
-        saveLList();
 
+        //saveLList();
 
 
         //define myiD for compare
         myID = AWSProvider.getInstance().getIdentityManager().getCachedUserID();
         Log.d("MapsActivity", "My userID : " + myID);
-        Uri dataUri = AqiContentContract.Aqidata.uriBuilder();
+
 
         ALLorSelf = "ALL";
-        // Replace local cursor methods with async query handling
-        AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
-            @Override
-            protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
-                super.onQueryComplete(token, cookie, cursor);
-                Log.d("MapsActivity", "Cursor complete");
-                try {
-                    cursor.moveToFirst();
-                    while (cursor.moveToNext()) {
-                        GPS gps = new GPS();
-                        //gps.savefromCursorQuery(cursor);
-                        Log.d("MapsActivity", "Cursor's UserID : " + gps.getUserID());
-                        if (myID.equals(gps.getUserID())) {
-                            //    mylist.add(gps);
-                        }
-                        //all_list.add(gps);
-
-
-                        //Datapoint dp = Datapoint.fromCursorQuery(cursor);
-                        // dp has all fields in it. Add to map from here.
-                        //Log.d("ASyncQuery", "PacketId: " + dp.getPacketId());
-                        // use dp.getSensor_co and other accessors to read data.
-                        // See Datapoint class in data package for more info.
-
-
-                    }
-                } finally {
-                    cursor.close();
-                }
-            }
-        };
-        queryHandler.startQuery(QUERY_TOKEN, null, dataUri, SensorContentContract.Sensordata.PROJECTION_ALL, null, null, null);
+        DataType = info.CO;
+        Radius = info.CO_RANGE;
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.float_option_btn);
@@ -201,6 +165,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 setupPopup(v);
             }
         });
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+
+
 
     }
 
@@ -218,8 +189,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        Double lat_begin = DataInterpreter.getInstance().getGpsLat();
+        Double long_begin = DataInterpreter.getInstance().getGpsLong();
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(lat_begin, long_begin)), 15));
         //updateMap();
-        addheatmap();
+        downloadFromServer();
         // Add a marker in Sydney and move the camera
 
         //LatLng Uconn = new LatLng(g1.getLatitude(),g1.getLongitude());
@@ -336,6 +311,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Menu menu = popup.getMenu();
         inflater.inflate(R.menu.firstmenu, menu);
 
+        //MenuItem tt = (MenuItem)findViewById(R.id.popup_co);
+
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -385,23 +362,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         updateHeatMap();
                         break;
 
-//                    case R.id.popup_aqi_value:
-//                        DataType = info.AQIvalue;
-//                        Radius= 100;
-//                        saveLList();
-//                        updateHeatMap();
-//                        break;
+                    case R.id.popup_aqi_value:
+                        DataType = info.AQIvalue;
+                        Radius = 100;
+                        saveLList();
+                        updateHeatMap();
+                        break;
 
-//                   case R.id.popup_all:
-//
-//                        ALLorSelf = "ALL";
+                    case R.id.popup_all:
+
+                        ALLorSelf = "ALL";
 //                        updateMap();
-//                        break;
-//                    case R.id.popup_self:
-//
-//                        ALLorSelf = "SELF";
-                    //                       updateMap();
-                    //                       break;
+                        break;
+                    case R.id.popup_self:
+
+                        ALLorSelf = "SELF";
+//                        updateMap();
+                        break;
 
 
                 }
@@ -418,40 +395,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     void addheatmap() {
 
         int[] colors = {
-                Color.rgb(102, 225, 0), // green
-                Color.rgb(255, 0, 0)    // red
+                Color.rgb(3,192,60),        // green
+                Color.rgb(255, 211, 0),     // yellow
+                Color.rgb(255,153,102),     //orange
+                Color.rgb(206,32,41),       //red
+                Color.rgb(120,81,169),      //purple
+                Color.rgb(176,48,96)        //maroon
         };
 
+
         float[] startPoints = {
-                0.2f, 1f
+                0.05f, 0.15f,0.25f,0.35f,0.5f, 0.8f
         };
         Gradient gradient = new Gradient(colors, startPoints);
         //mProvider
         mProvider = new HeatmapTileProvider.Builder()
                 .weightedData(WLLlist)
                 .gradient(gradient)
+                .radius(50)
                 .build();
 
 
-        mProvider.setRadius(50);
+
         mOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-        Long = all_list.get(all_list.size() - 1).getLongitude();
-        Lat = all_list.get(all_list.size() - 1).getLatitude();
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(Lat, Long)), 15));
+
     }
 
     void saveLList() {
         WLLlist.clear();
         for (int i = 0; i < all_list.size(); i++) {
             WeightedLatLng WLL = new WeightedLatLng(new LatLng(all_list.get(i).getLatitude(), all_list.get(i).getLongitude()), all_list.get(i).get(DataType));
-            Log.d("MapsActivity", "save list the data type is : "+DataType+" the value is : "+Integer.toString(all_list.get(i).get(DataType)));
+            Log.d("MapsActivity", "save list the data type is : " + DataType + " the value is : " + Integer.toString(all_list.get(i).get(DataType)));
             WLLlist.add(WLL);
         }
     }
-    void updateHeatMap(){
+
+    void updateHeatMap() {
         mProvider.setWeightedData(WLLlist);
         mOverlay.clearTileCache();
-        moveToCenter();
+
     }
 //    @Override
 //    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -463,10 +445,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                SensorContentContract.Sensordata.SORT_ORDER_DEFAULT);
 //    }
 
-    void moveToCenter(){
+    void moveToCenter() {
         Long = all_list.get(all_list.size() - 1).getLongitude();
         Lat = all_list.get(all_list.size() - 1).getLatitude();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(Lat, Long)), 15));
+        Log.d("MapsActivity", "moveToCenter is worked to : Lat = "+Double.toString(Lat)+" Long = "+Double.toString(Long));
+    }
+    void downloadFromServer(){
+        // Replace local cursor methods with async query handling
+        contentResolver = this.getContentResolver();
+        Uri dataUri = AqiContentContract.Aqidata.uriBuilder();
+        AsyncQueryHandler queryHandler = new AsyncQueryHandler(contentResolver) {
+            @Override
+            protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+                super.onQueryComplete(token, cookie, cursor);
+                Log.d("MapsActivity", "Cursor complete");
+                try {
+                    cursor.moveToFirst();
+                    GPS gpsfinal = new GPS();
+                    gpsfinal.savefromCursorQuery(cursor);
+                    Log.d("MapsActivity", "Cursor's UserID : " + gpsfinal.getUserID());
+                    all_list.add(gpsfinal);
+
+                    while (cursor.moveToNext()) {
+                        GPS gps = new GPS();
+                        gps.savefromCursorQuery(cursor);
+                        Log.d("MapsActivity", "Cursor's UserID : " + gps.getUserID());
+                        if (myID.equals(gps.getUserID())) {
+                            //    mylist.add(gps);
+                        }
+                        all_list.add(gps);
+                    }
+
+
+                } finally {
+                    cursor.close();
+                    Log.d("MapsActivity", "Cursor is closed");
+                    saveLList();
+                    addheatmap();
+
+                }
+            }
+        };
+        queryHandler.startQuery(QUERY_TOKEN, null, dataUri, SensorContentContract.Sensordata.PROJECTION_ALL, null, null, null);
+
+
     }
 
 

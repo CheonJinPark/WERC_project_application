@@ -109,6 +109,9 @@ public class GPS implements Serializable{
             case Information.O3:
                 result = getO3();
                 break;
+            case Information.AQIvalue:
+                result = getAqival();
+                break;
         }
         return result;
     }

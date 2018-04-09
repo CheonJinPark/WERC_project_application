@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.hardware.Sensor;
 import android.location.Location;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -63,6 +64,8 @@ public class CustomDPmakerActivity extends AppCompatActivity {
 //        initial_GPSs();
         initial_Button();
 
+        longitude = DataInterpreter.getInstance().getGpsLong();
+        latitude = DataInterpreter.getInstance().getGpsLat();
         GPS_Lat_textview.setText(Double.toString(DataInterpreter.getInstance().getGpsLat()));
         GPS_Long_textview.setText(Double.toString(DataInterpreter.getInstance().getGpsLong()));
 
@@ -70,9 +73,6 @@ public class CustomDPmakerActivity extends AppCompatActivity {
     }
 
     void initialviews() {
-        PacketId_Edit = (EditText) findViewById(R.id.CDP_PacketId_Edit);
-        UserId_Edit = (EditText) findViewById(R.id.CDP_UderID_Edit);
-        Device_Edit = (EditText) findViewById(R.id.CDP_DeviceID_Edit);
         CO_textview = (TextView) findViewById(R.id.CDP_CO_value_textview);
         CO_seekbar = (SeekBar) findViewById(R.id.CDP_CO_SeekBar);
         NO2_textview = (TextView) findViewById(R.id.CDP_NO2_value_textview);
@@ -278,6 +278,35 @@ public class CustomDPmakerActivity extends AppCompatActivity {
                 cv.put(AqiContentContract.Aqidata.SENSORAQIO3, Double.parseDouble(O3_textview.getText().toString()));
                 cv.put(AqiContentContract.Aqidata.SENSORAQISO2, Double.parseDouble(SO2_textview.getText().toString()));
                 cv.put(AqiContentContract.Aqidata.SENSORAQIPM, Double.parseDouble(PM_textview.getText().toString()));
+                Double co_aqi = cv.getAsDouble(AqiContentContract.Aqidata.SENSORAQICO);
+                Double no2_aqi = cv.getAsDouble(AqiContentContract.Aqidata.SENSORAQINO2);
+                Double o3_aqi = cv.getAsDouble(AqiContentContract.Aqidata.SENSORAQIO3);
+                Double so2_aqi = cv.getAsDouble(AqiContentContract.Aqidata.SENSORAQISO2);
+                Double pm_aqi = cv.getAsDouble(AqiContentContract.Aqidata.SENSORAQIPM);
+                Double pml_aqi = cv.getAsDouble(AqiContentContract.Aqidata.SENSORAQIPML);
+                // Determine Largest AQI Value and Source
+                if (co_aqi >= no2_aqi && co_aqi >= o3_aqi && co_aqi >= so2_aqi && co_aqi >= pm_aqi && co_aqi >= pml_aqi) {
+                    cv.put(AqiContentContract.Aqidata.AQISRC, "Carbon Monoxide");
+                    cv.put(AqiContentContract.Aqidata.AQIVAL, co_aqi);
+                } else if (no2_aqi >= co_aqi && no2_aqi >= o3_aqi && no2_aqi >= so2_aqi && no2_aqi >= pm_aqi && no2_aqi >= pml_aqi) {
+                    cv.put(AqiContentContract.Aqidata.AQISRC, "Nitrogen Dioxide");
+                    cv.put(AqiContentContract.Aqidata.AQIVAL, no2_aqi);
+                } else if (o3_aqi >= co_aqi && o3_aqi >= no2_aqi && o3_aqi >= so2_aqi && o3_aqi >= pm_aqi && o3_aqi >= pml_aqi) {
+                    cv.put(AqiContentContract.Aqidata.AQISRC, "Ozone");
+                    cv.put(AqiContentContract.Aqidata.AQIVAL, o3_aqi);
+                } else if (so2_aqi >= co_aqi && so2_aqi >= o3_aqi && so2_aqi >= no2_aqi && so2_aqi >= pm_aqi && so2_aqi >= pml_aqi) {
+                    cv.put(AqiContentContract.Aqidata.AQISRC, "Sulfur Dioxide");
+                    cv.put(AqiContentContract.Aqidata.AQIVAL, so2_aqi);
+                } else if (pm_aqi >= co_aqi && pm_aqi >= o3_aqi && pm_aqi >= no2_aqi && pm_aqi >= so2_aqi && pm_aqi >= pml_aqi) {
+                    cv.put(AqiContentContract.Aqidata.AQISRC, "Small Particulate Matter");
+                    cv.put(AqiContentContract.Aqidata.AQIVAL, pm_aqi);
+                } else if (pml_aqi >= co_aqi && pml_aqi >= o3_aqi && pml_aqi >= so2_aqi && pml_aqi >= pm_aqi && pml_aqi >= no2_aqi ) {
+                    cv.put(AqiContentContract.Aqidata.AQISRC, "Large Particulate Matter");
+                    cv.put(AqiContentContract.Aqidata.AQIVAL, pml_aqi);
+                } else {
+                    cv.put(AqiContentContract.Aqidata.AQISRC, "Unknown. How did you find this");
+                    cv.put(AqiContentContract.Aqidata.AQIVAL, co_aqi);
+                }
 
                 //check how does it work
                 Log.d("JIN","Start Checking" );
