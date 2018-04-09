@@ -124,6 +124,7 @@ public class GPS implements Serializable{
         this.longitude = longitude;
     }
 
+    
     public double getLatitude() {
         return latitude;
     }

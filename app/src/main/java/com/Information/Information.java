@@ -22,6 +22,7 @@ public class Information {
     public final static String NO2 = "NO2";
     public final static String SO2 = "SO2";
     public final static String DUST = "DUST";
+    public final static String AQIvalue = "AQI_VALUE";
 
 
     public final static String SAFE_COLOUR = "#447CFC00";
